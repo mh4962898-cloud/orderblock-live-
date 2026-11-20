@@ -162,11 +162,8 @@
   <!-- MAIN CONTENT -->
   <main class="flex-1 max-w-[1720px] w-full mx-auto px-2.5 sm:px-5 py-4">
 
-    <!-- =====================================================================
-         TAB 1: ORDER-BLOCK.COM 3-COLUMN SANKEY + MATRIX + TOP BUILD-UP CARDS
-         ===================================================================== -->
+    <!-- TAB 1: SANKEY + MATRIX + TOP BUILD-UP CARDS -->
     <div id="view-sectorflow" class="space-y-4">
-      <!-- Top Search & Sector Filter Bar -->
       <div class="t-card border t-border rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2.5">
         <div class="relative flex-1 min-w-[210px] max-w-md">
           <svg class="w-3.5 h-3.5 t-muted absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -175,10 +172,8 @@
         <div class="flex flex-wrap items-center gap-1" id="sf-sector-pills"></div>
       </div>
 
-      <!-- 3-PANEL INSTITUTIONAL TERMINAL GRID -->
       <div class="grid grid-cols-1 xl:grid-cols-12 gap-3 items-stretch">
-
-        <!-- PANEL 1 (LEFT 4 COLS): SANKEY SECTOR & STOCK FLOW VISUALIZER -->
+        <!-- PANEL 1: SANKEY -->
         <div class="xl:col-span-4 t-card border t-border rounded-xl p-3 flex flex-col justify-between relative overflow-hidden">
           <div class="flex items-center justify-between mb-2">
             <div>
@@ -192,9 +187,8 @@
           </div>
         </div>
 
-        <!-- PANEL 2 (MIDDLE 4 COLS): 4-COLUMN MULTI-TIER BULLISH & BEARISH MINI-TILES -->
+        <!-- PANEL 2: MULTI-TIER MATRIX -->
         <div class="xl:col-span-4 flex flex-col gap-3">
-          <!-- Bullish Multi-Tier Matrix -->
           <div class="t-card border t-border rounded-xl p-2.5 flex-1">
             <div class="flex items-center justify-between mb-2 px-1">
               <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#10b981]">▲ Bullish Order Block Matrix (Click for Live Chart)</span>
@@ -203,7 +197,6 @@
             <div id="bull-mini-matrix" class="grid grid-cols-2 sm:grid-cols-4 gap-1.5"></div>
           </div>
 
-          <!-- Bearish Multi-Tier Matrix -->
           <div class="t-card border t-border rounded-xl p-2.5 flex-1">
             <div class="flex items-center justify-between mb-2 px-1">
               <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#ef4444]">▼ Bearish Order Block Matrix (Click for Live Chart)</span>
@@ -213,17 +206,14 @@
           </div>
         </div>
 
-        <!-- PANEL 3 (RIGHT 4 COLS): LARGE TOP BULLISH & BEARISH BUILD-UP CARDS -->
+        <!-- PANEL 3: TOP CARDS -->
         <div class="xl:col-span-4 flex flex-col gap-3">
-          <!-- Top 3 Bullish Cards -->
           <div id="top-bull-cards" class="space-y-2"></div>
-          <!-- Top 3 Bearish Cards -->
           <div id="top-bear-cards" class="space-y-2"></div>
         </div>
-
       </div>
 
-      <!-- LIVE SELECTED STOCK TRADE EXECUTION BAR (ENTRY, SL, TP1, TP2 + MINI LIVE CHART) -->
+      <!-- SELECTED STOCK TRADE EXECUTION BAR -->
       <div class="t-card border border-[#2962ff]/40 rounded-xl p-4 shadow-2xl">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b t-border">
           <div class="flex flex-wrap items-center gap-2.5">
@@ -233,7 +223,6 @@
             <span id="bar-lot" class="text-xs font-num text-slate-400">Lot: 150</span>
           </div>
 
-          <!-- Entry / SL / TP1 / TP2 Pills -->
           <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 font-num text-xs">
             <div class="bg-[#0b1017] border t-border rounded-lg px-2.5 py-1.5">
               <span class="text-[9px] text-slate-400 block">OB ZONE</span>
@@ -267,16 +256,13 @@
           </div>
         </div>
 
-        <!-- Inline Live Candlestick Chart Strip -->
         <div id="inline-chart-wrap" class="relative w-full h-[230px] sm:h-[260px] bg-[#06090d] rounded-lg border t-border mt-3 overflow-hidden">
           <canvas id="inline-live-canvas" class="w-full h-full block"></canvas>
         </div>
       </div>
     </div>
 
-    <!-- =====================================================================
-         TAB 2: DEDICATED FULL LIVE CHART + ENTRY / SL / TP TERMINAL
-         ===================================================================== -->
+    <!-- TAB 2: FULL LIVE CHART -->
     <div id="view-livechart" class="hidden space-y-4">
       <div class="t-card border t-border rounded-xl p-4 shadow-2xl">
         <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b t-border">
@@ -294,7 +280,6 @@
           </div>
         </div>
 
-        <!-- Big Entry / SL / TP Dashboard Cards -->
         <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 my-3 font-num">
           <div class="bg-[#080c10] border t-border rounded-xl p-3">
             <span class="text-[10px] text-slate-400 block">ORDER BLOCK ZONE</span>
@@ -318,16 +303,13 @@
           </div>
         </div>
 
-        <!-- Full-Size Interactive Live Candlestick Chart -->
         <div id="full-chart-wrap" class="relative w-full h-[380px] sm:h-[440px] bg-[#06090d] rounded-xl border t-border overflow-hidden">
           <canvas id="full-live-canvas" class="w-full h-full block cursor-crosshair"></canvas>
         </div>
       </div>
     </div>
 
-    <!-- =====================================================================
-         TAB 3: CUSTOM OB CALCULATOR
-         ===================================================================== -->
+    <!-- TAB 3: CUSTOM OB CALCULATOR -->
     <div id="view-finder" class="hidden space-y-4">
       <div class="t-card border t-border rounded-xl p-5">
         <h2 class="text-base font-extrabold t-strong mb-4">Custom NSE F&amp;O Entry / SL / TP Calculator</h2>
@@ -349,9 +331,7 @@
       </div>
     </div>
 
-    <!-- =====================================================================
-         TAB 4: TRADE JOURNAL
-         ===================================================================== -->
+    <!-- TAB 4: TRADE JOURNAL -->
     <div id="view-journal" class="hidden space-y-4">
       <div class="t-card border t-border rounded-xl p-5">
         <div class="flex items-center justify-between mb-3">
@@ -409,9 +389,7 @@
       showToast('Brand updated!');
     }
 
-    // COMPREHENSIVE NSE F&O DATASET (MATCHING SCREENSHOT STOCKS + ENTRY/SL/TP)
     const fnoStocks = [
-      // BULLISH STOCKS
       { symbol: 'COFORGE', sector: 'IT', ltp: 2332.00, change: 3.49, oiChg: '+16.2%', buildup: 'LONG BUILD-UP', score: 96, lotSize: 150, rr: '1:2.8', obLow: 2083.90, obHigh: 2112.30, s1: 2080.10, r1: 2222.90, r2: 2316.50, entry: 2112.30, sl: 2068.50, tp1: 2222.90, tp2: 2316.50 },
       { symbol: 'PERSISTENT', sector: 'IT', ltp: 6348.00, change: 2.86, oiChg: '+14.8%', buildup: 'LONG BUILD-UP', score: 94, lotSize: 100, rr: '1:2.8', obLow: 5977.50, obHigh: 6046.00, s1: 5912.65, r1: 6231.25, r2: 6371.90, entry: 6046.00, sl: 5912.65, tp1: 6231.25, tp2: 6371.90 },
       { symbol: 'LTF', sector: 'Finance', ltp: 279.65, change: 1.76, oiChg: '+11.4%', buildup: 'LONG BUILD-UP', score: 90, lotSize: 2250, rr: '1:2.8', obLow: 270.45, obHigh: 279.65, s1: 266.00, r1: 276.00, r2: 280.10, entry: 274.50, sl: 266.00, tp1: 278.50, tp2: 282.10 },
@@ -424,8 +402,6 @@
       { symbol: 'APOLLOHOSP', sector: 'Pharma', ltp: 7240.00, change: 2.40, oiChg: '+11.0%', buildup: 'LONG BUILD-UP', score: 81, lotSize: 125, rr: '1:3.3', obLow: 7110.00, obHigh: 7145.00, s1: 7085.00, r1: 7295.00, r2: 7360.00, entry: 7145.00, sl: 7085.00, tp1: 7295.00, tp2: 7360.00 },
       { symbol: 'INDUSINDBK', sector: 'Banking', ltp: 1084.50, change: 4.15, oiChg: '+15.4%', buildup: 'LONG BUILD-UP', score: 92, lotSize: 500, rr: '1:3.5', obLow: 1056.00, obHigh: 1062.50, s1: 1049.50, r1: 1095.00, r2: 1115.00, entry: 1062.50, sl: 1049.50, tp1: 1095.00, tp2: 1115.00 },
       { symbol: 'AXISBANK', sector: 'Banking', ltp: 1192.40, change: 2.95, oiChg: '+10.7%', buildup: 'LONG BUILD-UP', score: 87, lotSize: 625, rr: '1:3.2', obLow: 1168.00, obHigh: 1174.50, s1: 1161.00, r1: 1202.00, r2: 1218.00, entry: 1174.50, sl: 1161.00, tp1: 1202.00, tp2: 1218.00 },
-
-      // BEARISH STOCKS
       { symbol: 'TCS', sector: 'IT', ltp: 2382.40, change: -1.69, oiChg: '+15.3%', buildup: 'SHORT BUILD-UP', score: -94, lotSize: 175, rr: '1:3.0', obLow: 2382.40, obHigh: 2392.40, s1: 2354.95, r1: 2399.55, r2: 2412.00, entry: 2385.00, sl: 2399.55, tp1: 2354.95, tp2: 2317.85 },
       { symbol: 'TATASTEEL', sector: 'Metals', ltp: 154.74, change: -3.48, oiChg: '+14.6%', buildup: 'SHORT BUILD-UP', score: -92, lotSize: 5500, rr: '1:2.8', obLow: 154.74, obHigh: 156.96, s1: 147.40, r1: 159.50, r2: 162.00, entry: 155.80, sl: 159.50, tp1: 147.40, tp2: 142.85 },
       { symbol: 'KPITTECH', sector: 'IT', ltp: 526.45, change: -2.79, oiChg: '+12.8%', buildup: 'SHORT BUILD-UP', score: -89, lotSize: 800, rr: '1:2.8', obLow: 526.45, obHigh: 537.00, s1: 515.70, r1: 538.70, r2: 545.00, entry: 531.50, sl: 538.70, tp1: 522.25, tp2: 515.70 },
@@ -453,7 +429,6 @@
       const bulls = fnoStocks.filter(s => s.change >= 0 && match(s));
       const bears = fnoStocks.filter(s => s.change < 0 && match(s));
 
-      // Middle 4-Column Mini-Tiles with Volume Profile Bars
       document.getElementById('bull-mini-matrix').innerHTML = bulls.map((s, idx) => {
         const w1 = 45 + ((idx * 17) % 50);
         const w2 = 35 + ((idx * 23) % 55);
@@ -490,8 +465,7 @@
           </div>`;
       }).join('');
 
-      // Right Panel: Top 3 Large Bullish Cards
-      document.getElementById('top-bull-cards').innerHTML = bulls.slice(0, 3).map((s, i) => `
+      document.getElementById('top-bull-cards').innerHTML = bulls.slice(0, 3).map(s => `
         <div onclick="selectStock('${s.symbol}')" class="cursor-pointer rounded-xl p-3 bg-gradient-to-r from-[#0e2620] via-[#0d1c1a] to-[#0b1219] border ${selectedStock.symbol === s.symbol ? 'border-[#10b981]' : 'border-[#10b981]/35 hover:border-[#10b981]'} transition-all shadow-lg">
           <div class="flex items-center justify-between">
             <div>
@@ -520,8 +494,7 @@
         </div>
       `).join('');
 
-      // Right Panel: Top 3 Large Bearish Cards
-      document.getElementById('top-bear-cards').innerHTML = bears.slice(0, 3).map((s, i) => `
+      document.getElementById('top-bear-cards').innerHTML = bears.slice(0, 3).map(s => `
         <div onclick="selectStock('${s.symbol}')" class="cursor-pointer rounded-xl p-3 bg-gradient-to-r from-[#291116] via-[#1c1015] to-[#0b1219] border ${selectedStock.symbol === s.symbol ? 'border-[#ef4444]' : 'border-[#ef4444]/35 hover:border-[#ef4444]'} transition-all shadow-lg">
           <div class="flex items-center justify-between">
             <div>
@@ -555,7 +528,6 @@
 
     function setSfSector(sec) { sfSector = sec; renderAllMatrix(); }
 
-    // LEFT SANKEY FLOW & DEPTH CANVAS
     function drawSankeyCanvas() {
       const canvas = document.getElementById('sankey-canvas');
       const wrap = document.getElementById('sankey-wrap');
@@ -575,11 +547,9 @@
       const midY = h * 0.44;
       const spineX = w * 0.72;
 
-      // Equilibrium Line
       ctx.strokeStyle = '#334155';
       ctx.beginPath(); ctx.moveTo(0, midY); ctx.lineTo(w, midY); ctx.stroke();
 
-      // Left Horizontal Depth Histogram Bars
       for (let i = 0; i < 18; i++) {
         const y = 16 + i * ((midY - 24) / 18);
         const bw = (0.2 + Math.abs(Math.sin(i * 0.9)) * 0.7) * (spineX * 0.55);
@@ -593,7 +563,6 @@
         ctx.fillRect(8, y, bw, 5);
       }
 
-      // Smooth Bezier Sankey Flow Ribbons into Central Spine
       for (let i = 0; i < 14; i++) {
         const sy = 20 + i * ((midY - 28) / 14);
         ctx.strokeStyle = 'rgba(16, 185, 129, 0.25)';
@@ -613,7 +582,6 @@
         ctx.stroke();
       }
 
-      // Central Vertical Sankey Spine Column
       ctx.fillStyle = 'rgba(16, 185, 129, 0.22)';
       ctx.fillRect(spineX - 14, 18, 28, midY - 22);
       ctx.strokeStyle = '#10b981';
@@ -624,7 +592,6 @@
       ctx.strokeStyle = '#ef4444';
       ctx.strokeRect(spineX - 14, midY + 4, 28, h - midY - 22);
 
-      // Right Output Connectors to Matrix
       for (let i = 0; i < 6; i++) {
         ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
         ctx.beginPath();
@@ -640,7 +607,6 @@
       }
     }
 
-    // SELECT STOCK & UPDATE ENTRY / SL / TP + LIVE CHARTS
     function selectStock(symbol) {
       const s = fnoStocks.find(x => x.symbol === symbol);
       if (!s) return;
@@ -665,7 +631,6 @@
       document.getElementById('bar-tp1').textContent = `₹${s.tp1.toFixed(2)}`;
       document.getElementById('bar-tp2').textContent = `₹${s.tp2.toFixed(2)} (${s.rr})`;
 
-      // Full Chart Tab Sync
       const selEl = document.getElementById('chart-stock-selector');
       if (selEl) selEl.value = s.symbol;
       document.getElementById('fc-bias-badge').textContent = `${isBull ? 'BULLISH OB' : 'BEARISH OB'} • ${s.buildup}`;
@@ -686,7 +651,6 @@
       switchMainTab('livechart');
     }
 
-    // DRAW LIVE CANDLESTICK CHART WITH ENTRY, SL, TP1, TP2 & OB ZONE LINES
     function drawCandlestickChart(canvasId, s) {
       const canvas = document.getElementById(canvasId);
       if (!canvas) return;
@@ -710,21 +674,18 @@
       const maxP = Math.max(s.sl, s.tp2, s.obHigh, s.ltp) * 1.004;
       const pToY = p => padT + ((maxP - p) / (maxP - minP)) * plotH;
 
-      // Grid
       ctx.strokeStyle = '#111924';
       for (let i = 0; i <= 5; i++) {
         const y = padT + (plotH / 5) * i;
         ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
       }
 
-      // Order Block Zone Box
       const zTop = pToY(s.obHigh), zBot = pToY(s.obLow);
       ctx.fillStyle = isBull ? 'rgba(16, 185, 129, 0.16)' : 'rgba(239, 68, 68, 0.16)';
       ctx.fillRect(padL, zTop, plotW, Math.max(zBot - zTop, 10));
       ctx.strokeStyle = isBull ? '#10b981' : '#ef4444';
       ctx.strokeRect(padL, zTop, plotW, Math.max(zBot - zTop, 10));
 
-      // Helper for Entry / SL / TP1 / TP2 Lines
       const drawTradeLine = (price, label, color) => {
         const y = pToY(price);
         ctx.save();
@@ -747,7 +708,6 @@
       drawTradeLine(s.entry, 'ENT', '#60a5fa');
       drawTradeLine(s.sl, 'SL ', '#ef4444');
 
-      // Generate Deterministic + Live Ticking Candlesticks
       const count = 38;
       const stepW = plotW / count;
       let seed = s.symbol.charCodeAt(0) * 31;
@@ -817,10 +777,39 @@
       document.getElementById('sim-btn-label').textContent = isSimActive ? 'LIVE ON' : 'PAUSED';
     }
 
-    function tickLive() {
+    // DHAN LIVE SERVER CONNECTION (WITH AUTO-FALLBACK)
+    const DHAN_API_URL = 'https://orderblock-live-dhan-live-server.onrender.com/api/dhan-live';
+    let isDhanLiveConnected = false;
+
+    async function fetchDhanLive() {
       if (!isSimActive) return;
       const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-      document.getElementById('ist-clock-display').textContent = nowIST.toTimeString().split(' ')[0] + ' IST';
+      const timeStr = nowIST.toTimeString().split(' ')[0] + ' IST';
+
+      try {
+        const res = await fetch(DHAN_API_URL);
+        const data = await res.json();
+
+        if (data.status === 'LIVE_DHAN' && data.stocks && Object.keys(data.stocks).length > 0) {
+          isDhanLiveConnected = true;
+          document.getElementById('ist-clock-display').textContent = `${timeStr} • 🟢 DHAN LIVE`;
+          document.getElementById('sim-btn-label').textContent = 'DHAN LIVE';
+
+          fnoStocks.forEach(s => {
+            const live = data.stocks[s.symbol];
+            if (live && live.ltp) {
+              s.ltp = +live.ltp;
+              s.change = +live.change;
+            }
+          });
+          selectStock(selectedStock.symbol);
+          return;
+        }
+      } catch (e) {
+        isDhanLiveConnected = false;
+      }
+
+      document.getElementById('ist-clock-display').textContent = `${timeStr} • SIM MODE`;
       fnoStocks.forEach(s => {
         const d = (Math.random() - 0.49) * 0.09;
         s.change = +(s.change + d).toFixed(2);
@@ -877,7 +866,8 @@
       selectStock('COFORGE');
       calculateCustomOB();
       renderJournal();
-      setInterval(tickLive, 1500);
+      fetchDhanLive();
+      setInterval(fetchDhanLive, 3000);
     };
   </script>
 </body>
