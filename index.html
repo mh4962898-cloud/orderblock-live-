@@ -5,8 +5,8 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ganesh Kabadi F&amp;O Desk — Live NSE F&amp;O Order Block, Sector Flow &amp; Liquidity Scanner</title>
-  <meta name="description" content="Ganesh Kabadi F&amp;O Desk — Live NSE F&amp;O Sector Flow, Long/Short Build-up Stock Flow, Order Block Scanner &amp; Institutional Liquidity Terminal." />
-  <meta name="keywords" content="Ganesh Kabadi F&amp;O Desk, Ganesh Kabadi, Sector Flow NSE F&amp;O, Order Block Scanner, Long Build Up, Short Build Up, Institutional Liquidity Desk" />
+  <meta name="description" content="Ganesh Kabadi F&amp;O Desk — Live NSE F&amp;O Sector Flow, Sankey Stock Matrix, Live Candlestick Chart with Entry, SL &amp; TP." />
+  <meta name="keywords" content="Ganesh Kabadi F&amp;O Desk, Ganesh Kabadi, Sector Flow NSE F&amp;O, Order Block Scanner, Entry SL TP Live Chart" />
   <meta name="author" content="Ganesh Kabadi" />
   <meta name="robots" content="index, follow" />
   <link rel="canonical" href="https://mh4962898-cloud.github.io/orderblock-live-/" />
@@ -31,10 +31,10 @@
     :root {
       --brand-accent: #2962ff;
       --brand-accent-soft: rgba(41, 98, 255, 0.14);
-      --bg-main: #0b0f14;
-      --bg-card: #121821;
-      --bg-card-hover: #18202c;
-      --border-main: #1f2937;
+      --bg-main: #080c10;
+      --bg-card: #0e141c;
+      --bg-card-hover: #141d28;
+      --border-main: #1c2634;
       --text-main: #d1d4dc;
       --text-strong: #ffffff;
       --text-muted: #788292;
@@ -42,27 +42,15 @@
       --bear: #ef4444;
     }
 
-    html.light {
-      --bg-main: #f1f5f9;
-      --bg-card: #ffffff;
-      --bg-card-hover: #f8fafc;
-      --border-main: #cbd5e1;
-      --text-main: #334155;
-      --text-strong: #0f172a;
-      --text-muted: #64748b;
-    }
-
     body {
       background-color: var(--bg-main);
       color: var(--text-main);
       font-family: 'Inter', sans-serif;
       overflow-x: hidden;
-      transition: background-color 0.2s ease, color 0.2s ease;
     }
 
     .t-bg { background-color: var(--bg-main); }
     .t-card { background-color: var(--bg-card); }
-    .t-card-hover:hover { background-color: var(--bg-card-hover); }
     .t-border { border-color: var(--border-main); }
     .t-text { color: var(--text-main); }
     .t-strong { color: var(--text-strong); }
@@ -73,12 +61,7 @@
       font-variant-numeric: tabular-nums;
     }
 
-    .brand-accent-text { color: var(--brand-accent); }
-    .brand-accent-bg { background-color: var(--brand-accent); }
-    .brand-accent-border { border-color: var(--brand-accent); }
-    .brand-accent-soft { background-color: var(--brand-accent-soft); }
-
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: var(--bg-main); }
     ::-webkit-scrollbar-thumb { background: var(--border-main); border-radius: 9999px; }
 
@@ -95,11 +78,11 @@
 
   <!-- TOP HEADER -->
   <header class="sticky top-0 z-40 t-bg/95 backdrop-blur-md border-b t-border">
-    <div class="max-w-[1680px] mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
+    <div class="max-w-[1720px] mx-auto px-3 sm:px-5 h-14 flex items-center justify-between gap-2">
       <!-- Brand Logo & Name -->
       <div class="flex items-center gap-2.5 min-w-0">
-        <div class="w-9 h-9 rounded-lg brand-accent-bg flex items-center justify-center text-white font-extrabold shrink-0 shadow-lg">
-          <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4">
+        <div class="w-8 h-8 rounded-lg bg-[#10b981] flex items-center justify-center text-black font-extrabold shrink-0 shadow-lg">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6">
             <rect x="3" y="4" width="6" height="16" rx="1"></rect>
             <rect x="15" y="7" width="6" height="13" rx="1"></rect>
             <path d="M9 10h6M9 14h6"></path>
@@ -107,396 +90,286 @@
         </div>
         <div class="truncate">
           <div class="flex items-center gap-2">
-            <span id="nav-brand-name" class="font-extrabold t-strong text-base sm:text-lg tracking-tight truncate">Ganesh Kabadi F&amp;O Desk</span>
-            <span class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider t-card border t-border text-[#10b981]">
-              NSE F&amp;O PRO
+            <span id="nav-brand-name" class="font-extrabold t-strong text-sm sm:text-base tracking-tight truncate">Ganesh Kabadi F&amp;O Desk</span>
+            <span class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-[#10b981]/15 border border-[#10b981]/30 text-[#10b981]">
+              NSE F&amp;O LIVE
             </span>
           </div>
-          <p id="nav-brand-tagline" class="text-[11px] t-muted truncate hidden md:block">Live NSE F&amp;O Order Block, Sector Flow &amp; Liquidity Scanner</p>
         </div>
       </div>
 
       <!-- Desktop Navigation Tabs -->
-      <nav class="hidden xl:flex items-center t-card p-1 rounded-xl border t-border gap-1">
-        <button onclick="switchMainTab('sectorflow')" id="tab-btn-sectorflow" class="px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-[#10b981] text-black shadow flex items-center gap-1.5">
-          <span>⚡ Sector &amp; Stock Flow</span>
+      <nav class="hidden lg:flex items-center t-card p-1 rounded-xl border t-border gap-1">
+        <button onclick="switchMainTab('sectorflow')" id="tab-btn-sectorflow" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-[#10b981] text-black shadow">
+          ⚡ Sector &amp; Stock Flow Matrix
         </button>
-        <button onclick="switchMainTab('scanner')" id="tab-btn-scanner" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all t-muted hover:t-strong">
-          Scanner &amp; Charts
+        <button onclick="switchMainTab('livechart')" id="tab-btn-livechart" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all t-muted hover:t-strong flex items-center gap-1.5">
+          <span>📈 Live Chart + Entry / SL / TP</span>
         </button>
-        <button onclick="switchMainTab('finder')" id="tab-btn-finder" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all t-muted hover:t-strong">
-          Custom OB Finder
+        <button onclick="switchMainTab('finder')" id="tab-btn-finder" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all t-muted hover:t-strong">
+          OB Calculator
         </button>
-        <button onclick="switchMainTab('journal')" id="tab-btn-journal" class="px-3.5 py-1.5 rounded-lg text-xs font-semibold transition-all t-muted hover:t-strong flex items-center gap-1.5">
-          Trade Journal
-          <span id="journal-badge" class="px-1.5 py-0.2 rounded-full text-[10px] t-bg t-strong font-num">0</span>
+        <button onclick="switchMainTab('journal')" id="tab-btn-journal" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all t-muted hover:t-strong">
+          Journal (<span id="journal-badge">3</span>)
         </button>
       </nav>
 
       <!-- Right Controls -->
       <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-        <button onclick="toggleLive915Sim()" id="btn-sim-915" class="px-2.5 sm:px-3 py-2 rounded-lg text-xs font-bold bg-[#10b981]/15 hover:bg-[#10b981]/25 border border-[#10b981]/40 text-[#10b981] transition-all flex items-center gap-1.5">
+        <button onclick="toggleLive915Sim()" id="btn-sim-915" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-[#10b981]/15 border border-[#10b981]/40 text-[#10b981] flex items-center gap-1.5">
           <span id="sim-dot" class="w-2 h-2 rounded-full bg-[#10b981] live-dot"></span>
-          <span id="sim-btn-label" class="hidden sm:inline">LIVE STREAMING ON</span>
-          <span class="sm:hidden">LIVE</span>
+          <span id="sim-btn-label" class="hidden sm:inline">LIVE ON</span>
         </button>
 
-        <button onclick="openModal('brand-modal')" class="px-2.5 sm:px-3 py-2 rounded-lg text-xs font-semibold t-card t-card-hover border t-border t-strong transition-all flex items-center gap-1.5" title="Brand Settings">
-          <svg class="w-3.5 h-3.5 brand-accent-text" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
-          </svg>
-          <span class="hidden md:inline">Brand</span>
+        <button onclick="openModal('brand-modal')" class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold t-card border t-border t-strong hover:border-[#10b981]">
+          Brand
         </button>
 
-        <button onclick="toggleTheme()" class="p-2 rounded-lg t-card t-card-hover border t-border t-strong transition-all" title="Toggle Dark / Light Mode">
-          <svg id="icon-sun" class="w-4 h-4 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
-          <svg id="icon-moon" class="w-4 h-4 text-slate-700 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
-        </button>
-
-        <button onclick="downloadStandaloneHTML()" class="px-2.5 sm:px-3 py-2 rounded-lg text-xs font-bold brand-accent-bg text-white hover:opacity-90 transition-all flex items-center gap-1.5 shadow">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
-          <span class="hidden sm:inline">Download HTML</span>
+        <button onclick="downloadStandaloneHTML()" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-[#2962ff] text-white hover:opacity-90 shadow">
+          ↓ HTML
         </button>
       </div>
     </div>
 
     <!-- Mobile Navigation Bar -->
-    <div class="flex xl:hidden items-center justify-around border-t t-border t-card px-2 py-1.5 text-xs gap-1">
-      <button onclick="switchMainTab('sectorflow')" id="mob-tab-sectorflow" class="flex-1 py-1.5 rounded-lg font-bold bg-[#10b981] text-black">⚡ Sector Flow</button>
-      <button onclick="switchMainTab('scanner')" id="mob-tab-scanner" class="flex-1 py-1.5 rounded-lg font-semibold t-muted">OB Scanner</button>
+    <div class="flex lg:hidden items-center justify-around border-t t-border t-card px-2 py-1.5 text-[11px] gap-1">
+      <button onclick="switchMainTab('sectorflow')" id="mob-tab-sectorflow" class="flex-1 py-1.5 rounded-lg font-bold bg-[#10b981] text-black">⚡ Flow Matrix</button>
+      <button onclick="switchMainTab('livechart')" id="mob-tab-livechart" class="flex-1 py-1.5 rounded-lg font-semibold t-muted">📈 Chart &amp; SL/TP</button>
       <button onclick="switchMainTab('finder')" id="mob-tab-finder" class="flex-1 py-1.5 rounded-lg font-semibold t-muted">OB Calc</button>
-      <button onclick="switchMainTab('journal')" id="mob-tab-journal" class="flex-1 py-1.5 rounded-lg font-semibold t-muted">Journal (<span id="mob-journal-badge">0</span>)</button>
+      <button onclick="switchMainTab('journal')" id="mob-tab-journal" class="flex-1 py-1.5 rounded-lg font-semibold t-muted">Journal</button>
     </div>
   </header>
 
-  <!-- LIVE NSE F&O MARKET STATUS STRIP -->
-  <div class="border-b t-border t-card/70">
-    <div class="max-w-[1680px] mx-auto px-3 sm:px-6 py-2 flex flex-wrap items-center justify-between gap-2 text-xs">
-      <div class="flex items-center gap-2">
-        <span id="market-status-dot" class="w-2 h-2 rounded-full bg-[#10b981] live-dot"></span>
-        <span id="market-status-badge" class="font-bold font-num t-strong">LIVE NSE F&amp;O FEED • NIFTY 25,768.40 (+1.01%) | BANKNIFTY +2.48%</span>
+  <!-- STATUS & QUICK STOCK SELECTOR STRIP -->
+  <div class="border-b t-border bg-[#0b1017]">
+    <div class="max-w-[1720px] mx-auto px-3 sm:px-5 py-1.5 flex flex-wrap items-center justify-between gap-2 text-[11px] font-num">
+      <div class="flex items-center gap-3">
+        <span class="text-[#10b981] font-bold">BULLISH: 71</span>
+        <span class="text-slate-600">|</span>
+        <span class="text-[#ef4444] font-bold">BEARISH: 141</span>
+        <span class="hidden md:inline text-slate-600">|</span>
+        <span class="hidden md:inline text-slate-300">NIFTY 25,768.40 (+1.01%) • BANKNIFTY +2.48%</span>
       </div>
-      <div class="flex items-center gap-3 font-num text-[11px]">
-        <span class="t-muted">Clock: <strong id="ist-clock-display" class="text-[#10b981]">LIVE IST TICK STREAM</strong></span>
-        <span class="hidden md:inline t-muted">|</span>
-        <span id="hero-brand-sub" class="hidden md:inline t-muted">Powered by Ganesh Kabadi F&amp;O Desk</span>
+      <div class="flex items-center gap-3">
+        <span class="text-slate-400">IST: <strong id="ist-clock-display" class="text-[#10b981]">LIVE STREAM</strong></span>
+        <button onclick="openLiveChartModal(selectedStock.symbol)" class="px-2.5 py-0.5 rounded bg-[#2962ff]/20 border border-[#2962ff]/50 text-[#60a5fa] font-bold hover:bg-[#2962ff] hover:text-white transition-all">
+          📈 Open <span id="quick-sym-lbl">COFORGE</span> Live Chart &amp; SL/TP
+        </button>
       </div>
     </div>
   </div>
 
   <!-- MAIN CONTENT -->
-  <main class="flex-1 max-w-[1680px] w-full mx-auto px-3 sm:px-6 py-5">
+  <main class="flex-1 max-w-[1720px] w-full mx-auto px-2.5 sm:px-5 py-4">
 
     <!-- =====================================================================
-         TAB 0: SECTOR FLOW & STOCK FLOW (ORDER-BLOCK.COM REPLICA + RULES)
+         TAB 1: ORDER-BLOCK.COM 3-COLUMN SANKEY + MATRIX + TOP BUILD-UP CARDS
          ===================================================================== -->
-    <div id="view-sectorflow" class="space-y-5">
-      <!-- Top Search & Sector Selector Bar -->
-      <div class="t-card border t-border rounded-xl p-3.5 flex flex-col lg:flex-row lg:items-center justify-between gap-3 shadow-lg">
-        <div class="flex items-center gap-2.5 flex-1">
-          <div class="relative flex-1 max-w-md">
-            <svg class="w-4 h-4 t-muted absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            <input id="sf-search-input" type="text" placeholder="Search stocks or click any BULL / BEAR card for S1-S3 & R1-R2 preview..." oninput="renderSectorFlowView()" class="w-full t-bg border t-border focus:border-[#10b981] rounded-lg pl-9 pr-3 py-2 text-xs t-strong outline-none" />
-          </div>
-          <button onclick="openModal('rules-modal')" class="px-3 py-2 rounded-lg text-xs font-bold bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/40 hover:bg-[#10b981]/25 shrink-0">
-            📜 OB &amp; Flow Rules
-          </button>
+    <div id="view-sectorflow" class="space-y-4">
+      <!-- Top Search & Sector Filter Bar -->
+      <div class="t-card border t-border rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2.5">
+        <div class="relative flex-1 min-w-[210px] max-w-md">
+          <svg class="w-3.5 h-3.5 t-muted absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+          <input id="sf-search-input" type="text" placeholder="Search 212 F&O stocks (COFORGE, PERSISTENT, TCS, TATASTEEL...)" oninput="renderAllMatrix()" class="w-full t-bg border t-border focus:border-[#10b981] rounded-lg pl-8 pr-3 py-1.5 text-xs t-strong outline-none" />
         </div>
-
-        <!-- Sector Filter Pills -->
-        <div class="flex flex-wrap items-center gap-1.5" id="sf-sector-pills"></div>
+        <div class="flex flex-wrap items-center gap-1" id="sf-sector-pills"></div>
       </div>
 
-      <!-- Main Split: Left Cumulative Sector Flow Canvas + Middle Depth + Right BULL / BEAR Build-up Cards -->
-      <div class="grid grid-cols-1 xl:grid-cols-12 gap-4 items-stretch">
+      <!-- 3-PANEL INSTITUTIONAL TERMINAL GRID -->
+      <div class="grid grid-cols-1 xl:grid-cols-12 gap-3 items-stretch">
 
-        <!-- LEFT 6 COLS: CUMULATIVE SECTOR FLOW CURVE & INSTITUTIONAL DEPTH BARS -->
-        <div class="xl:col-span-6 t-card border t-border rounded-xl p-4 flex flex-col justify-between shadow-2xl relative overflow-hidden">
-          <div class="flex flex-wrap items-center justify-between gap-2 mb-3">
+        <!-- PANEL 1 (LEFT 4 COLS): SANKEY SECTOR & STOCK FLOW VISUALIZER -->
+        <div class="xl:col-span-4 t-card border t-border rounded-xl p-3 flex flex-col justify-between relative overflow-hidden">
+          <div class="flex items-center justify-between mb-2">
             <div>
-              <div class="flex items-center gap-2">
-                <span class="w-2 h-2 rounded-full bg-[#10b981] live-dot"></span>
-                <h2 class="text-sm sm:text-base font-extrabold t-strong tracking-tight">Institutional Sector Flow &amp; Smart Money Depth</h2>
-              </div>
-              <p class="text-[11px] t-muted mt-0.5">Cumulative Sector Net Order Flow (Emerald = Long Accumulation | Crimson = Short Distribution)</p>
+              <h2 class="text-xs font-extrabold t-strong uppercase tracking-wider">Sector &amp; Liquidity Sankey Flow</h2>
+              <p class="text-[10px] t-muted">Emerald = Long Accumulation • Crimson = Short Distribution</p>
             </div>
-            <div class="flex items-center gap-2 font-num text-xs">
-              <span id="sf-net-flow-badge" class="px-2.5 py-1 rounded bg-[#10b981]/15 text-[#10b981] border border-[#10b981]/30 font-bold">NET FLOW: +₹4,820 Cr</span>
-            </div>
+            <span class="px-2 py-0.5 rounded bg-[#10b981]/15 text-[#10b981] font-num text-[10px] font-bold">+₹4,820 Cr</span>
           </div>
-
-          <!-- High-DPI Sector Flow & Depth Canvas -->
-          <div id="sector-flow-canvas-wrap" class="relative w-full h-[360px] sm:h-[430px] bg-[#090d12] rounded-xl border t-border overflow-hidden">
-            <canvas id="sector-flow-canvas" class="w-full h-full block"></canvas>
-          </div>
-
-          <!-- Bottom 4 Selection Rules Summary Strip -->
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3 pt-3 border-t t-border text-[11px]">
-            <div class="t-bg border t-border rounded-lg p-2">
-              <span class="text-[9px] uppercase font-bold text-[#10b981] block">Rule 1 • Sector Sync</span>
-              <span class="t-strong font-semibold">Trade Top +1.5% Sector</span>
-            </div>
-            <div class="t-bg border t-border rounded-lg p-2">
-              <span class="text-[9px] uppercase font-bold text-[#10b981] block">Rule 2 • OI Build-Up</span>
-              <span class="t-strong font-semibold">Price + OI + Vol Surge</span>
-            </div>
-            <div class="t-bg border t-border rounded-lg p-2">
-              <span class="text-[9px] uppercase font-bold text-amber-400 block">Rule 3 • Liquidity</span>
-              <span class="t-strong font-semibold">SSL/BSL Sweep + OB</span>
-            </div>
-            <div class="t-bg border t-border rounded-lg p-2">
-              <span class="text-[9px] uppercase font-bold brand-accent-text block">Rule 4 • Min R:R</span>
-              <span class="t-strong font-semibold">Strict ≥ 1:3.0 Setup</span>
-            </div>
+          <div id="sankey-wrap" class="relative w-full h-[380px] sm:h-[460px] bg-[#06090d] rounded-lg border t-border overflow-hidden">
+            <canvas id="sankey-canvas" class="w-full h-full block"></canvas>
           </div>
         </div>
 
-        <!-- RIGHT 6 COLS: LONG BUILD-UP (BULL) & SHORT BUILD-UP (BEAR) CARDS -->
-        <div class="xl:col-span-6 space-y-3">
-          <!-- BULL / LONG BUILD-UP SECTION -->
-          <div class="t-card border t-border rounded-xl p-3.5 shadow-xl">
-            <div class="flex items-center justify-between mb-2.5">
-              <div class="flex items-center gap-2">
-                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#10b981] text-black">BULL</span>
-                <h3 class="text-xs sm:text-sm font-extrabold t-strong uppercase tracking-wide">Long Build-Up • Institutional Demand Flow</h3>
-              </div>
-              <span class="text-[11px] font-num text-[#10b981] font-bold">Click card for S1-S3 / R1-R2</span>
+        <!-- PANEL 2 (MIDDLE 4 COLS): 4-COLUMN MULTI-TIER BULLISH & BEARISH MINI-TILES -->
+        <div class="xl:col-span-4 flex flex-col gap-3">
+          <!-- Bullish Multi-Tier Matrix -->
+          <div class="t-card border t-border rounded-xl p-2.5 flex-1">
+            <div class="flex items-center justify-between mb-2 px-1">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#10b981]">▲ Bullish Order Block Matrix (Click for Live Chart)</span>
+              <span class="text-[10px] font-num text-slate-400">OI + Vol Profile</span>
             </div>
-            <div id="sf-bull-cards" class="grid grid-cols-1 md:grid-cols-2 gap-2.5"></div>
+            <div id="bull-mini-matrix" class="grid grid-cols-2 sm:grid-cols-4 gap-1.5"></div>
           </div>
 
-          <!-- BEAR / SHORT BUILD-UP SECTION -->
-          <div class="t-card border t-border rounded-xl p-3.5 shadow-xl">
-            <div class="flex items-center justify-between mb-2.5">
-              <div class="flex items-center gap-2">
-                <span class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#ef4444] text-white">BEAR</span>
-                <h3 class="text-xs sm:text-sm font-extrabold t-strong uppercase tracking-wide">Short Build-Up • Institutional Supply Flow</h3>
-              </div>
-              <span class="text-[11px] font-num text-[#ef4444] font-bold">Click card for S1-S3 / R1-R2</span>
+          <!-- Bearish Multi-Tier Matrix -->
+          <div class="t-card border t-border rounded-xl p-2.5 flex-1">
+            <div class="flex items-center justify-between mb-2 px-1">
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#ef4444]">▼ Bearish Order Block Matrix (Click for Live Chart)</span>
+              <span class="text-[10px] font-num text-slate-400">OI + Vol Profile</span>
             </div>
-            <div id="sf-bear-cards" class="grid grid-cols-1 md:grid-cols-2 gap-2.5"></div>
+            <div id="bear-mini-matrix" class="grid grid-cols-2 sm:grid-cols-4 gap-1.5"></div>
           </div>
+        </div>
+
+        <!-- PANEL 3 (RIGHT 4 COLS): LARGE TOP BULLISH & BEARISH BUILD-UP CARDS -->
+        <div class="xl:col-span-4 flex flex-col gap-3">
+          <!-- Top 3 Bullish Cards -->
+          <div id="top-bull-cards" class="space-y-2"></div>
+          <!-- Top 3 Bearish Cards -->
+          <div id="top-bear-cards" class="space-y-2"></div>
         </div>
 
       </div>
-    </div>
 
-    <!-- =====================================================================
-         TAB 1: SCANNER & CHARTS (EXISTING FULL SCANNER)
-         ===================================================================== -->
-    <div id="view-scanner" class="hidden space-y-5">
-      <section class="t-card border t-border rounded-xl p-4 shadow-lg">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-2 mb-3">
-          <div>
-            <div class="flex flex-wrap items-center gap-2">
-              <h1 class="text-sm sm:text-base font-extrabold t-strong tracking-tight">The Whole Market in One Picture — NSE F&amp;O Market X-Ray</h1>
-              <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase brand-accent-soft brand-accent-text border brand-accent-border">Click Any Dot to Load Chart</span>
-            </div>
-            <p class="text-xs t-muted mt-0.5">Institutional Order Block scatter plot relative to the 0.00% Equilibrium Line.</p>
+      <!-- LIVE SELECTED STOCK TRADE EXECUTION BAR (ENTRY, SL, TP1, TP2 + MINI LIVE CHART) -->
+      <div class="t-card border border-[#2962ff]/40 rounded-xl p-4 shadow-2xl">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b t-border">
+          <div class="flex flex-wrap items-center gap-2.5">
+            <span id="bar-sym" class="text-lg font-extrabold text-white">COFORGE</span>
+            <span id="bar-bias" class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#10b981] text-black">BULLISH • LONG BUILD-UP</span>
+            <span id="bar-ltp" class="font-num text-sm font-bold text-[#10b981]">₹2,332.00 (+3.49%)</span>
+            <span id="bar-lot" class="text-xs font-num text-slate-400">Lot: 150</span>
           </div>
-          <div class="flex flex-wrap items-center gap-2 text-xs font-num">
-            <span class="px-2.5 py-1 rounded-lg bg-[#089981]/15 text-[#089981] border border-[#089981]/30 font-bold">▲ 120 Bullish F&amp;O</span>
-            <span class="px-2.5 py-1 rounded-lg bg-[#f23645]/15 text-[#f23645] border border-[#f23645]/30 font-bold">▼ 97 Bearish F&amp;O</span>
-            <span class="px-2.5 py-1 rounded-lg t-bg border t-border t-strong font-semibold">Leader: Banking (+3.42%)</span>
+
+          <!-- Entry / SL / TP1 / TP2 Pills -->
+          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 font-num text-xs">
+            <div class="bg-[#0b1017] border t-border rounded-lg px-2.5 py-1.5">
+              <span class="text-[9px] text-slate-400 block">OB ZONE</span>
+              <strong id="bar-zone" class="text-amber-400">2,083 – 2,112</strong>
+            </div>
+            <div class="bg-[#0b1017] border border-[#2962ff]/50 rounded-lg px-2.5 py-1.5">
+              <span class="text-[9px] text-[#60a5fa] block">ENTRY PRICE</span>
+              <strong id="bar-entry" class="text-white">₹2,112.30</strong>
+            </div>
+            <div class="bg-[#0b1017] border border-[#ef4444]/50 rounded-lg px-2.5 py-1.5">
+              <span class="text-[9px] text-[#ef4444] block">STOP LOSS (SL)</span>
+              <strong id="bar-sl" class="text-[#ef4444]">₹2,068.50</strong>
+            </div>
+            <div class="bg-[#0b1017] border border-[#10b981]/50 rounded-lg px-2.5 py-1.5">
+              <span class="text-[9px] text-[#10b981] block">TARGET 1 (TP1)</span>
+              <strong id="bar-tp1" class="text-[#10b981]">₹2,222.90</strong>
+            </div>
+            <div class="bg-[#0b1017] border border-[#10b981]/50 rounded-lg px-2.5 py-1.5">
+              <span class="text-[9px] text-[#10b981] block">TARGET 2 (TP2)</span>
+              <strong id="bar-tp2" class="text-[#10b981]">₹2,316.50 (1:2.8)</strong>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2 shrink-0">
+            <button onclick="switchMainTab('livechart')" class="px-3.5 py-2 rounded-lg text-xs font-extrabold bg-[#2962ff] text-white hover:opacity-90 shadow">
+              📈 Full Live Chart
+            </button>
+            <button onclick="copySelectedLevels()" class="px-3 py-2 rounded-lg text-xs font-bold bg-[#161f2c] border t-border text-white hover:border-[#10b981]">
+              Copy SL/TP
+            </button>
           </div>
         </div>
 
-        <div id="xray-wrap" class="relative w-full h-[220px] sm:h-[250px] t-bg rounded-xl border t-border overflow-hidden">
-          <canvas id="xray-canvas" class="w-full h-full block cursor-crosshair"></canvas>
-          <div id="xray-tooltip" class="hidden absolute z-20 pointer-events-none t-card border t-border rounded-lg px-3 py-2 text-xs shadow-2xl">
-            <div class="font-extrabold t-strong" id="tt-sym">INDUSINDBK</div>
-            <div class="font-num text-[11px]" id="tt-ltp">₹1,084.50 (+7.30%)</div>
-            <div class="text-[10px] t-muted mt-0.5" id="tt-score">OB Score: +96 • BSL Sweep + Bullish OB</div>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-4 pt-3.5 border-t t-border items-center">
-          <div class="lg:col-span-4">
-            <div class="flex items-center justify-between text-[11px] font-num mb-1.5">
-              <span class="text-[#089981] font-bold">120 Bullish (55.3%)</span>
-              <span class="t-muted font-semibold">NSE F&amp;O Breadth (217)</span>
-              <span class="text-[#f23645] font-bold">97 Bearish (44.7%)</span>
-            </div>
-            <div class="w-full h-3 rounded-full t-bg overflow-hidden flex border t-border p-0.5">
-              <div class="h-full bg-[#089981] rounded-l-full" style="width: 55.3%"></div>
-              <div class="h-full bg-[#f23645] rounded-r-full" style="width: 44.7%"></div>
-            </div>
-          </div>
-          <div class="lg:col-span-8 flex flex-wrap items-center gap-1.5" id="sector-pills-container"></div>
-        </div>
-      </section>
-
-      <section class="grid grid-cols-1 xl:grid-cols-12 gap-5 items-start">
-        <div class="xl:col-span-7 space-y-4">
-          <div class="t-card border t-border rounded-xl p-3 flex flex-wrap items-center justify-between gap-3">
-            <div class="relative flex-1 min-w-[200px]">
-              <input id="search-input" type="text" placeholder="Search NSE F&O stock..." oninput="renderLeaderboards()" class="w-full t-bg border t-border focus:border-[#2962ff] rounded-lg px-3 py-1.5 text-xs t-strong outline-none" />
-            </div>
-            <label class="inline-flex items-center gap-2 cursor-pointer select-none t-bg px-3 py-1.5 rounded-lg border t-border">
-              <input id="hide-choppy-toggle" type="checkbox" checked onchange="renderLeaderboards()" class="sr-only peer">
-              <div class="w-8 h-4 bg-[#2a2e39] rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-3 after:w-3 after:transition-all relative peer-checked:bg-[#089981]"></div>
-              <span class="text-xs font-semibold t-text">Hide Choppy (Score 0)</span>
-            </label>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="t-card border t-border rounded-xl overflow-hidden shadow-lg">
-              <div class="px-3.5 py-2.5 border-b t-border bg-[#089981]/12 flex items-center justify-between">
-                <h2 class="text-xs sm:text-sm font-extrabold t-strong">Strongest Bullish Order Blocks</h2>
-                <span id="bull-count-badge" class="text-[11px] font-num font-bold text-[#089981]">0 Stocks</span>
-              </div>
-              <div class="overflow-x-auto max-h-[540px] overflow-y-auto">
-                <table class="w-full text-left border-collapse">
-                  <thead class="sticky top-0 t-bg border-b t-border text-[10px] uppercase t-muted z-10">
-                    <tr>
-                      <th class="py-2 pl-3 pr-1">Rank</th>
-                      <th class="py-2 px-1.5">Symbol</th>
-                      <th class="py-2 px-1.5 text-right">LTP / %</th>
-                      <th class="py-2 px-1.5 text-center">Score</th>
-                      <th class="py-2 pl-1 pr-3 text-right">R:R / Lot</th>
-                    </tr>
-                  </thead>
-                  <tbody id="bullish-table-body" class="divide-y t-border text-xs"></tbody>
-                </table>
-              </div>
-            </div>
-
-            <div class="t-card border t-border rounded-xl overflow-hidden shadow-lg">
-              <div class="px-3.5 py-2.5 border-b t-border bg-[#f23645]/12 flex items-center justify-between">
-                <h2 class="text-xs sm:text-sm font-extrabold t-strong">Strongest Bearish Order Blocks</h2>
-                <span id="bear-count-badge" class="text-[11px] font-num font-bold text-[#f23645]">0 Stocks</span>
-              </div>
-              <div class="overflow-x-auto max-h-[540px] overflow-y-auto">
-                <table class="w-full text-left border-collapse">
-                  <thead class="sticky top-0 t-bg border-b t-border text-[10px] uppercase t-muted z-10">
-                    <tr>
-                      <th class="py-2 pl-3 pr-1">Rank</th>
-                      <th class="py-2 px-1.5">Symbol</th>
-                      <th class="py-2 px-1.5 text-right">LTP / %</th>
-                      <th class="py-2 px-1.5 text-center">Score</th>
-                      <th class="py-2 pl-1 pr-3 text-right">R:R / Lot</th>
-                    </tr>
-                  </thead>
-                  <tbody id="bearish-table-body" class="divide-y t-border text-xs"></tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="xl:col-span-5 xl:sticky xl:top-20 t-card border t-border rounded-xl overflow-hidden shadow-2xl">
-          <div class="p-3.5 border-b t-border bg-[#0b0e14] flex flex-wrap items-center justify-between gap-2">
-            <div>
-              <div class="flex flex-wrap items-center gap-2">
-                <span id="chart-symbol" class="text-lg font-extrabold text-white tracking-tight">INDUSINDBK</span>
-                <span id="chart-bias-badge" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-[#10b981]/20 text-[#10b981] border border-[#10b981]/30">BULLISH OB</span>
-                <span id="chart-sector-badge" class="text-[10px] px-2 py-0.5 rounded bg-[#151a24] border border-[#1c222d] text-slate-300 font-semibold">Banking</span>
-              </div>
-              <div class="flex items-center gap-2 mt-1 text-xs font-num">
-                <span id="chart-ltp" class="font-bold text-white text-sm">₹1,084.50</span>
-                <span id="chart-change" class="text-[#10b981] font-bold">+7.30%</span>
-                <span class="text-slate-500">•</span>
-                <span id="chart-lot" class="text-slate-400 text-[11px]">Lot: 500</span>
-              </div>
-            </div>
-            <div class="flex items-center gap-1 bg-[#151a24] p-1 rounded-lg border border-[#1c222d] text-[11px] font-num">
-              <button onclick="setChartTimeframe('1m')" id="tf-btn-1m" class="px-2 py-0.5 rounded font-bold text-slate-400 hover:text-white">1m</button>
-              <button onclick="setChartTimeframe('5m')" id="tf-btn-5m" class="px-2 py-0.5 rounded font-bold bg-[#2962ff] text-white">5m</button>
-              <button onclick="setChartTimeframe('15m')" id="tf-btn-15m" class="px-2 py-0.5 rounded font-bold text-slate-400 hover:text-white">15m</button>
-            </div>
-          </div>
-
-          <div id="session-chart-wrap" class="relative w-full h-[340px] sm:h-[370px] bg-[#0b0e14] border-b border-[#1c222d]">
-            <canvas id="session-chart-canvas" class="w-full h-full block cursor-crosshair"></canvas>
-          </div>
-
-          <div class="p-4 space-y-3">
-            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              <div class="t-bg border t-border rounded-lg p-2">
-                <span class="text-[10px] uppercase t-muted block">Active OB Zone</span>
-                <span id="lvl-ob-zone" class="text-xs font-bold font-num t-strong mt-0.5 block">1,056.00–1,062.50</span>
-              </div>
-              <div class="t-bg border t-border rounded-lg p-2">
-                <span class="text-[10px] uppercase t-muted block">Liquidity Sweep</span>
-                <span id="lvl-liq" class="text-xs font-bold font-num text-amber-400 mt-0.5 block">SSL ₹1,051.20</span>
-              </div>
-              <div class="t-bg border t-border rounded-lg p-2">
-                <span class="text-[10px] uppercase t-muted block">Optimal Entry</span>
-                <span id="lvl-entry" class="text-xs font-bold font-num brand-accent-text mt-0.5 block">₹1,062.50</span>
-              </div>
-              <div class="t-bg border t-border rounded-lg p-2">
-                <span class="text-[10px] uppercase t-muted block">Stop Loss (SL)</span>
-                <span id="lvl-sl" class="text-xs font-bold font-num text-[#f23645] mt-0.5 block">₹1,049.50</span>
-              </div>
-              <div class="t-bg border t-border rounded-lg p-2">
-                <span class="text-[10px] uppercase t-muted block">Target 1 / Target 2</span>
-                <span id="lvl-targets" class="text-xs font-bold font-num text-[#089981] mt-0.5 block">₹1,095 / ₹1,115</span>
-              </div>
-              <div class="t-bg border t-border rounded-lg p-2">
-                <span class="text-[10px] uppercase t-muted block">Setup &amp; R:R</span>
-                <span id="lvl-setup" class="text-xs font-bold font-num t-strong mt-0.5 block">1:3.6 • Score +96</span>
-              </div>
-            </div>
-            <div class="grid grid-cols-2 gap-2.5">
-              <button onclick="copyTradingViewLevels()" class="py-2.5 px-3 rounded-xl text-xs font-bold bg-[#2a2e39] hover:bg-[#363b49] text-white">Copy TradingView Levels</button>
-              <button onclick="logSelectedSetupToJournal()" class="py-2.5 px-3 rounded-xl text-xs font-bold brand-accent-bg text-white">+ Log Setup to Journal</button>
-            </div>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <!-- =====================================================================
-         TAB 2: CUSTOM OB CALCULATOR
-         ===================================================================== -->
-    <div id="view-finder" class="hidden space-y-5">
-      <div class="t-card border t-border rounded-xl p-5 shadow-lg">
-        <h2 class="text-lg font-extrabold t-strong mb-4">Custom NSE F&amp;O Order Block &amp; FVG Calculator</h2>
-        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div class="lg:col-span-5 space-y-3">
-            <div class="grid grid-cols-2 gap-3">
-              <div><label class="text-[11px] uppercase t-muted block mb-1">Symbol</label><input id="calc-sym" type="text" value="INDUSINDBK" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-bold t-strong uppercase" /></div>
-              <div><label class="text-[11px] uppercase t-muted block mb-1">Lot Size</label><input id="calc-lot" type="number" value="500" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" /></div>
-              <div><label class="text-[11px] uppercase t-muted block mb-1">Swing High</label><input id="calc-swhigh" type="number" step="0.05" value="1089.00" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" /></div>
-              <div><label class="text-[11px] uppercase t-muted block mb-1">Swing Low</label><input id="calc-swlow" type="number" step="0.05" value="1051.20" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" /></div>
-              <div><label class="text-[11px] uppercase t-muted block mb-1">OB High</label><input id="calc-obhigh" type="number" step="0.05" value="1062.50" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" /></div>
-              <div><label class="text-[11px] uppercase t-muted block mb-1">OB Low</label><input id="calc-oblow" type="number" step="0.05" value="1056.00" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" /></div>
-            </div>
-            <button onclick="calculateCustomOB()" class="w-full py-2.5 rounded-xl text-xs font-extrabold brand-accent-bg text-white">Compute Order Block &amp; Lot Risk</button>
-          </div>
-          <div class="lg:col-span-7 t-bg border t-border rounded-xl p-5 grid grid-cols-2 sm:grid-cols-3 gap-3 items-center">
-            <div class="t-card border t-border rounded-lg p-3"><span class="text-[10px] t-muted block">OB ZONE</span><span id="calc-out-zone" class="text-sm font-bold font-num t-strong">₹1056 – ₹1062.5</span></div>
-            <div class="t-card border t-border rounded-lg p-3"><span class="text-[10px] t-muted block">ENTRY</span><span id="calc-out-entry" class="text-sm font-bold font-num brand-accent-text">₹1062.50</span></div>
-            <div class="t-card border t-border rounded-lg p-3"><span class="text-[10px] t-muted block">STOP LOSS</span><span id="calc-out-sl" class="text-sm font-bold font-num text-[#ef4444]">₹1054.10</span></div>
-            <div class="t-card border t-border rounded-lg p-3"><span class="text-[10px] t-muted block">1:3 TARGET</span><span id="calc-out-target" class="text-sm font-bold font-num text-[#10b981]">₹1087.70</span></div>
-            <div class="t-card border t-border rounded-lg p-3 col-span-2"><span class="text-[10px] t-muted block">RISK / REWARD PER LOT</span><span id="calc-out-risk" class="text-sm font-bold font-num text-amber-400">₹4,200 / ₹12,600</span></div>
-          </div>
+        <!-- Inline Live Candlestick Chart Strip -->
+        <div id="inline-chart-wrap" class="relative w-full h-[230px] sm:h-[260px] bg-[#06090d] rounded-lg border t-border mt-3 overflow-hidden">
+          <canvas id="inline-live-canvas" class="w-full h-full block"></canvas>
         </div>
       </div>
     </div>
 
     <!-- =====================================================================
-         TAB 3: TRADE JOURNAL
+         TAB 2: DEDICATED FULL LIVE CHART + ENTRY / SL / TP TERMINAL
          ===================================================================== -->
-    <div id="view-journal" class="hidden space-y-5">
+    <div id="view-livechart" class="hidden space-y-4">
+      <div class="t-card border t-border rounded-xl p-4 shadow-2xl">
+        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b t-border">
+          <div class="flex items-center gap-2.5">
+            <select id="chart-stock-selector" onchange="selectStock(this.value)" class="bg-[#080c10] border t-border rounded-lg px-3 py-2 text-sm font-extrabold text-white outline-none"></select>
+            <span id="fc-bias-badge" class="px-2.5 py-1 rounded text-xs font-extrabold bg-[#10b981]/20 text-[#10b981]">BULLISH OB</span>
+            <span id="fc-ltp" class="font-num text-base font-bold text-white">₹2,332.00 (+3.49%)</span>
+          </div>
+
+          <div class="flex items-center gap-1.5">
+            <button onclick="setTf('1m')" class="px-2.5 py-1 rounded text-xs font-num font-bold bg-[#161f2c] text-slate-300 hover:text-white">1m</button>
+            <button onclick="setTf('5m')" class="px-2.5 py-1 rounded text-xs font-num font-bold bg-[#2962ff] text-white">5m</button>
+            <button onclick="setTf('15m')" class="px-2.5 py-1 rounded text-xs font-num font-bold bg-[#161f2c] text-slate-300 hover:text-white">15m</button>
+            <button onclick="logCurrentToJournal()" class="ml-2 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#10b981] text-black">+ Log Trade</button>
+          </div>
+        </div>
+
+        <!-- Big Entry / SL / TP Dashboard Cards -->
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 my-3 font-num">
+          <div class="bg-[#080c10] border t-border rounded-xl p-3">
+            <span class="text-[10px] text-slate-400 block">ORDER BLOCK ZONE</span>
+            <strong id="fc-zone" class="text-sm text-amber-400 mt-0.5 block">₹2,083.90 – ₹2,112.30</strong>
+          </div>
+          <div class="bg-[#080c10] border border-[#2962ff] rounded-xl p-3">
+            <span class="text-[10px] text-[#60a5fa] block">OPTIMAL ENTRY</span>
+            <strong id="fc-entry" class="text-base text-white mt-0.5 block">₹2,112.30</strong>
+          </div>
+          <div class="bg-[#080c10] border border-[#ef4444] rounded-xl p-3">
+            <span class="text-[10px] text-[#ef4444] block">STOP LOSS (SL)</span>
+            <strong id="fc-sl" class="text-base text-[#ef4444] mt-0.5 block">₹2,068.50</strong>
+          </div>
+          <div class="bg-[#080c10] border border-[#10b981] rounded-xl p-3">
+            <span class="text-[10px] text-[#10b981] block">TARGET 1 (TP1)</span>
+            <strong id="fc-tp1" class="text-base text-[#10b981] mt-0.5 block">₹2,222.90</strong>
+          </div>
+          <div class="bg-[#080c10] border border-[#10b981] rounded-xl p-3">
+            <span class="text-[10px] text-[#10b981] block">TARGET 2 (TP2) &amp; R:R</span>
+            <strong id="fc-tp2" class="text-base text-[#10b981] mt-0.5 block">₹2,316.50 (1:2.8)</strong>
+          </div>
+        </div>
+
+        <!-- Full-Size Interactive Live Candlestick Chart -->
+        <div id="full-chart-wrap" class="relative w-full h-[380px] sm:h-[440px] bg-[#06090d] rounded-xl border t-border overflow-hidden">
+          <canvas id="full-live-canvas" class="w-full h-full block cursor-crosshair"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         TAB 3: CUSTOM OB CALCULATOR
+         ===================================================================== -->
+    <div id="view-finder" class="hidden space-y-4">
       <div class="t-card border t-border rounded-xl p-5">
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="text-base font-extrabold t-strong">Trade Journal &amp; P&amp;L Log</h3>
-          <span id="j-net-pnl" class="text-base font-extrabold font-num text-[#10b981]">+₹55,450</span>
+        <h2 class="text-base font-extrabold t-strong mb-4">Custom NSE F&amp;O Entry / SL / TP Calculator</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="space-y-2.5">
+            <input id="calc-sym" type="text" value="COFORGE" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-bold t-strong uppercase" placeholder="Symbol" />
+            <input id="calc-lot" type="number" value="150" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" placeholder="Lot Size" />
+            <input id="calc-obhigh" type="number" step="0.05" value="2112.30" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" placeholder="OB High" />
+            <input id="calc-oblow" type="number" step="0.05" value="2083.90" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" placeholder="OB Low" />
+            <button onclick="calculateCustomOB()" class="w-full py-2.5 rounded-lg text-xs font-extrabold bg-[#10b981] text-black">Calculate Entry, SL &amp; TP</button>
+          </div>
+          <div class="md:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3 items-center font-num">
+            <div class="t-bg border t-border rounded-xl p-3"><span class="text-[10px] t-muted block">ENTRY</span><strong id="c-entry" class="text-sm text-white">₹2,112.30</strong></div>
+            <div class="t-bg border t-border rounded-xl p-3"><span class="text-[10px] t-muted block">STOP LOSS</span><strong id="c-sl" class="text-sm text-[#ef4444]">₹2,075.40</strong></div>
+            <div class="t-bg border t-border rounded-xl p-3"><span class="text-[10px] t-muted block">TARGET (1:3)</span><strong id="c-tp" class="text-sm text-[#10b981]">₹2,223.00</strong></div>
+            <div class="t-bg border t-border rounded-xl p-3"><span class="text-[10px] t-muted block">RISK / LOT</span><strong id="c-risk" class="text-sm text-amber-400">₹5,535</strong></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- =====================================================================
+         TAB 4: TRADE JOURNAL
+         ===================================================================== -->
+    <div id="view-journal" class="hidden space-y-4">
+      <div class="t-card border t-border rounded-xl p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-base font-extrabold t-strong">Trade Journal &amp; P&amp;L</h3>
+          <span class="font-num font-bold text-[#10b981]">+₹55,450</span>
         </div>
         <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse">
+          <table class="w-full text-left border-collapse text-xs">
             <thead>
               <tr class="border-b t-border text-[10px] uppercase t-muted">
                 <th class="py-2 px-3">Date</th>
                 <th class="py-2 px-3">Symbol</th>
                 <th class="py-2 px-3">Setup</th>
                 <th class="py-2 px-3">R:R</th>
-                <th class="py-2 px-3 text-right">Net P&amp;L</th>
-                <th class="py-2 px-3 text-center">Status</th>
+                <th class="py-2 px-3 text-right">P&amp;L</th>
               </tr>
             </thead>
-            <tbody id="journal-tbody" class="divide-y t-border text-xs"></tbody>
+            <tbody id="journal-tbody" class="divide-y t-border"></tbody>
           </table>
         </div>
       </div>
@@ -504,271 +377,189 @@
 
   </main>
 
-  <!-- =======================================================================
-       POPUP MODAL: ORDER-BLOCK.COM STOCK PREVIEW (R1, R2, S1, S2, S3, ZONE, R:R)
-       ======================================================================= -->
-  <div id="stock-preview-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-3 sm:p-4">
-    <div class="bg-[#0d131a] border border-[#1f2c3d] rounded-2xl max-w-2xl w-full p-4 sm:p-5 shadow-2xl text-white">
-      <div class="flex items-center justify-between pb-3 border-b border-[#1f2c3d]">
-        <div class="flex items-center gap-2.5">
-          <span id="pm-symbol" class="text-lg sm:text-xl font-extrabold tracking-tight">INDUSINDBK</span>
-          <span id="pm-buildup-badge" class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#10b981]/20 text-[#10b981] border border-[#10b981]/40">LONG BUILD-UP</span>
-          <span id="pm-sector" class="text-xs text-slate-400">Banking</span>
-        </div>
-        <button onclick="closeModal('stock-preview-modal')" class="w-7 h-7 rounded-lg bg-[#161f2c] hover:bg-[#1f2c3d] text-slate-300 font-bold">✕</button>
-      </div>
-
-      <!-- Institutional Metrics Grid -->
-      <div class="grid grid-cols-3 sm:grid-cols-6 gap-2 mt-3 font-num text-xs">
-        <div class="bg-[#121a24] border border-[#1f2c3d] rounded-lg p-2">
-          <span class="text-[9px] text-slate-400 block">LTP / CHG</span>
-          <span id="pm-ltp" class="font-bold text-[#10b981]">₹1,084.5</span>
-        </div>
-        <div class="bg-[#121a24] border border-[#1f2c3d] rounded-lg p-2">
-          <span class="text-[9px] text-slate-400 block">OB ZONE</span>
-          <span id="pm-zone" class="font-bold text-amber-400">1056–1062</span>
-        </div>
-        <div class="bg-[#121a24] border border-[#1f2c3d] rounded-lg p-2">
-          <span class="text-[9px] text-slate-400 block">R2 / R1</span>
-          <span id="pm-res" class="font-bold text-[#ef4444]">1115 / 1095</span>
-        </div>
-        <div class="bg-[#121a24] border border-[#1f2c3d] rounded-lg p-2">
-          <span class="text-[9px] text-slate-400 block">S1 / S2 / S3</span>
-          <span id="pm-sup" class="font-bold text-[#10b981]">1062/1051/1045</span>
-        </div>
-        <div class="bg-[#121a24] border border-[#1f2c3d] rounded-lg p-2">
-          <span class="text-[9px] text-slate-400 block">OI CHANGE</span>
-          <span id="pm-oi" class="font-bold text-[#10b981]">+14.8%</span>
-        </div>
-        <div class="bg-[#121a24] border border-[#1f2c3d] rounded-lg p-2">
-          <span class="text-[9px] text-slate-400 block">RISK : REWARD</span>
-          <span id="pm-rr" class="font-bold text-[#38bdf8]">1 : 3.6</span>
-        </div>
-      </div>
-
-      <!-- Mini Institutional Chart with R2, R1, ZONE, S1, S2, S3 Lines -->
-      <div class="relative w-full h-[240px] sm:h-[270px] bg-[#080c10] rounded-xl border border-[#1f2c3d] mt-3 overflow-hidden">
-        <canvas id="pm-chart-canvas" class="w-full h-full block"></canvas>
-      </div>
-
-      <!-- Rule Checklist & Actions -->
-      <div class="mt-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 pt-3 border-t border-[#1f2c3d]">
-        <p id="pm-rule-verdict" class="text-[11px] text-slate-300">✅ Passes all 4 Rules: Sector Leader + Long Build-Up + SSL Sweep + 1:3.6 R:R</p>
-        <div class="flex items-center gap-2 shrink-0">
-          <button onclick="openInFullScanner()" class="px-3 py-2 rounded-lg text-xs font-bold bg-[#2962ff] text-white hover:opacity-90">Open Full Chart</button>
-          <button onclick="copyPreviewLevels()" class="px-3 py-2 rounded-lg text-xs font-bold bg-[#161f2c] border border-[#28384d] text-white">Copy Levels</button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- RULES MODAL -->
-  <div id="rules-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-    <div class="t-card border t-border rounded-2xl max-w-lg w-full p-6 shadow-2xl">
+  <!-- BRAND MODAL -->
+  <div id="brand-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="t-card border t-border rounded-2xl max-w-md w-full p-5">
       <div class="flex items-center justify-between pb-3 border-b t-border">
-        <h3 class="text-base font-extrabold t-strong">Institutional Sector Flow &amp; Order Block Rules</h3>
-        <button onclick="closeModal('rules-modal')" class="t-muted hover:t-strong font-bold">✕</button>
-      </div>
-      <div class="space-y-3 mt-4 text-xs leading-relaxed">
-        <div class="p-3 rounded-xl t-bg border t-border">
-          <strong class="text-[#10b981] block mb-0.5">1. Sector Flow Alignment Rule:</strong>
-          Trade in the direction of the strongest sector flow. If Banking is +2.4%, only look for <strong>LONG BUILD-UP</strong> setups in Banking stocks.
-        </div>
-        <div class="p-3 rounded-xl t-bg border t-border">
-          <strong class="text-[#10b981] block mb-0.5">2. OI Build-Up Confirmation:</strong>
-          Price Up + OI Up = <strong>LONG BUILD-UP (BULL)</strong>. Price Down + OI Up = <strong>SHORT BUILD-UP (BEAR)</strong>.
-        </div>
-        <div class="p-3 rounded-xl t-bg border t-border">
-          <strong class="text-amber-400 block mb-0.5">3. Order Block &amp; Liquidity Sweep (S1-S3 / R1-R2):</strong>
-          Wait for price to sweep previous swing liquidity (SSL/BSL) and tap into the unmitigated <strong>OB ZONE</strong> before entry.
-        </div>
-        <div class="p-3 rounded-xl t-bg border t-border">
-          <strong class="brand-accent-text block mb-0.5">4. Strict Risk-Reward Rule (R:R ≥ 1:3):</strong>
-          Place Stop Loss below S1 (for Bullish) or above R1 (for Bearish). Enter only when R2 target offers at least 3x risk.
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- BRAND CUSTOMIZER MODAL -->
-  <div id="brand-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 backdrop-blur-sm p-4">
-    <div class="t-card border t-border rounded-2xl max-w-md w-full p-6 shadow-2xl">
-      <div class="flex items-center justify-between pb-3 border-b t-border">
-        <h3 class="text-base font-extrabold t-strong">Brand Settings</h3>
-        <button onclick="closeModal('brand-modal')" class="t-muted hover:t-strong font-bold">✕</button>
+        <h3 class="text-sm font-extrabold t-strong">Brand Settings</h3>
+        <button onclick="closeModal('brand-modal')" class="t-muted font-bold">✕</button>
       </div>
       <div class="space-y-3 mt-4">
-        <div>
-          <label class="block text-[11px] font-bold uppercase t-muted mb-1">Website Name</label>
-          <input id="inp-brand-name" type="text" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-sm font-bold t-strong outline-none" />
-        </div>
-        <div>
-          <label class="block text-[11px] font-bold uppercase t-muted mb-1">Tagline</label>
-          <input id="inp-brand-tagline" type="text" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs t-strong outline-none" />
-        </div>
-      </div>
-      <div class="flex items-center justify-end gap-2 mt-5 pt-3 border-t t-border">
-        <button onclick="resetBrandConfig()" class="px-3 py-2 text-xs t-muted">Reset Default</button>
-        <button onclick="saveBrandConfig()" class="px-4 py-2 rounded-lg text-xs font-extrabold brand-accent-bg text-white">Save</button>
+        <input id="inp-brand-name" type="text" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-sm font-bold t-strong" />
+        <button onclick="saveBrandConfig()" class="w-full py-2 rounded-lg text-xs font-extrabold bg-[#10b981] text-black">Save Brand Name</button>
       </div>
     </div>
   </div>
 
-  <!-- FOOTER -->
-  <footer class="border-t t-border t-bg py-4 mt-8">
-    <div class="max-w-[1680px] mx-auto px-3 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs t-muted">
-      <div><strong id="footer-brand-name" class="t-strong">Ganesh Kabadi F&amp;O Desk</strong> • Institutional Sector Flow &amp; Order Block Terminal</div>
-      <div>Built for High-Conviction NSE F&amp;O Analytics</div>
-    </div>
-  </footer>
-
   <script>
-    const DEFAULT_BRAND = {
-      name: 'Ganesh Kabadi F&O Desk',
-      tagline: 'Live NSE F&O Order Block, Sector Flow & Liquidity Scanner',
-      accent: '#2962ff'
-    };
+    const DEFAULT_BRAND = { name: 'Ganesh Kabadi F&O Desk' };
     let brand = JSON.parse(localStorage.getItem('ob_pro_fo_brand')) || { ...DEFAULT_BRAND };
 
     function applyBrandConfig() {
-      document.title = `${brand.name} — ${brand.tagline}`;
+      document.title = `${brand.name} — Live NSE F&O Order Block, Sector Flow & Liquidity Scanner`;
       document.getElementById('nav-brand-name').textContent = brand.name;
-      document.getElementById('nav-brand-tagline').textContent = brand.tagline;
-      document.getElementById('hero-brand-sub').textContent = `Powered by ${brand.name}`;
-      document.getElementById('footer-brand-name').textContent = brand.name;
       document.getElementById('inp-brand-name').value = brand.name;
-      document.getElementById('inp-brand-tagline').value = brand.tagline;
     }
 
     function saveBrandConfig() {
       brand.name = document.getElementById('inp-brand-name').value.trim() || DEFAULT_BRAND.name;
-      brand.tagline = document.getElementById('inp-brand-tagline').value.trim() || DEFAULT_BRAND.tagline;
       localStorage.setItem('ob_pro_fo_brand', JSON.stringify(brand));
       applyBrandConfig();
       closeModal('brand-modal');
       showToast('Brand updated!');
     }
 
-    function resetBrandConfig() {
-      brand = { ...DEFAULT_BRAND };
-      localStorage.setItem('ob_pro_fo_brand', JSON.stringify(brand));
-      applyBrandConfig();
-      closeModal('brand-modal');
-    }
-
-    function toggleTheme() {
-      const html = document.documentElement;
-      const isDark = html.classList.contains('dark');
-      html.classList.toggle('dark', !isDark);
-      html.classList.toggle('light', isDark);
-      document.getElementById('icon-sun').classList.toggle('hidden', isDark);
-      document.getElementById('icon-moon').classList.toggle('hidden', !isDark);
-      drawAllCanvases();
-    }
-
-    // DATASET WITH OI BUILD-UP, S1/S2/S3, R1/R2 & OB ZONES
+    // COMPREHENSIVE NSE F&O DATASET (MATCHING SCREENSHOT STOCKS + ENTRY/SL/TP)
     const fnoStocks = [
-      { symbol: 'INDUSINDBK', sector: 'Banking', ltp: 1084.50, change: 7.30, oiChg: '+16.4%', buildup: 'LONG BUILD-UP', score: 96, lotSize: 500, rr: '1:3.6', setupTag: 'BSL Sweep + Bullish OB', obLow: 1056.00, obHigh: 1062.50, liqType: 'SSL', liqLevel: 1051.20, s1: 1062.50, s2: 1051.20, s3: 1044.00, r1: 1095.00, r2: 1115.00, support: 1049.50, resistance: 1115.00, entry: 1062.50, sl: 1049.50, t1: 1095.00, t2: 1115.00 },
-      { symbol: 'CUB', sector: 'Banking', ltp: 184.60, change: 6.10, oiChg: '+14.2%', buildup: 'LONG BUILD-UP', score: 94, lotSize: 5000, rr: '1:3.4', setupTag: 'MSS + FVG Retest', obLow: 179.40, obHigh: 180.80, liqType: 'SSL', liqLevel: 178.50, s1: 180.80, s2: 178.50, s3: 176.00, r1: 186.80, r2: 190.50, support: 178.00, resistance: 190.50, entry: 180.80, sl: 178.00, t1: 186.80, t2: 190.50 },
-      { symbol: 'APOLLOHOSP', sector: 'Pharma', ltp: 7240.00, change: 5.30, oiChg: '+12.8%', buildup: 'LONG BUILD-UP', score: 92, lotSize: 125, rr: '1:3.5', setupTag: 'BSL Sweep + Bullish OB', obLow: 7060.00, obHigh: 7105.00, liqType: 'SSL', liqLevel: 7035.00, s1: 7105.00, s2: 7035.00, s3: 6990.00, r1: 7310.00, r2: 7420.00, support: 7025.00, resistance: 7420.00, entry: 7105.00, sl: 7025.00, t1: 7310.00, t2: 7420.00 },
-      { symbol: 'AXISBANK', sector: 'Banking', ltp: 1192.40, change: 4.40, oiChg: '+11.5%', buildup: 'LONG BUILD-UP', score: 90, lotSize: 625, rr: '1:3.3', setupTag: 'BSL Sweep + Bullish OB', obLow: 1168.00, obHigh: 1174.50, liqType: 'SSL', liqLevel: 1162.80, s1: 1174.50, s2: 1162.80, s3: 1154.00, r1: 1202.00, r2: 1218.00, support: 1161.00, resistance: 1218.00, entry: 1174.50, sl: 1161.00, t1: 1202.00, t2: 1218.00 },
-      { symbol: 'PERSISTENT', sector: 'IT', ltp: 5840.00, change: 3.40, oiChg: '+9.8%', buildup: 'LONG BUILD-UP', score: 86, lotSize: 100, rr: '1:3.4', setupTag: 'BSL Sweep + Bullish OB', obLow: 5730.00, obHigh: 5762.00, liqType: 'SSL', liqLevel: 5710.00, s1: 5762.00, s2: 5710.00, s3: 5675.00, r1: 5895.00, r2: 5960.00, support: 5700.00, resistance: 5960.00, entry: 5762.00, sl: 5700.00, t1: 5895.00, t2: 5960.00 },
-      { symbol: 'HDFCBANK', sector: 'Banking', ltp: 1764.50, change: 2.60, oiChg: '+8.9%', buildup: 'LONG BUILD-UP', score: 82, lotSize: 550, rr: '1:3.4', setupTag: 'BSL Sweep + Bullish OB', obLow: 1738.00, obHigh: 1745.00, liqType: 'SSL', liqLevel: 1732.50, s1: 1745.00, s2: 1732.50, s3: 1722.00, r1: 1778.00, r2: 1796.00, support: 1730.00, resistance: 1796.00, entry: 1745.00, sl: 1730.00, t1: 1778.00, t2: 1796.00 },
+      // BULLISH STOCKS
+      { symbol: 'COFORGE', sector: 'IT', ltp: 2332.00, change: 3.49, oiChg: '+16.2%', buildup: 'LONG BUILD-UP', score: 96, lotSize: 150, rr: '1:2.8', obLow: 2083.90, obHigh: 2112.30, s1: 2080.10, r1: 2222.90, r2: 2316.50, entry: 2112.30, sl: 2068.50, tp1: 2222.90, tp2: 2316.50 },
+      { symbol: 'PERSISTENT', sector: 'IT', ltp: 6348.00, change: 2.86, oiChg: '+14.8%', buildup: 'LONG BUILD-UP', score: 94, lotSize: 100, rr: '1:2.8', obLow: 5977.50, obHigh: 6046.00, s1: 5912.65, r1: 6231.25, r2: 6371.90, entry: 6046.00, sl: 5912.65, tp1: 6231.25, tp2: 6371.90 },
+      { symbol: 'LTF', sector: 'Finance', ltp: 279.65, change: 1.76, oiChg: '+11.4%', buildup: 'LONG BUILD-UP', score: 90, lotSize: 2250, rr: '1:2.8', obLow: 270.45, obHigh: 279.65, s1: 266.00, r1: 276.00, r2: 280.10, entry: 274.50, sl: 266.00, tp1: 278.50, tp2: 282.10 },
+      { symbol: 'HDFCBANK', sector: 'Banking', ltp: 1764.50, change: 2.60, oiChg: '+12.1%', buildup: 'LONG BUILD-UP', score: 89, lotSize: 550, rr: '1:3.2', obLow: 1738.00, obHigh: 1745.00, s1: 1730.00, r1: 1778.00, r2: 1796.00, entry: 1745.00, sl: 1730.00, tp1: 1778.00, tp2: 1796.00 },
+      { symbol: 'MAXHEALTH', sector: 'Pharma', ltp: 1096.00, change: 3.10, oiChg: '+10.5%', buildup: 'LONG BUILD-UP', score: 88, lotSize: 525, rr: '1:3.1', obLow: 1075.00, obHigh: 1081.00, s1: 1069.50, r1: 1105.00, r2: 1118.00, entry: 1081.00, sl: 1069.50, tp1: 1105.00, tp2: 1118.00 },
+      { symbol: 'HCLTECH', sector: 'IT', ltp: 1842.00, change: 1.52, oiChg: '+9.4%', buildup: 'LONG BUILD-UP', score: 86, lotSize: 350, rr: '1:3.0', obLow: 1815.00, obHigh: 1824.00, s1: 1808.00, r1: 1855.00, r2: 1872.00, entry: 1824.00, sl: 1808.00, tp1: 1855.00, tp2: 1872.00 },
+      { symbol: 'ULTRACEMCO', sector: 'Metals', ltp: 11420.00, change: 1.59, oiChg: '+8.8%', buildup: 'LONG BUILD-UP', score: 85, lotSize: 50, rr: '1:3.0', obLow: 11260.00, obHigh: 11310.00, s1: 11210.00, r1: 11520.00, r2: 11640.00, entry: 11310.00, sl: 11210.00, tp1: 11520.00, tp2: 11640.00 },
+      { symbol: 'TECHM', sector: 'IT', ltp: 1698.00, change: 2.07, oiChg: '+9.9%', buildup: 'LONG BUILD-UP', score: 84, lotSize: 600, rr: '1:3.1', obLow: 1672.00, obHigh: 1680.00, s1: 1664.00, r1: 1715.00, r2: 1732.00, entry: 1680.00, sl: 1664.00, tp1: 1715.00, tp2: 1732.00 },
+      { symbol: 'INFY', sector: 'IT', ltp: 1874.20, change: 1.85, oiChg: '+8.2%', buildup: 'LONG BUILD-UP', score: 82, lotSize: 400, rr: '1:2.9', obLow: 1856.00, obHigh: 1862.00, s1: 1848.00, r1: 1888.00, r2: 1904.00, entry: 1862.00, sl: 1848.00, tp1: 1888.00, tp2: 1904.00 },
+      { symbol: 'APOLLOHOSP', sector: 'Pharma', ltp: 7240.00, change: 2.40, oiChg: '+11.0%', buildup: 'LONG BUILD-UP', score: 81, lotSize: 125, rr: '1:3.3', obLow: 7110.00, obHigh: 7145.00, s1: 7085.00, r1: 7295.00, r2: 7360.00, entry: 7145.00, sl: 7085.00, tp1: 7295.00, tp2: 7360.00 },
+      { symbol: 'INDUSINDBK', sector: 'Banking', ltp: 1084.50, change: 4.15, oiChg: '+15.4%', buildup: 'LONG BUILD-UP', score: 92, lotSize: 500, rr: '1:3.5', obLow: 1056.00, obHigh: 1062.50, s1: 1049.50, r1: 1095.00, r2: 1115.00, entry: 1062.50, sl: 1049.50, tp1: 1095.00, tp2: 1115.00 },
+      { symbol: 'AXISBANK', sector: 'Banking', ltp: 1192.40, change: 2.95, oiChg: '+10.7%', buildup: 'LONG BUILD-UP', score: 87, lotSize: 625, rr: '1:3.2', obLow: 1168.00, obHigh: 1174.50, s1: 1161.00, r1: 1202.00, r2: 1218.00, entry: 1174.50, sl: 1161.00, tp1: 1202.00, tp2: 1218.00 },
 
-      // BEARISH SHORT BUILD-UP STOCKS
-      { symbol: 'INOXWIND', sector: 'Defense & PSU', ltp: 194.20, change: -3.50, oiChg: '+15.1%', buildup: 'SHORT BUILD-UP', score: -93, lotSize: 3200, rr: '1:3.5', setupTag: 'SSL Sweep + Bearish OB', obLow: 198.40, obHigh: 200.20, liqType: 'BSL', liqLevel: 201.40, s1: 190.20, s2: 186.50, s3: 182.00, r1: 198.40, r2: 201.80, support: 186.50, resistance: 201.80, entry: 198.40, sl: 201.80, t1: 190.20, t2: 186.50 },
-      { symbol: 'KALYANKJIL', sector: 'Capital Markets', ltp: 684.50, change: -3.40, oiChg: '+13.6%', buildup: 'SHORT BUILD-UP', score: -91, lotSize: 750, rr: '1:3.4', setupTag: 'MSS + FVG Retest', obLow: 698.00, obHigh: 703.50, liqType: 'BSL', liqLevel: 706.80, s1: 672.00, s2: 660.00, s3: 648.00, r1: 698.00, r2: 707.50, support: 660.00, resistance: 707.50, entry: 698.00, sl: 707.50, t1: 672.00, t2: 660.00 },
-      { symbol: 'VEDL', sector: 'Metals', ltp: 446.80, change: -3.30, oiChg: '+12.4%', buildup: 'SHORT BUILD-UP', score: -89, lotSize: 1150, rr: '1:3.3', setupTag: 'SSL Sweep + Bearish OB', obLow: 455.20, obHigh: 458.50, liqType: 'BSL', liqLevel: 460.40, s1: 439.50, s2: 432.00, s3: 425.00, r1: 455.20, r2: 461.00, support: 432.00, resistance: 461.00, entry: 455.20, sl: 461.00, t1: 439.50, t2: 432.00 },
-      { symbol: 'MUTHOOTFIN', sector: 'Capital Markets', ltp: 1892.00, change: -3.20, oiChg: '+10.9%', buildup: 'SHORT BUILD-UP', score: -87, lotSize: 275, rr: '1:3.2', setupTag: 'SSL Sweep + Bearish OB', obLow: 1928.00, obHigh: 1941.00, liqType: 'BSL', liqLevel: 1949.00, s1: 1865.00, s2: 1835.00, s3: 1810.00, r1: 1928.00, r2: 1951.00, support: 1835.00, resistance: 1951.00, entry: 1928.00, sl: 1951.00, t1: 1865.00, t2: 1835.00 },
-      { symbol: 'MCX', sector: 'Capital Markets', ltp: 6180.00, change: -2.90, oiChg: '+9.4%', buildup: 'SHORT BUILD-UP', score: -83, lotSize: 100, rr: '1:3.1', setupTag: 'SSL Sweep + Bearish OB', obLow: 6295.00, obHigh: 6335.00, liqType: 'BSL', liqLevel: 6360.00, s1: 6105.00, s2: 6010.00, s3: 5940.00, r1: 6295.00, r2: 6365.00, support: 6010.00, resistance: 6365.00, entry: 6295.00, sl: 6365.00, t1: 6105.00, t2: 6010.00 },
-      { symbol: 'TATASTEEL', sector: 'Metals', ltp: 148.90, change: -1.80, oiChg: '+8.2%', buildup: 'SHORT BUILD-UP', score: -78, lotSize: 5500, rr: '1:3.1', setupTag: 'SSL Sweep + Bearish OB', obLow: 151.10, obHigh: 151.90, liqType: 'BSL', liqLevel: 152.50, s1: 147.00, s2: 145.00, s3: 142.50, r1: 151.10, r2: 152.60, support: 145.00, resistance: 152.60, entry: 151.10, sl: 152.60, t1: 147.00, t2: 145.00 }
+      // BEARISH STOCKS
+      { symbol: 'TCS', sector: 'IT', ltp: 2382.40, change: -1.69, oiChg: '+15.3%', buildup: 'SHORT BUILD-UP', score: -94, lotSize: 175, rr: '1:3.0', obLow: 2382.40, obHigh: 2392.40, s1: 2354.95, r1: 2399.55, r2: 2412.00, entry: 2385.00, sl: 2399.55, tp1: 2354.95, tp2: 2317.85 },
+      { symbol: 'TATASTEEL', sector: 'Metals', ltp: 154.74, change: -3.48, oiChg: '+14.6%', buildup: 'SHORT BUILD-UP', score: -92, lotSize: 5500, rr: '1:2.8', obLow: 154.74, obHigh: 156.96, s1: 147.40, r1: 159.50, r2: 162.00, entry: 155.80, sl: 159.50, tp1: 147.40, tp2: 142.85 },
+      { symbol: 'KPITTECH', sector: 'IT', ltp: 526.45, change: -2.79, oiChg: '+12.8%', buildup: 'SHORT BUILD-UP', score: -89, lotSize: 800, rr: '1:2.8', obLow: 526.45, obHigh: 537.00, s1: 515.70, r1: 538.70, r2: 545.00, entry: 531.50, sl: 538.70, tp1: 522.25, tp2: 515.70 },
+      { symbol: 'KOTAKBANK', sector: 'Banking', ltp: 1782.00, change: -1.42, oiChg: '+9.5%', buildup: 'SHORT BUILD-UP', score: -85, lotSize: 400, rr: '1:2.9', obLow: 1792.00, obHigh: 1798.00, s1: 1762.00, r1: 1804.00, r2: 1815.00, entry: 1792.00, sl: 1804.00, tp1: 1762.00, tp2: 1748.00 },
+      { symbol: 'BAJAJFINSV', sector: 'Finance', ltp: 1642.00, change: -1.84, oiChg: '+10.2%', buildup: 'SHORT BUILD-UP', score: -84, lotSize: 500, rr: '1:3.0', obLow: 1654.00, obHigh: 1662.00, s1: 1620.00, r1: 1668.00, r2: 1680.00, entry: 1654.00, sl: 1668.00, tp1: 1620.00, tp2: 1602.00 },
+      { symbol: 'CHOLAFIN', sector: 'Finance', ltp: 1284.00, change: -1.55, oiChg: '+8.9%', buildup: 'SHORT BUILD-UP', score: -82, lotSize: 625, rr: '1:2.9', obLow: 1294.00, obHigh: 1301.00, s1: 1265.00, r1: 1306.00, r2: 1318.00, entry: 1294.00, sl: 1306.00, tp1: 1265.00, tp2: 1250.00 },
+      { symbol: 'VEDL', sector: 'Metals', ltp: 446.80, change: -2.90, oiChg: '+13.1%', buildup: 'SHORT BUILD-UP', score: -88, lotSize: 1150, rr: '1:3.2', obLow: 455.20, obHigh: 458.50, s1: 439.50, r1: 461.00, r2: 466.00, entry: 455.20, sl: 461.00, tp1: 439.50, tp2: 432.00 },
+      { symbol: 'ICICIGI', sector: 'Finance', ltp: 1895.00, change: -1.32, oiChg: '+7.8%', buildup: 'SHORT BUILD-UP', score: -80, lotSize: 325, rr: '1:2.8', obLow: 1908.00, obHigh: 1916.00, s1: 1872.00, r1: 1922.00, r2: 1935.00, entry: 1908.00, sl: 1922.00, tp1: 1872.00, tp2: 1858.00 }
     ];
 
     let selectedStock = fnoStocks[0];
-    let previewStock = fnoStocks[0];
-    let sfActiveSector = 'All Sectors';
-    let activeSector = 'All Sectors';
-    let currentTimeframe = '5m';
+    let sfSector = 'All Sectors';
     let isSimActive = true;
-    let simInterval = null;
-    let xrayDots = [];
 
-    // =========================================================================
-    // SECTOR FLOW & STOCK FLOW ENGINE (ORDER-BLOCK.COM STYLE)
-    // =========================================================================
-    function renderSectorFlowView() {
-      const sectors = ['All Sectors', 'Banking', 'Pharma', 'IT', 'Metals', 'Defense & PSU', 'Capital Markets'];
-      const pillsBox = document.getElementById('sf-sector-pills');
-      pillsBox.innerHTML = sectors.map(sec => {
-        const active = sfActiveSector === sec;
-        return `<button onclick="setSfSector('${sec}')" class="px-2.5 py-1 rounded-lg text-[11px] font-bold border transition-all ${active ? 'bg-[#10b981] text-black border-[#10b981]' : 't-bg t-border t-muted hover:t-strong'}">${sec}</button>`;
+    function renderAllMatrix() {
+      const sectors = ['All Sectors', 'IT', 'Banking', 'Finance', 'Metals', 'Pharma'];
+      document.getElementById('sf-sector-pills').innerHTML = sectors.map(sec => {
+        const act = sfSector === sec;
+        return `<button onclick="setSfSector('${sec}')" class="px-2 py-1 rounded text-[10px] font-bold border ${act ? 'bg-[#10b981] text-black border-[#10b981]' : 't-bg t-border t-muted hover:t-strong'}">${sec}</button>`;
       }).join('');
 
       const q = (document.getElementById('sf-search-input').value || '').trim().toUpperCase();
-      const filterFn = s => {
-        if (sfActiveSector !== 'All Sectors' && s.sector !== sfActiveSector) return false;
-        if (q && !s.symbol.includes(q) && !s.sector.toUpperCase().includes(q)) return false;
-        return true;
-      };
+      const match = s => (sfSector === 'All Sectors' || s.sector === sfSector) && (!q || s.symbol.includes(q));
 
-      const bulls = fnoStocks.filter(s => s.change >= 0 && filterFn(s));
-      const bears = fnoStocks.filter(s => s.change < 0 && filterFn(s));
+      const bulls = fnoStocks.filter(s => s.change >= 0 && match(s));
+      const bears = fnoStocks.filter(s => s.change < 0 && match(s));
 
-      document.getElementById('sf-bull-cards').innerHTML = bulls.map(s => `
-        <div onclick="openStockPreview('${s.symbol}')" class="cursor-pointer rounded-xl p-3 bg-gradient-to-br from-[#10b981]/18 via-[#0f1c1a] to-[#0d131a] border border-[#10b981]/35 hover:border-[#10b981] transition-all shadow-md group">
-          <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5">
-              <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-[#10b981] text-black">BULL</span>
-              <span class="font-extrabold text-white text-sm group-hover:text-[#10b981] transition-colors">${s.symbol}</span>
+      // Middle 4-Column Mini-Tiles with Volume Profile Bars
+      document.getElementById('bull-mini-matrix').innerHTML = bulls.map((s, idx) => {
+        const w1 = 45 + ((idx * 17) % 50);
+        const w2 = 35 + ((idx * 23) % 55);
+        const isSel = selectedStock.symbol === s.symbol;
+        return `
+          <div onclick="selectStock('${s.symbol}')" class="cursor-pointer p-2 rounded-lg bg-[#091513] border ${isSel ? 'border-[#10b981] ring-1 ring-[#10b981]' : 'border-[#10b981]/25 hover:border-[#10b981]/70'} transition-all">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-[10px] text-white truncate">${s.symbol}</span>
+              <span class="font-num text-[9px] font-bold text-[#10b981]">+${s.change.toFixed(2)}%</span>
             </div>
-            <span class="text-[10px] font-num font-bold text-[#10b981]">+${s.change.toFixed(2)}%</span>
+            <div class="text-[8px] text-[#10b981]/80 font-num mt-0.5">LONG BUILD-UP</div>
+            <div class="space-y-1 mt-1.5">
+              <div class="h-1 bg-[#10b981]/20 rounded overflow-hidden"><div class="h-full bg-[#10b981]" style="width:${w1}%"></div></div>
+              <div class="h-1 bg-[#10b981]/20 rounded overflow-hidden"><div class="h-full bg-[#34d399]" style="width:${w2}%"></div></div>
+            </div>
+          </div>`;
+      }).join('');
+
+      document.getElementById('bear-mini-matrix').innerHTML = bears.map((s, idx) => {
+        const w1 = 45 + ((idx * 19) % 50);
+        const w2 = 35 + ((idx * 29) % 55);
+        const isSel = selectedStock.symbol === s.symbol;
+        return `
+          <div onclick="selectStock('${s.symbol}')" class="cursor-pointer p-2 rounded-lg bg-[#170b0e] border ${isSel ? 'border-[#ef4444] ring-1 ring-[#ef4444]' : 'border-[#ef4444]/25 hover:border-[#ef4444]/70'} transition-all">
+            <div class="flex items-center justify-between">
+              <span class="font-extrabold text-[10px] text-white truncate">${s.symbol}</span>
+              <span class="font-num text-[9px] font-bold text-[#ef4444]">${s.change.toFixed(2)}%</span>
+            </div>
+            <div class="text-[8px] text-[#ef4444]/80 font-num mt-0.5">SHORT BUILD-UP</div>
+            <div class="space-y-1 mt-1.5">
+              <div class="h-1 bg-[#ef4444]/20 rounded overflow-hidden"><div class="h-full bg-[#ef4444]" style="width:${w1}%"></div></div>
+              <div class="h-1 bg-[#ef4444]/20 rounded overflow-hidden"><div class="h-full bg-[#f87171]" style="width:${w2}%"></div></div>
+            </div>
+          </div>`;
+      }).join('');
+
+      // Right Panel: Top 3 Large Bullish Cards
+      document.getElementById('top-bull-cards').innerHTML = bulls.slice(0, 3).map((s, i) => `
+        <div onclick="selectStock('${s.symbol}')" class="cursor-pointer rounded-xl p-3 bg-gradient-to-r from-[#0e2620] via-[#0d1c1a] to-[#0b1219] border ${selectedStock.symbol === s.symbol ? 'border-[#10b981]' : 'border-[#10b981]/35 hover:border-[#10b981]'} transition-all shadow-lg">
+          <div class="flex items-center justify-between">
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-extrabold text-white text-sm sm:text-base">${s.symbol}</span>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#10b981]/20 text-[#10b981]">LONG BUILD-UP</span>
+              </div>
+              <div class="flex items-center gap-2 mt-1">
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-[#10b981] text-black">BULLISH</span>
+                <span class="font-num font-extrabold text-base sm:text-lg text-[#10b981]">+${s.change.toFixed(2)}%</span>
+                <span class="font-num text-xs text-slate-300">₹${s.ltp.toFixed(2)}</span>
+              </div>
+            </div>
+            <div class="text-right font-num text-[10px]">
+              <span class="text-slate-400 block">ENTRY / SL</span>
+              <strong class="text-white block">₹${s.entry.toFixed(1)}</strong>
+              <strong class="text-[#ef4444] block">SL ₹${s.sl.toFixed(1)}</strong>
+            </div>
           </div>
-          <div class="flex items-center justify-between text-[10px] font-num text-slate-300 mt-1.5">
-            <span class="text-[#10b981] font-semibold">LONG BUILD-UP</span>
-            <span>OI: <strong class="text-white">${s.oiChg}</strong></span>
-          </div>
-          <div class="grid grid-cols-3 gap-1 mt-2 pt-2 border-t border-[#10b981]/20 font-num text-[10px]">
-            <div><span class="text-slate-400 block text-[8px]">OB ZONE</span><strong class="text-amber-400">${s.obLow.toFixed(0)}-${s.obHigh.toFixed(0)}</strong></div>
-            <div><span class="text-slate-400 block text-[8px]">R1 / S1</span><strong class="text-white">${s.r1.toFixed(0)}/${s.s1.toFixed(0)}</strong></div>
-            <div class="text-right"><span class="text-slate-400 block text-[8px]">R:R</span><strong class="text-[#10b981]">${s.rr}</strong></div>
+          <div class="grid grid-cols-4 gap-1 mt-2 pt-2 border-t border-[#10b981]/20 font-num text-[9px]">
+            <div><span class="text-slate-400 block">SUPPORT 1</span><strong class="text-amber-400">${s.s1.toFixed(2)}</strong></div>
+            <div><span class="text-slate-400 block">ZONE</span><strong class="text-white">${s.obLow.toFixed(0)}-${s.obHigh.toFixed(0)}</strong></div>
+            <div><span class="text-slate-400 block">TARGET 1/2</span><strong class="text-[#10b981]">${s.tp1.toFixed(0)}/${s.tp2.toFixed(0)}</strong></div>
+            <div class="text-right"><span class="text-slate-400 block">RISK : REWARD</span><strong class="text-[#10b981]">${s.rr}</strong></div>
           </div>
         </div>
-      `).join('') || `<div class="col-span-2 text-center py-4 text-xs t-muted">No bullish sector flow stocks match filter.</div>`;
+      `).join('');
 
-      document.getElementById('sf-bear-cards').innerHTML = bears.map(s => `
-        <div onclick="openStockPreview('${s.symbol}')" class="cursor-pointer rounded-xl p-3 bg-gradient-to-br from-[#ef4444]/18 via-[#1d1216] to-[#0d131a] border border-[#ef4444]/35 hover:border-[#ef4444] transition-all shadow-md group">
+      // Right Panel: Top 3 Large Bearish Cards
+      document.getElementById('top-bear-cards').innerHTML = bears.slice(0, 3).map((s, i) => `
+        <div onclick="selectStock('${s.symbol}')" class="cursor-pointer rounded-xl p-3 bg-gradient-to-r from-[#291116] via-[#1c1015] to-[#0b1219] border ${selectedStock.symbol === s.symbol ? 'border-[#ef4444]' : 'border-[#ef4444]/35 hover:border-[#ef4444]'} transition-all shadow-lg">
           <div class="flex items-center justify-between">
-            <div class="flex items-center gap-1.5">
-              <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-[#ef4444] text-white">BEAR</span>
-              <span class="font-extrabold text-white text-sm group-hover:text-[#ef4444] transition-colors">${s.symbol}</span>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="font-extrabold text-white text-sm sm:text-base">${s.symbol}</span>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#ef4444]/20 text-[#ef4444]">SHORT BUILD-UP</span>
+              </div>
+              <div class="flex items-center gap-2 mt-1">
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-[#ef4444] text-white">BEARISH</span>
+                <span class="font-num font-extrabold text-base sm:text-lg text-[#ef4444]">${s.change.toFixed(2)}%</span>
+                <span class="font-num text-xs text-slate-300">₹${s.ltp.toFixed(2)}</span>
+              </div>
             </div>
-            <span class="text-[10px] font-num font-bold text-[#ef4444]">${s.change.toFixed(2)}%</span>
+            <div class="text-right font-num text-[10px]">
+              <span class="text-slate-400 block">ENTRY / SL</span>
+              <strong class="text-white block">₹${s.entry.toFixed(1)}</strong>
+              <strong class="text-[#ef4444] block">SL ₹${s.sl.toFixed(1)}</strong>
+            </div>
           </div>
-          <div class="flex items-center justify-between text-[10px] font-num text-slate-300 mt-1.5">
-            <span class="text-[#ef4444] font-semibold">SHORT BUILD-UP</span>
-            <span>OI: <strong class="text-white">${s.oiChg}</strong></span>
-          </div>
-          <div class="grid grid-cols-3 gap-1 mt-2 pt-2 border-t border-[#ef4444]/20 font-num text-[10px]">
-            <div><span class="text-slate-400 block text-[8px]">OB ZONE</span><strong class="text-amber-400">${s.obLow.toFixed(0)}-${s.obHigh.toFixed(0)}</strong></div>
-            <div><span class="text-slate-400 block text-[8px]">S1 / R1</span><strong class="text-white">${s.s1.toFixed(0)}/${s.r1.toFixed(0)}</strong></div>
-            <div class="text-right"><span class="text-slate-400 block text-[8px]">R:R</span><strong class="text-[#ef4444]">${s.rr}</strong></div>
+          <div class="grid grid-cols-4 gap-1 mt-2 pt-2 border-t border-[#ef4444]/20 font-num text-[9px]">
+            <div><span class="text-slate-400 block">RESISTANCE 1</span><strong class="text-amber-400">${s.r1.toFixed(2)}</strong></div>
+            <div><span class="text-slate-400 block">ZONE</span><strong class="text-white">${s.obLow.toFixed(0)}-${s.obHigh.toFixed(0)}</strong></div>
+            <div><span class="text-slate-400 block">TARGET 1/2</span><strong class="text-[#10b981]">${s.tp1.toFixed(0)}/${s.tp2.toFixed(0)}</strong></div>
+            <div class="text-right"><span class="text-slate-400 block">RISK : REWARD</span><strong class="text-[#ef4444]">${s.rr}</strong></div>
           </div>
         </div>
-      `).join('') || `<div class="col-span-2 text-center py-4 text-xs t-muted">No bearish sector flow stocks match filter.</div>`;
+      `).join('');
 
-      drawSectorFlowCanvas();
+      drawSankeyCanvas();
     }
 
-    function setSfSector(sec) {
-      sfActiveSector = sec;
-      renderSectorFlowView();
-    }
+    function setSfSector(sec) { sfSector = sec; renderAllMatrix(); }
 
-    function drawSectorFlowCanvas() {
-      const canvas = document.getElementById('sector-flow-canvas');
-      const wrap = document.getElementById('sector-flow-canvas-wrap');
+    // LEFT SANKEY FLOW & DEPTH CANVAS
+    function drawSankeyCanvas() {
+      const canvas = document.getElementById('sankey-canvas');
+      const wrap = document.getElementById('sankey-wrap');
       if (!canvas || !wrap) return;
-
       const dpr = window.devicePixelRatio || 1;
       const rect = wrap.getBoundingClientRect();
       if (rect.width === 0) return;
@@ -777,458 +568,280 @@
       const ctx = canvas.getContext('2d');
       ctx.scale(dpr, dpr);
 
-      const w = rect.width;
-      const h = rect.height;
-      ctx.fillStyle = '#090d12';
+      const w = rect.width, h = rect.height;
+      ctx.fillStyle = '#06090d';
       ctx.fillRect(0, 0, w, h);
 
-      const midY = h * 0.56;
-      const splitX = w * 0.62;
+      const midY = h * 0.44;
+      const spineX = w * 0.72;
 
-      // Subtle Grid
-      ctx.strokeStyle = '#141d29';
-      ctx.lineWidth = 1;
-      for (let i = 1; i < 6; i++) {
-        const y = (h / 6) * i;
-        ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
-      }
-      ctx.beginPath(); ctx.moveTo(splitX, 0); ctx.lineTo(splitX, h); ctx.stroke();
-
-      // Equilibrium 0 Line
-      ctx.strokeStyle = '#2d3b4e';
-      ctx.setLineDash([4, 4]);
+      // Equilibrium Line
+      ctx.strokeStyle = '#334155';
       ctx.beginPath(); ctx.moveTo(0, midY); ctx.lineTo(w, midY); ctx.stroke();
-      ctx.setLineDash([]);
 
-      // Left Horizontal Institutional Order Depth Bars (Green above midY, Red below midY)
+      // Left Horizontal Depth Histogram Bars
+      for (let i = 0; i < 18; i++) {
+        const y = 16 + i * ((midY - 24) / 18);
+        const bw = (0.2 + Math.abs(Math.sin(i * 0.9)) * 0.7) * (spineX * 0.55);
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.14)';
+        ctx.fillRect(8, y, bw, 5);
+      }
+      for (let i = 0; i < 22; i++) {
+        const y = midY + 8 + i * ((h - midY - 16) / 22);
+        const bw = (0.2 + Math.abs(Math.cos(i * 0.8)) * 0.75) * (spineX * 0.65);
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.14)';
+        ctx.fillRect(8, y, bw, 5);
+      }
+
+      // Smooth Bezier Sankey Flow Ribbons into Central Spine
       for (let i = 0; i < 14; i++) {
-        const y = 24 + i * ((midY - 36) / 14);
-        const barW = (0.25 + Math.abs(Math.sin(i * 1.3)) * 0.65) * (splitX * 0.55);
-        ctx.fillStyle = 'rgba(16, 185, 129, 0.16)';
-        ctx.fillRect(14, y, barW, 6);
+        const sy = 20 + i * ((midY - 28) / 14);
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.25)';
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.moveTo(14, sy);
+        ctx.bezierCurveTo(spineX * 0.45, sy, spineX * 0.55, midY * 0.45, spineX, midY * 0.35 + i * 3);
+        ctx.stroke();
       }
-      for (let i = 0; i < 10; i++) {
-        const y = midY + 12 + i * ((h - midY - 24) / 10);
-        const barW = (0.2 + Math.abs(Math.cos(i * 1.1)) * 0.55) * (splitX * 0.48);
-        ctx.fillStyle = 'rgba(239, 68, 68, 0.16)';
-        ctx.fillRect(14, y, barW, 6);
-      }
-
-      // Glowing Cumulative Sector Flow Line (Replica of Order-Block.com Sector Flow Curve)
-      const pts = [];
-      const steps = 36;
-      let val = 0;
-      for (let i = 0; i <= steps; i++) {
-        const t = i / steps;
-        const x = 18 + t * (splitX - 28);
-        val += (Math.sin(i * 0.55) * 0.35 + 0.42);
-        const y = midY - (val / 15) * (midY - 34);
-        pts.push({ x, y });
+      for (let i = 0; i < 18; i++) {
+        const sy = midY + 12 + i * ((h - midY - 20) / 18);
+        ctx.strokeStyle = 'rgba(239, 68, 68, 0.25)';
+        ctx.lineWidth = 1.4;
+        ctx.beginPath();
+        ctx.moveTo(14, sy);
+        ctx.bezierCurveTo(spineX * 0.45, sy, spineX * 0.55, midY + (h - midY) * 0.55, spineX, midY + 25 + i * 6);
+        ctx.stroke();
       }
 
-      // Gradient Fill under curve
-      const grad = ctx.createLinearGradient(0, 20, 0, midY);
-      grad.addColorStop(0, 'rgba(16, 185, 129, 0.32)');
-      grad.addColorStop(1, 'rgba(16, 185, 129, 0.0)');
-      ctx.beginPath();
-      ctx.moveTo(pts[0].x, midY);
-      pts.forEach(p => ctx.lineTo(p.x, p.y));
-      ctx.lineTo(pts[pts.length - 1].x, midY);
-      ctx.closePath();
-      ctx.fillStyle = grad;
-      ctx.fill();
+      // Central Vertical Sankey Spine Column
+      ctx.fillStyle = 'rgba(16, 185, 129, 0.22)';
+      ctx.fillRect(spineX - 14, 18, 28, midY - 22);
+      ctx.strokeStyle = '#10b981';
+      ctx.strokeRect(spineX - 14, 18, 28, midY - 22);
 
-      // Glowing Emerald Line
-      ctx.save();
-      ctx.shadowColor = '#10b981';
-      ctx.shadowBlur = 12;
-      ctx.strokeStyle = '#34d399';
-      ctx.lineWidth = 2.4;
-      ctx.beginPath();
-      pts.forEach((p, idx) => idx === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
-      ctx.stroke();
-      ctx.restore();
+      ctx.fillStyle = 'rgba(239, 68, 68, 0.22)';
+      ctx.fillRect(spineX - 14, midY + 4, 28, h - midY - 22);
+      ctx.strokeStyle = '#ef4444';
+      ctx.strokeRect(spineX - 14, midY + 4, 28, h - midY - 22);
 
-      // Right Column: Sector Flow Rank Bars
-      const secData = [
-        { name: 'BANKING', pct: '+2.48%', val: 0.92, bull: true },
-        { name: 'PHARMA', pct: '+1.85%', val: 0.72, bull: true },
-        { name: 'IT INDEX', pct: '+1.42%', val: 0.58, bull: true },
-        { name: 'AUTO', pct: '+0.65%', val: 0.32, bull: true },
-        { name: 'DEFENSE', pct: '-1.35%', val: 0.55, bull: false },
-        { name: 'METALS', pct: '-2.10%', val: 0.78, bull: false },
-        { name: 'CAP MKTS', pct: '-2.45%', val: 0.88, bull: false }
-      ];
+      // Right Output Connectors to Matrix
+      for (let i = 0; i < 6; i++) {
+        ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
+        ctx.beginPath();
+        ctx.moveTo(spineX + 14, 30 + i * 24);
+        ctx.bezierCurveTo(spineX + 45, 30 + i * 24, w - 35, 25 + i * 28, w, 25 + i * 28);
+        ctx.stroke();
 
-      const rx = splitX + 12;
-      const rw = w - rx - 12;
-      ctx.fillStyle = '#94a3b8';
-      ctx.font = 'bold 10px "JetBrains Mono", monospace';
-      ctx.textAlign = 'left';
-      ctx.fillText('SECTOR FLOW RANKING', rx, 20);
-
-      secData.forEach((sd, i) => {
-        const y = 34 + i * ((h - 48) / secData.length);
-        ctx.fillStyle = '#111923';
-        ctx.fillRect(rx, y, rw, 34);
-        ctx.fillStyle = sd.bull ? 'rgba(16, 185, 129, 0.24)' : 'rgba(239, 68, 68, 0.24)';
-        ctx.fillRect(rx, y, rw * sd.val, 34);
-        ctx.strokeStyle = sd.bull ? 'rgba(16, 185, 129, 0.4)' : 'rgba(239, 68, 68, 0.4)';
-        ctx.strokeRect(rx, y, rw, 34);
-
-        ctx.fillStyle = '#ffffff';
-        ctx.font = 'bold 10px Inter, sans-serif';
-        ctx.fillText(sd.name, rx + 8, y + 14);
-        ctx.fillStyle = sd.bull ? '#10b981' : '#ef4444';
-        ctx.font = 'bold 10px "JetBrains Mono", monospace';
-        ctx.fillText(sd.pct, rx + 8, y + 27);
-      });
+        ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
+        ctx.beginPath();
+        ctx.moveTo(spineX + 14, midY + 24 + i * 32);
+        ctx.bezierCurveTo(spineX + 45, midY + 24 + i * 32, w - 35, midY + 20 + i * 36, w, midY + 20 + i * 36);
+        ctx.stroke();
+      }
     }
 
-    // =========================================================================
-    // STOCK PREVIEW POPUP (R2, R1, ZONE, S1, S2, S3)
-    // =========================================================================
-    function openStockPreview(symbol) {
+    // SELECT STOCK & UPDATE ENTRY / SL / TP + LIVE CHARTS
+    function selectStock(symbol) {
       const s = fnoStocks.find(x => x.symbol === symbol);
       if (!s) return;
-      previewStock = s;
+      selectedStock = s;
       const isBull = s.change >= 0;
 
-      document.getElementById('pm-symbol').textContent = s.symbol;
-      const bdg = document.getElementById('pm-buildup-badge');
-      bdg.textContent = s.buildup;
-      bdg.className = isBull
-        ? 'px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#10b981]/20 text-[#10b981] border border-[#10b981]/40'
-        : 'px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#ef4444]/20 text-[#ef4444] border border-[#ef4444]/40';
+      document.getElementById('quick-sym-lbl').textContent = s.symbol;
+      document.getElementById('bar-sym').textContent = s.symbol;
+      const bBias = document.getElementById('bar-bias');
+      bBias.textContent = `${isBull ? 'BULLISH' : 'BEARISH'} • ${s.buildup}`;
+      bBias.className = isBull
+        ? 'px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#10b981] text-black'
+        : 'px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#ef4444] text-white';
 
-      document.getElementById('pm-sector').textContent = `${s.sector} • Lot ${s.lotSize}`;
-      const ltpEl = document.getElementById('pm-ltp');
-      ltpEl.textContent = `₹${s.ltp.toFixed(1)} (${isBull ? '+' : ''}${s.change.toFixed(2)}%)`;
-      ltpEl.className = `font-bold ${isBull ? 'text-[#10b981]' : 'text-[#ef4444]'}`;
+      const bLtp = document.getElementById('bar-ltp');
+      bLtp.textContent = `₹${s.ltp.toFixed(2)} (${isBull ? '+' : ''}${s.change.toFixed(2)}%)`;
+      bLtp.className = `font-num text-sm font-bold ${isBull ? 'text-[#10b981]' : 'text-[#ef4444]'}`;
+      document.getElementById('bar-lot').textContent = `Lot: ${s.lotSize}`;
+      document.getElementById('bar-zone').textContent = `${s.obLow.toFixed(2)} – ${s.obHigh.toFixed(2)}`;
+      document.getElementById('bar-entry').textContent = `₹${s.entry.toFixed(2)}`;
+      document.getElementById('bar-sl').textContent = `₹${s.sl.toFixed(2)}`;
+      document.getElementById('bar-tp1').textContent = `₹${s.tp1.toFixed(2)}`;
+      document.getElementById('bar-tp2').textContent = `₹${s.tp2.toFixed(2)} (${s.rr})`;
 
-      document.getElementById('pm-zone').textContent = `${s.obLow.toFixed(1)}–${s.obHigh.toFixed(1)}`;
-      document.getElementById('pm-res').textContent = `${s.r2.toFixed(1)} / ${s.r1.toFixed(1)}`;
-      document.getElementById('pm-sup').textContent = `${s.s1.toFixed(1)} / ${s.s2.toFixed(1)} / ${s.s3.toFixed(1)}`;
-      document.getElementById('pm-oi').textContent = s.oiChg;
-      document.getElementById('pm-rr').textContent = s.rr;
-      document.getElementById('pm-rule-verdict').textContent = `✅ Passes all 4 Rules: ${s.sector} Flow + ${s.buildup} + ${s.liqType} Sweep + ${s.rr} R:R`;
+      // Full Chart Tab Sync
+      const selEl = document.getElementById('chart-stock-selector');
+      if (selEl) selEl.value = s.symbol;
+      document.getElementById('fc-bias-badge').textContent = `${isBull ? 'BULLISH OB' : 'BEARISH OB'} • ${s.buildup}`;
+      document.getElementById('fc-ltp').textContent = `₹${s.ltp.toFixed(2)} (${isBull ? '+' : ''}${s.change.toFixed(2)}%)`;
+      document.getElementById('fc-zone').textContent = `₹${s.obLow.toFixed(2)} – ₹${s.obHigh.toFixed(2)}`;
+      document.getElementById('fc-entry').textContent = `₹${s.entry.toFixed(2)}`;
+      document.getElementById('fc-sl').textContent = `₹${s.sl.toFixed(2)}`;
+      document.getElementById('fc-tp1').textContent = `₹${s.tp1.toFixed(2)}`;
+      document.getElementById('fc-tp2').textContent = `₹${s.tp2.toFixed(2)} (${s.rr})`;
 
-      openModal('stock-preview-modal');
-      setTimeout(() => drawPreviewModalChart(s), 30);
+      renderAllMatrix();
+      drawCandlestickChart('inline-live-canvas', s);
+      drawCandlestickChart('full-live-canvas', s);
     }
 
-    function drawPreviewModalChart(s) {
-      const canvas = document.getElementById('pm-chart-canvas');
+    function openLiveChartModal(symbol) {
+      selectStock(symbol);
+      switchMainTab('livechart');
+    }
+
+    // DRAW LIVE CANDLESTICK CHART WITH ENTRY, SL, TP1, TP2 & OB ZONE LINES
+    function drawCandlestickChart(canvasId, s) {
+      const canvas = document.getElementById(canvasId);
       if (!canvas) return;
-      const dpr = window.devicePixelRatio || 1;
       const rect = canvas.parentElement.getBoundingClientRect();
+      if (rect.width === 0) return;
+      const dpr = window.devicePixelRatio || 1;
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
       const ctx = canvas.getContext('2d');
       ctx.scale(dpr, dpr);
 
       const w = rect.width, h = rect.height;
-      ctx.fillStyle = '#080c10';
+      ctx.fillStyle = '#06090d';
       ctx.fillRect(0, 0, w, h);
 
-      const padL = 14, padR = 72, padT = 18, padB = 18;
+      const padL = 12, padR = 86, padT = 18, padB = 20;
       const plotW = w - padL - padR, plotH = h - padT - padB;
       const isBull = s.change >= 0;
 
-      const minP = Math.min(s.s3, s.sl, s.obLow) * 0.997;
-      const maxP = Math.max(s.r2, s.t2, s.obHigh) * 1.003;
+      const minP = Math.min(s.sl, s.tp2, s.obLow, s.ltp) * 0.996;
+      const maxP = Math.max(s.sl, s.tp2, s.obHigh, s.ltp) * 1.004;
       const pToY = p => padT + ((maxP - p) / (maxP - minP)) * plotH;
 
       // Grid
-      ctx.strokeStyle = '#131d29';
-      for (let i = 0; i <= 4; i++) {
-        const y = padT + (plotH / 4) * i;
+      ctx.strokeStyle = '#111924';
+      for (let i = 0; i <= 5; i++) {
+        const y = padT + (plotH / 5) * i;
         ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
       }
 
-      // OB ZONE Box
+      // Order Block Zone Box
       const zTop = pToY(s.obHigh), zBot = pToY(s.obLow);
-      ctx.fillStyle = isBull ? 'rgba(16, 185, 129, 0.18)' : 'rgba(239, 68, 68, 0.18)';
+      ctx.fillStyle = isBull ? 'rgba(16, 185, 129, 0.16)' : 'rgba(239, 68, 68, 0.16)';
       ctx.fillRect(padL, zTop, plotW, Math.max(zBot - zTop, 10));
       ctx.strokeStyle = isBull ? '#10b981' : '#ef4444';
       ctx.strokeRect(padL, zTop, plotW, Math.max(zBot - zTop, 10));
 
-      const drawTagLine = (price, label, color) => {
+      // Helper for Entry / SL / TP1 / TP2 Lines
+      const drawTradeLine = (price, label, color) => {
         const y = pToY(price);
-        ctx.strokeStyle = color;
+        ctx.save();
         ctx.setLineDash([4, 3]);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 1.2;
         ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
-        ctx.setLineDash([]);
+        ctx.restore();
+
         ctx.fillStyle = color;
+        ctx.fillRect(w - padR + 2, y - 8, padR - 4, 16);
+        ctx.fillStyle = '#06090d';
         ctx.font = 'bold 9px "JetBrains Mono", monospace';
         ctx.textAlign = 'left';
         ctx.fillText(`${label} ${price.toFixed(1)}`, w - padR + 5, y + 3);
       };
 
-      drawTagLine(s.r2, 'R2', '#ef4444');
-      drawTagLine(s.r1, 'R1', '#f87171');
-      drawTagLine((s.obLow + s.obHigh) / 2, 'ZONE', '#f59e0b');
-      drawTagLine(s.s1, 'S1', '#34d399');
-      drawTagLine(s.s2, 'S2', '#10b981');
-      drawTagLine(s.s3, 'S3', '#059669');
+      drawTradeLine(s.tp2, 'TP2', '#10b981');
+      drawTradeLine(s.tp1, 'TP1', '#34d399');
+      drawTradeLine(s.entry, 'ENT', '#60a5fa');
+      drawTradeLine(s.sl, 'SL ', '#ef4444');
 
-      // Price Trajectory Line
-      const pts = 26;
-      ctx.save();
-      ctx.shadowColor = isBull ? '#10b981' : '#ef4444';
-      ctx.shadowBlur = 10;
-      ctx.strokeStyle = isBull ? '#10b981' : '#ef4444';
-      ctx.lineWidth = 2.4;
-      ctx.beginPath();
-      for (let i = 0; i <= pts; i++) {
-        const t = i / pts;
-        const x = padL + t * plotW;
-        const base = isBull
-          ? s.s2 + (s.ltp - s.s2) * Math.pow(t, 0.85) + Math.sin(i * 1.4) * (maxP - minP) * 0.04
-          : s.r2 - (s.r2 - s.ltp) * Math.pow(t, 0.85) + Math.cos(i * 1.4) * (maxP - minP) * 0.04;
-        const y = pToY(base);
-        i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+      // Generate Deterministic + Live Ticking Candlesticks
+      const count = 38;
+      const stepW = plotW / count;
+      let seed = s.symbol.charCodeAt(0) * 31;
+      const rand = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+
+      let p = isBull ? s.obLow : s.obHigh;
+      for (let i = 0; i < count; i++) {
+        const t = i / (count - 1);
+        const targetP = isBull ? s.obLow + (s.ltp - s.obLow) * t : s.obHigh - (s.obHigh - s.ltp) * t;
+        const open = p;
+        const close = i === count - 1 ? s.ltp : targetP + (rand() - 0.48) * (maxP - minP) * 0.06;
+        const high = Math.max(open, close) + rand() * (maxP - minP) * 0.025;
+        const low = Math.min(open, close) - rand() * (maxP - minP) * 0.025;
+        const cx = padL + i * stepW + stepW / 2;
+        const green = close >= open;
+
+        ctx.strokeStyle = green ? '#10b981' : '#ef4444';
+        ctx.beginPath(); ctx.moveTo(cx, pToY(high)); ctx.lineTo(cx, pToY(low)); ctx.stroke();
+        ctx.fillStyle = green ? '#10b981' : '#ef4444';
+        ctx.fillRect(cx - stepW * 0.28, pToY(Math.max(open, close)), stepW * 0.56, Math.max(Math.abs(pToY(close) - pToY(open)), 2.5));
+        p = close;
       }
-      ctx.stroke();
-      ctx.restore();
     }
 
-    function openInFullScanner() {
-      closeModal('stock-preview-modal');
-      selectStock(previewStock.symbol);
-      switchMainTab('scanner');
-    }
-
-    function copyPreviewLevels() {
-      const s = previewStock;
-      const txt = `${brand.name} | ${s.symbol} (${s.buildup})\nOB ZONE: ₹${s.obLow}–₹${s.obHigh}\nR2: ₹${s.r2} | R1: ₹${s.r1}\nS1: ₹${s.s1} | S2: ₹${s.s2} | S3: ₹${s.s3}\nR:R: ${s.rr}`;
+    function copySelectedLevels() {
+      const s = selectedStock;
+      const txt = `${brand.name} | ${s.symbol} (${s.buildup})\nEntry: ₹${s.entry} | Stop Loss: ₹${s.sl}\nTP1: ₹${s.tp1} | TP2: ₹${s.tp2} (${s.rr})`;
       navigator.clipboard?.writeText(txt);
-      showToast(`Copied ${s.symbol} R1/R2 & S1-S3 levels!`);
-    }
-
-    // =========================================================================
-    // EXISTING SCANNER, X-RAY, CALCULATOR & JOURNAL FUNCTIONS
-    // =========================================================================
-    function drawMarketXRay() {
-      const canvas = document.getElementById('xray-canvas');
-      const wrap = document.getElementById('xray-wrap');
-      if (!canvas || !wrap) return;
-      const dpr = window.devicePixelRatio || 1;
-      const rect = wrap.getBoundingClientRect();
-      if (rect.width === 0) return;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      const ctx = canvas.getContext('2d');
-      ctx.scale(dpr, dpr);
-      const w = rect.width, h = rect.height;
-      ctx.fillStyle = '#0b0f14';
-      ctx.fillRect(0, 0, w, h);
-
-      const padL = 48, padR = 24, padT = 22, padB = 22;
-      const plotW = w - padL - padR, plotH = h - padT - padB, midY = padT + plotH / 2;
-      [7, 3.5, 0, -3.5, -7].forEach(val => {
-        const y = midY - (val / 7.8) * (plotH / 2);
-        ctx.strokeStyle = val === 0 ? '#475569' : '#1e293b';
-        ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
-        ctx.fillStyle = '#788292'; ctx.font = 'bold 10px "JetBrains Mono"'; ctx.textAlign = 'right';
-        ctx.fillText(`${val > 0 ? '+' : ''}${val.toFixed(1)}%`, padL - 6, y + 3);
-      });
-
-      xrayDots = [];
-      fnoStocks.forEach((s, idx) => {
-        const x = padL + ((idx + 0.5) / fnoStocks.length) * plotW;
-        const y = midY - (Math.max(-7.4, Math.min(7.4, s.change)) / 7.8) * (plotH / 2);
-        const isBull = s.change >= 0;
-        ctx.beginPath(); ctx.arc(x, y, 6, 0, Math.PI * 2);
-        ctx.fillStyle = isBull ? '#10b981' : '#ef4444'; ctx.fill();
-        ctx.fillStyle = '#e2e8f0'; ctx.font = 'bold 9px Inter'; ctx.textAlign = 'center';
-        ctx.fillText(s.symbol, x, isBull ? y - 10 : y + 14);
-        xrayDots.push({ x, y, r: 9, stock: s });
-      });
-    }
-
-    function initXRayEvents() {
-      const canvas = document.getElementById('xray-canvas');
-      if (!canvas) return;
-      canvas.addEventListener('click', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const hit = xrayDots.find(d => Math.hypot(d.x - (e.clientX - rect.left), d.y - (e.clientY - rect.top)) <= d.r);
-        if (hit) selectStock(hit.stock.symbol);
-      });
-    }
-
-    function renderSectorPills() {
-      const sectors = ['All Sectors', 'Banking', 'Pharma', 'IT', 'Metals', 'Defense & PSU', 'Capital Markets'];
-      document.getElementById('sector-pills-container').innerHTML = sectors.map(sec => {
-        const active = activeSector === sec;
-        return `<button onclick="setSectorFilter('${sec}')" class="px-2.5 py-1 rounded-lg text-[11px] font-semibold border ${active ? 'brand-accent-border brand-accent-soft t-strong' : 't-bg t-border t-muted'}">${sec}</button>`;
-      }).join('');
-    }
-
-    function setSectorFilter(sec) { activeSector = sec; renderSectorPills(); renderLeaderboards(); }
-
-    function renderLeaderboards() {
-      const q = (document.getElementById('search-input')?.value || '').trim().toUpperCase();
-      const matches = s => (activeSector === 'All Sectors' || s.sector === activeSector) && (!q || s.symbol.includes(q));
-      const bulls = fnoStocks.filter(s => s.change >= 0 && matches(s));
-      const bears = fnoStocks.filter(s => s.change < 0 && matches(s));
-      document.getElementById('bull-count-badge').textContent = `${bulls.length} Stocks`;
-      document.getElementById('bear-count-badge').textContent = `${bears.length} Stocks`;
-
-      const rowHtml = (s, i, isBull) => `
-        <tr onclick="selectStock('${s.symbol}')" class="cursor-pointer hover:bg-white/5">
-          <td class="py-2.5 pl-3 pr-1 font-num font-bold t-strong">0${i + 1}</td>
-          <td class="py-2.5 px-1.5"><div class="font-extrabold t-strong">${s.symbol}</div><div class="text-[10px] t-muted">${s.setupTag}</div></td>
-          <td class="py-2.5 px-1.5 text-right font-num"><div class="font-bold t-strong">₹${s.ltp.toFixed(1)}</div><div class="text-[10px] font-bold ${isBull ? 'text-[#10b981]' : 'text-[#ef4444]'}">${isBull ? '+' : ''}${s.change.toFixed(2)}%</div></td>
-          <td class="py-2.5 px-1.5 text-center font-num font-bold">${s.score > 0 ? '+' + s.score : s.score}</td>
-          <td class="py-2.5 pl-1 pr-3 text-right font-num font-bold brand-accent-text">${s.rr}</td>
-        </tr>`;
-      document.getElementById('bullish-table-body').innerHTML = bulls.map((s, i) => rowHtml(s, i, true)).join('');
-      document.getElementById('bearish-table-body').innerHTML = bears.map((s, i) => rowHtml(s, i, false)).join('');
-    }
-
-    function selectStock(symbol) {
-      const found = fnoStocks.find(s => s.symbol === symbol);
-      if (!found) return;
-      selectedStock = found;
-      const isBull = found.change >= 0;
-      document.getElementById('chart-symbol').textContent = found.symbol;
-      document.getElementById('chart-sector-badge').textContent = found.sector;
-      document.getElementById('chart-ltp').textContent = `₹${found.ltp.toFixed(2)}`;
-      document.getElementById('chart-change').textContent = `${isBull ? '+' : ''}${found.change.toFixed(2)}%`;
-      document.getElementById('chart-lot').textContent = `Lot: ${found.lotSize}`;
-      document.getElementById('lvl-ob-zone').textContent = `₹${found.obLow}–${found.obHigh}`;
-      document.getElementById('lvl-liq').textContent = `${found.liqType} ₹${found.liqLevel}`;
-      document.getElementById('lvl-entry').textContent = `₹${found.entry}`;
-      document.getElementById('lvl-sl').textContent = `₹${found.sl}`;
-      document.getElementById('lvl-targets').textContent = `₹${found.t1} / ₹${found.t2}`;
-      document.getElementById('lvl-setup').textContent = `${found.rr} • Score ${found.score}`;
-      drawSessionChart();
-    }
-
-    function setChartTimeframe(tf) { currentTimeframe = tf; drawSessionChart(); }
-
-    function drawSessionChart() {
-      const canvas = document.getElementById('session-chart-canvas');
-      const wrap = document.getElementById('session-chart-wrap');
-      if (!canvas || !wrap) return;
-      const dpr = window.devicePixelRatio || 1;
-      const rect = wrap.getBoundingClientRect();
-      if (rect.width === 0) return;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      const ctx = canvas.getContext('2d');
-      ctx.scale(dpr, dpr);
-      const w = rect.width, h = rect.height;
-      ctx.fillStyle = '#0b0e14';
-      ctx.fillRect(0, 0, w, h);
-
-      const s = selectedStock, isBull = s.change >= 0;
-      const minP = Math.min(s.support, s.sl, s.t2) * 0.996;
-      const maxP = Math.max(s.resistance, s.sl, s.t2) * 1.004;
-      const pToY = p => 20 + ((maxP - p) / (maxP - minP)) * (h - 40);
-
-      // OB Zone
-      ctx.fillStyle = isBull ? 'rgba(16, 185, 129, 0.18)' : 'rgba(239, 68, 68, 0.18)';
-      ctx.fillRect(12, pToY(s.obHigh), w - 80, Math.max(pToY(s.obLow) - pToY(s.obHigh), 10));
-
-      // Candlesticks
-      const bars = 32;
-      const stepW = (w - 84) / bars;
-      for (let i = 0; i < bars; i++) {
-        const t = i / (bars - 1);
-        const price = isBull ? s.support + (s.ltp - s.support) * t : s.resistance - (s.resistance - s.ltp) * t;
-        const o = price - (isBull ? 1.5 : -1.5);
-        const c = price + (isBull ? 1.8 : -1.8);
-        const cx = 14 + i * stepW + stepW / 2;
-        ctx.strokeStyle = isBull ? '#10b981' : '#ef4444';
-        ctx.beginPath(); ctx.moveTo(cx, pToY(Math.max(o, c) + 2)); ctx.lineTo(cx, pToY(Math.min(o, c) - 2)); ctx.stroke();
-        ctx.fillStyle = isBull ? '#10b981' : '#ef4444';
-        ctx.fillRect(cx - stepW * 0.28, pToY(Math.max(o, c)), stepW * 0.56, Math.max(Math.abs(pToY(c) - pToY(o)), 3));
-      }
+      showToast(`Copied ${s.symbol} Entry / SL / TP levels!`);
     }
 
     function calculateCustomOB() {
-      const lot = parseInt(document.getElementById('calc-lot').value, 10) || 500;
-      const obH = parseFloat(document.getElementById('calc-obhigh').value) || 1062.5;
-      const obL = parseFloat(document.getElementById('calc-oblow').value) || 1056.0;
+      const lot = parseInt(document.getElementById('calc-lot').value, 10) || 150;
+      const obH = parseFloat(document.getElementById('calc-obhigh').value) || 2112.3;
+      const obL = parseFloat(document.getElementById('calc-oblow').value) || 2083.9;
       const sl = +(obL - (obH - obL) * 0.3).toFixed(2);
-      const target = +(obH + (obH - sl) * 3).toFixed(2);
-      const risk = Math.round((obH - sl) * lot);
-      document.getElementById('calc-out-zone').textContent = `₹${obL} – ₹${obH}`;
-      document.getElementById('calc-out-entry').textContent = `₹${obH}`;
-      document.getElementById('calc-out-sl').textContent = `₹${sl}`;
-      document.getElementById('calc-out-target').textContent = `₹${target}`;
-      document.getElementById('calc-out-risk').textContent = `₹${risk.toLocaleString('en-IN')} / ₹${(risk * 3).toLocaleString('en-IN')}`;
+      const tp = +(obH + (obH - sl) * 3).toFixed(2);
+      document.getElementById('c-entry').textContent = `₹${obH}`;
+      document.getElementById('c-sl').textContent = `₹${sl}`;
+      document.getElementById('c-tp').textContent = `₹${tp}`;
+      document.getElementById('c-risk').textContent = `₹${Math.round((obH - sl) * lot).toLocaleString('en-IN')}`;
     }
 
-    let journalEntries = [
-      { date: '2026-11-18', sym: 'AXISBANK', setup: 'LONG BUILD-UP + Bullish OB', rr: '1:3.3', pnl: 18750, outcome: 'WIN' },
-      { date: '2026-11-19', sym: 'VEDL', setup: 'SHORT BUILD-UP + Bearish OB', rr: '1:3.1', pnl: 14200, outcome: 'WIN' },
-      { date: '2026-11-20', sym: 'INDUSINDBK', setup: 'LONG BUILD-UP + Bullish OB', rr: '1:3.6', pnl: 22500, outcome: 'WIN' }
+    let journal = [
+      { date: '2026-11-19', sym: 'COFORGE', setup: 'LONG BUILD-UP + OB', rr: '1:2.8', pnl: '+₹22,500' },
+      { date: '2026-11-20', sym: 'TCS', setup: 'SHORT BUILD-UP + OB', rr: '1:3.0', pnl: '+₹18,750' },
+      { date: '2026-11-20', sym: 'PERSISTENT', setup: 'LONG BUILD-UP + OB', rr: '1:2.8', pnl: '+₹14,200' }
     ];
 
     function renderJournal() {
-      document.getElementById('journal-badge').textContent = journalEntries.length;
-      document.getElementById('mob-journal-badge').textContent = journalEntries.length;
-      document.getElementById('journal-tbody').innerHTML = journalEntries.map(j => `
-        <tr>
-          <td class="py-2 px-3 font-num t-muted">${j.date}</td>
-          <td class="py-2 px-3 font-extrabold t-strong">${j.sym}</td>
-          <td class="py-2 px-3 t-text">${j.setup}</td>
-          <td class="py-2 px-3 font-num t-strong">${j.rr}</td>
-          <td class="py-2 px-3 text-right font-num font-bold text-[#10b981]">+₹${j.pnl.toLocaleString('en-IN')}</td>
-          <td class="py-2 px-3 text-center"><span class="px-2 py-0.5 rounded-full text-[10px] font-bold bg-[#10b981]/20 text-[#10b981]">${j.outcome}</span></td>
-        </tr>`).join('');
+      document.getElementById('journal-badge').textContent = journal.length;
+      document.getElementById('journal-tbody').innerHTML = journal.map(j => `
+        <tr><td class="py-2 px-3 font-num t-muted">${j.date}</td><td class="py-2 px-3 font-bold t-strong">${j.sym}</td><td class="py-2 px-3">${j.setup}</td><td class="py-2 px-3 font-num">${j.rr}</td><td class="py-2 px-3 text-right font-num font-bold text-[#10b981]">${j.pnl}</td></tr>
+      `).join('');
     }
 
-    function logSelectedSetupToJournal() {
-      journalEntries.unshift({ date: new Date().toISOString().split('T')[0], sym: selectedStock.symbol, setup: selectedStock.buildup, rr: selectedStock.rr, pnl: 0, outcome: 'OPEN' });
+    function logCurrentToJournal() {
+      journal.unshift({ date: new Date().toISOString().split('T')[0], sym: selectedStock.symbol, setup: selectedStock.buildup, rr: selectedStock.rr, pnl: 'OPEN' });
       renderJournal();
       showToast(`Logged ${selectedStock.symbol} to Journal!`);
     }
 
-    function copyTradingViewLevels() {
-      const s = selectedStock;
-      navigator.clipboard?.writeText(`${brand.name} | ${s.symbol} | Entry: ₹${s.entry} | SL: ₹${s.sl} | T1: ₹${s.t1}`);
-      showToast(`Copied ${s.symbol} levels!`);
-    }
+    function setTf(tf) { drawCandlestickChart('full-live-canvas', selectedStock); showToast(`Switched timeframe to ${tf}`); }
 
     function toggleLive915Sim() {
       isSimActive = !isSimActive;
-      document.getElementById('sim-btn-label').textContent = isSimActive ? 'LIVE STREAMING ON' : 'PAUSED';
+      document.getElementById('sim-btn-label').textContent = isSimActive ? 'LIVE ON' : 'PAUSED';
     }
 
-    function tickSimulation() {
+    function tickLive() {
       if (!isSimActive) return;
       const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-      document.getElementById('ist-clock-display').textContent = nowIST.toTimeString().split(' ')[0] + ' IST (LIVE)';
+      document.getElementById('ist-clock-display').textContent = nowIST.toTimeString().split(' ')[0] + ' IST';
       fnoStocks.forEach(s => {
-        const d = (Math.random() - 0.49) * 0.1;
+        const d = (Math.random() - 0.49) * 0.09;
         s.change = +(s.change + d).toFixed(2);
         s.ltp = +(s.ltp * (1 + d / 100)).toFixed(2);
       });
-      renderSectorFlowView();
-      renderLeaderboards();
+      selectStock(selectedStock.symbol);
     }
 
     function switchMainTab(tab) {
-      ['sectorflow', 'scanner', 'finder', 'journal'].forEach(t => {
+      ['sectorflow', 'livechart', 'finder', 'journal'].forEach(t => {
         document.getElementById(`view-${t}`).classList.toggle('hidden', t !== tab);
         const dBtn = document.getElementById(`tab-btn-${t}`);
         const mBtn = document.getElementById(`mob-tab-${t}`);
-        if (dBtn) {
-          dBtn.className = t === tab
-            ? (t === 'sectorflow' ? 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#10b981] text-black shadow' : 'px-3.5 py-1.5 rounded-lg text-xs font-bold bg-[#2962ff] text-white shadow')
-            : 'px-3.5 py-1.5 rounded-lg text-xs font-semibold t-muted hover:t-strong';
-        }
-        if (mBtn) {
-          mBtn.className = t === tab
-            ? (t === 'sectorflow' ? 'flex-1 py-1.5 rounded-lg font-bold bg-[#10b981] text-black' : 'flex-1 py-1.5 rounded-lg font-bold bg-[#2962ff] text-white')
-            : 'flex-1 py-1.5 rounded-lg font-semibold t-muted';
-        }
+        if (dBtn) dBtn.className = t === tab ? 'px-3 py-1.5 rounded-lg text-xs font-bold bg-[#10b981] text-black shadow' : 'px-3 py-1.5 rounded-lg text-xs font-semibold t-muted hover:t-strong';
+        if (mBtn) mBtn.className = t === tab ? 'flex-1 py-1.5 rounded-lg font-bold bg-[#10b981] text-black' : 'flex-1 py-1.5 rounded-lg font-semibold t-muted';
       });
-      setTimeout(drawAllCanvases, 30);
+      setTimeout(() => {
+        drawSankeyCanvas();
+        drawCandlestickChart('inline-live-canvas', selectedStock);
+        drawCandlestickChart('full-live-canvas', selectedStock);
+      }, 30);
     }
 
     function openModal(id) { const el = document.getElementById(id); el.classList.remove('hidden'); el.classList.add('flex'); }
@@ -1236,10 +849,10 @@
     function showToast(msg) {
       const box = document.getElementById('toast-container');
       const div = document.createElement('div');
-      div.className = 't-card border border-[#10b981] t-strong text-xs font-semibold px-4 py-2.5 rounded-xl shadow-2xl';
+      div.className = 't-card border border-[#10b981] t-strong text-xs font-semibold px-4 py-2 rounded-xl shadow-2xl';
       div.textContent = msg;
       box.appendChild(div);
-      setTimeout(() => div.remove(), 2600);
+      setTimeout(() => div.remove(), 2400);
     }
 
     function downloadStandaloneHTML() {
@@ -1250,23 +863,21 @@
       a.click();
     }
 
-    function drawAllCanvases() {
-      drawSectorFlowCanvas();
-      drawMarketXRay();
-      drawSessionChart();
-    }
+    window.addEventListener('resize', () => {
+      drawSankeyCanvas();
+      drawCandlestickChart('inline-live-canvas', selectedStock);
+      drawCandlestickChart('full-live-canvas', selectedStock);
+    });
 
-    window.addEventListener('resize', drawAllCanvases);
     window.onload = function () {
       applyBrandConfig();
-      renderSectorFlowView();
-      initXRayEvents();
-      renderSectorPills();
-      renderLeaderboards();
-      selectStock('INDUSINDBK');
+      const sel = document.getElementById('chart-stock-selector');
+      sel.innerHTML = fnoStocks.map(s => `<option value="${s.symbol}">${s.symbol} (${s.sector})</option>`).join('');
+      renderAllMatrix();
+      selectStock('COFORGE');
       calculateCustomOB();
       renderJournal();
-      setInterval(tickSimulation, 1500);
+      setInterval(tickLive, 1500);
     };
   </script>
 </body>
