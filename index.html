@@ -6,10 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Ganesh Kabadi F&amp;O Desk — Live NSE F&amp;O Order Block, Sector Flow &amp; Liquidity Scanner</title>
   <meta name="description" content="Ganesh Kabadi F&amp;O Desk — Live NSE F&amp;O Sector Flow, Sankey Stock Matrix, Live Candlestick Chart with Entry, SL &amp; TP." />
-  <meta name="keywords" content="Ganesh Kabadi F&amp;O Desk, Ganesh Kabadi, Sector Flow NSE F&amp;O, Order Block Scanner, Entry SL TP Live Chart" />
   <meta name="author" content="Ganesh Kabadi" />
-  <meta name="robots" content="index, follow" />
-  <link rel="canonical" href="https://mh4962898-cloud.github.io/orderblock-live-/" />
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,17 +26,12 @@
   </script>
   <style>
     :root {
-      --brand-accent: #2962ff;
-      --brand-accent-soft: rgba(41, 98, 255, 0.14);
       --bg-main: #080c10;
       --bg-card: #0e141c;
-      --bg-card-hover: #141d28;
       --border-main: #1c2634;
       --text-main: #d1d4dc;
       --text-strong: #ffffff;
       --text-muted: #788292;
-      --bull: #10b981;
-      --bear: #ef4444;
     }
 
     body {
@@ -79,7 +71,6 @@
   <!-- TOP HEADER -->
   <header class="sticky top-0 z-40 t-bg/95 backdrop-blur-md border-b t-border">
     <div class="max-w-[1720px] mx-auto px-3 sm:px-5 h-14 flex items-center justify-between gap-2">
-      <!-- Brand Logo & Name -->
       <div class="flex items-center gap-2.5 min-w-0">
         <div class="w-8 h-8 rounded-lg bg-[#10b981] flex items-center justify-center text-black font-extrabold shrink-0 shadow-lg">
           <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6">
@@ -92,29 +83,27 @@
           <div class="flex items-center gap-2">
             <span id="nav-brand-name" class="font-extrabold t-strong text-sm sm:text-base tracking-tight truncate">Ganesh Kabadi F&amp;O Desk</span>
             <span class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-[#10b981]/15 border border-[#10b981]/30 text-[#10b981]">
-              NSE F&amp;O LIVE
+              OB + LIQUIDITY
             </span>
           </div>
         </div>
       </div>
 
-      <!-- Desktop Navigation Tabs -->
       <nav class="hidden lg:flex items-center t-card p-1 rounded-xl border t-border gap-1">
         <button type="button" onclick="switchMainTab('sectorflow')" id="tab-btn-sectorflow" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-[#10b981] text-black shadow">
           ⚡ Sector &amp; Stock Flow Matrix
         </button>
         <button type="button" onclick="switchMainTab('livechart')" id="tab-btn-livechart" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all t-muted hover:t-strong flex items-center gap-1.5">
-          <span>📈 Live Chart + Entry / SL / TP</span>
+          <span>📈 Live Chart + OB / SL / TP</span>
         </button>
         <button type="button" onclick="switchMainTab('finder')" id="tab-btn-finder" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all t-muted hover:t-strong">
-          OB Calculator
+          OB + Liquidity Calc
         </button>
         <button type="button" onclick="switchMainTab('journal')" id="tab-btn-journal" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all t-muted hover:t-strong">
           Journal (<span id="journal-badge">3</span>)
         </button>
       </nav>
 
-      <!-- Right Controls -->
       <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
         <button type="button" onclick="toggleLive915Sim()" id="btn-sim-915" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-[#10b981]/15 border border-[#10b981]/40 text-[#10b981] flex items-center gap-1.5">
           <span id="sim-dot" class="w-2 h-2 rounded-full bg-[#10b981] live-dot"></span>
@@ -131,7 +120,6 @@
       </div>
     </div>
 
-    <!-- Mobile Navigation Bar -->
     <div class="flex lg:hidden items-center justify-around border-t t-border t-card px-2 py-1.5 text-[11px] gap-1">
       <button type="button" onclick="switchMainTab('sectorflow')" id="mob-tab-sectorflow" class="flex-1 py-1.5 rounded-lg font-bold bg-[#10b981] text-black">⚡ Flow Matrix</button>
       <button type="button" onclick="switchMainTab('livechart')" id="mob-tab-livechart" class="flex-1 py-1.5 rounded-lg font-semibold t-muted">📈 Chart &amp; SL/TP</button>
@@ -144,11 +132,11 @@
   <div class="border-b t-border bg-[#0b1017]">
     <div class="max-w-[1720px] mx-auto px-3 sm:px-5 py-1.5 flex flex-wrap items-center justify-between gap-2 text-[11px] font-num">
       <div class="flex items-center gap-3">
-        <span class="text-[#10b981] font-bold">BULLISH: 71</span>
+        <span class="text-[#10b981] font-bold">BULLISH OB: <span id="bull-count-lbl">12</span></span>
         <span class="text-slate-600">|</span>
-        <span class="text-[#ef4444] font-bold">BEARISH: 141</span>
+        <span class="text-[#ef4444] font-bold">BEARISH OB: <span id="bear-count-lbl">8</span></span>
         <span class="hidden md:inline text-slate-600">|</span>
-        <span class="hidden md:inline text-slate-300">NIFTY 25,768.40 (+1.01%) • BANKNIFTY +2.48%</span>
+        <span class="hidden md:inline text-slate-300">OB + Liquidity Sweep Model Active</span>
       </div>
       <div class="flex items-center gap-3">
         <span class="text-slate-400">IST: <strong id="ist-clock-display" class="text-[#10b981]">LIVE STREAM</strong></span>
@@ -162,12 +150,12 @@
   <!-- MAIN CONTENT -->
   <main class="flex-1 max-w-[1720px] w-full mx-auto px-2.5 sm:px-5 py-4">
 
-    <!-- TAB 1: SANKEY + MATRIX + TOP BUILD-UP CARDS -->
+    <!-- TAB 1: SANKEY + MATRIX + TOP OB CARDS -->
     <div id="view-sectorflow" class="space-y-4">
       <div class="t-card border t-border rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2.5">
         <div class="relative flex-1 min-w-[210px] max-w-md">
           <svg class="w-3.5 h-3.5 t-muted absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-          <input id="sf-search-input" type="text" placeholder="Search 212 F&O stocks (COFORGE, PERSISTENT, TCS, TATASTEEL...)" oninput="renderAllMatrix()" class="w-full t-bg border t-border focus:border-[#10b981] rounded-lg pl-8 pr-3 py-1.5 text-xs t-strong outline-none" />
+          <input id="sf-search-input" type="text" placeholder="Search F&O stocks (COFORGE, PERSISTENT, TCS, TATASTEEL...)" oninput="renderAllMatrix()" class="w-full t-bg border t-border focus:border-[#10b981] rounded-lg pl-8 pr-3 py-1.5 text-xs t-strong outline-none" />
         </div>
         <div class="flex flex-wrap items-center gap-1" id="sf-sector-pills"></div>
       </div>
@@ -178,58 +166,62 @@
           <div class="flex items-center justify-between mb-2">
             <div>
               <h2 class="text-xs font-extrabold t-strong uppercase tracking-wider">Sector &amp; Liquidity Sankey Flow</h2>
-              <p class="text-[10px] t-muted">Emerald = Long Accumulation • Crimson = Short Distribution</p>
+              <p class="text-[10px] t-muted">Emerald = Bullish OB / Demand • Crimson = Bearish OB / Supply</p>
             </div>
-            <span class="px-2 py-0.5 rounded bg-[#10b981]/15 text-[#10b981] font-num text-[10px] font-bold">+₹4,820 Cr</span>
+            <span class="px-2 py-0.5 rounded bg-[#10b981]/15 text-[#10b981] font-num text-[10px] font-bold">LIQ FLOW</span>
           </div>
           <div id="sankey-wrap" class="relative w-full h-[380px] sm:h-[460px] bg-[#06090d] rounded-lg border t-border overflow-hidden">
             <canvas id="sankey-canvas" class="w-full h-full block"></canvas>
           </div>
         </div>
 
-        <!-- PANEL 2: MULTI-TIER MATRIX -->
+        <!-- PANEL 2: MULTI-TIER OB MATRIX -->
         <div class="xl:col-span-4 flex flex-col gap-3">
           <div class="t-card border t-border rounded-xl p-2.5 flex-1">
             <div class="flex items-center justify-between mb-2 px-1">
-              <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#10b981]">▲ Bullish Order Block Matrix (Click for Live Chart)</span>
-              <span class="text-[10px] font-num text-slate-400">OI + Vol Profile</span>
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#10b981]">▲ Bullish Order Block Matrix (Demand + Liquidity)</span>
+              <span class="text-[10px] font-num text-slate-400">OB / LIQ</span>
             </div>
             <div id="bull-mini-matrix" class="grid grid-cols-2 sm:grid-cols-4 gap-1.5"></div>
           </div>
 
           <div class="t-card border t-border rounded-xl p-2.5 flex-1">
             <div class="flex items-center justify-between mb-2 px-1">
-              <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#ef4444]">▼ Bearish Order Block Matrix (Click for Live Chart)</span>
-              <span class="text-[10px] font-num text-slate-400">OI + Vol Profile</span>
+              <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#ef4444]">▼ Bearish Order Block Matrix (Supply + Liquidity)</span>
+              <span class="text-[10px] font-num text-slate-400">OB / LIQ</span>
             </div>
             <div id="bear-mini-matrix" class="grid grid-cols-2 sm:grid-cols-4 gap-1.5"></div>
           </div>
         </div>
 
-        <!-- PANEL 3: TOP CARDS -->
+        <!-- PANEL 3: TOP BULLISH & BEARISH OB CARDS -->
         <div class="xl:col-span-4 flex flex-col gap-3">
           <div id="top-bull-cards" class="space-y-2"></div>
           <div id="top-bear-cards" class="space-y-2"></div>
         </div>
       </div>
 
-      <!-- SELECTED STOCK TRADE EXECUTION BAR -->
+      <!-- SELECTED STOCK OB EXECUTION BAR -->
       <div class="t-card border border-[#2962ff]/40 rounded-xl p-4 shadow-2xl">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b t-border">
           <div class="flex flex-wrap items-center gap-2.5">
             <span id="bar-sym" class="text-lg font-extrabold text-white">COFORGE</span>
-            <span id="bar-bias" class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#10b981] text-black">BULLISH • LONG BUILD-UP</span>
+            <span id="bar-bias" class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#10b981] text-black">BULLISH OB • LONG BUILD-UP</span>
             <span id="bar-ltp" class="font-num text-sm font-bold text-[#10b981]">₹2,332.00 (+3.49%)</span>
             <span id="bar-lot" class="text-xs font-num text-slate-400">Lot: 150</span>
           </div>
 
-          <div class="grid grid-cols-2 sm:grid-cols-5 gap-2 font-num text-xs">
+          <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 font-num text-xs">
             <div class="bg-[#0b1017] border t-border rounded-lg px-2.5 py-1.5">
-              <span class="text-[9px] text-slate-400 block">OB ZONE</span>
-              <strong id="bar-zone" class="text-amber-400">2,083 – 2,112</strong>
+              <span class="text-[9px] text-amber-400 block">OB ZONE</span>
+              <strong id="bar-zone" class="text-white">2,083.9 – 2,112.3</strong>
+            </div>
+            <div class="bg-[#0b1017] border t-border rounded-lg px-2.5 py-1.5">
+              <span class="text-[9px] text-purple-400 block">LIQUIDITY (LIQ)</span>
+              <strong id="bar-liq" class="text-purple-300">₹2,072.00</strong>
             </div>
             <div class="bg-[#0b1017] border border-[#2962ff]/50 rounded-lg px-2.5 py-1.5">
-              <span class="text-[9px] text-[#60a5fa] block">ENTRY PRICE</span>
+              <span class="text-[9px] text-[#60a5fa] block">ENTRY</span>
               <strong id="bar-entry" class="text-white">₹2,112.30</strong>
             </div>
             <div class="bg-[#0b1017] border border-[#ef4444]/50 rounded-lg px-2.5 py-1.5">
@@ -242,7 +234,7 @@
             </div>
             <div class="bg-[#0b1017] border border-[#10b981]/50 rounded-lg px-2.5 py-1.5">
               <span class="text-[9px] text-[#10b981] block">TARGET 2 (TP2)</span>
-              <strong id="bar-tp2" class="text-[#10b981]">₹2,316.50 (1:2.8)</strong>
+              <strong id="bar-tp2" class="text-[#10b981]">₹2,316.50</strong>
             </div>
           </div>
 
@@ -251,7 +243,7 @@
               📈 Full Live Chart
             </button>
             <button type="button" onclick="copySelectedLevels()" class="px-3 py-2 rounded-lg text-xs font-bold bg-[#161f2c] border t-border text-white hover:border-[#10b981]">
-              Copy SL/TP
+              Copy OB/SL/TP
             </button>
           </div>
         </div>
@@ -280,26 +272,30 @@
           </div>
         </div>
 
-        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 my-3 font-num">
+        <div class="grid grid-cols-2 sm:grid-cols-6 gap-3 my-3 font-num">
           <div class="bg-[#080c10] border t-border rounded-xl p-3">
-            <span class="text-[10px] text-slate-400 block">ORDER BLOCK ZONE</span>
-            <strong id="fc-zone" class="text-sm text-amber-400 mt-0.5 block">₹2,083.90 – ₹2,112.30</strong>
+            <span class="text-[10px] text-amber-400 block">OB ZONE</span>
+            <strong id="fc-zone" class="text-xs sm:text-sm text-white mt-0.5 block">₹2,083.90 – ₹2,112.30</strong>
+          </div>
+          <div class="bg-[#080c10] border border-purple-500/50 rounded-xl p-3">
+            <span class="text-[10px] text-purple-400 block">LIQUIDITY (LIQ)</span>
+            <strong id="fc-liq" class="text-xs sm:text-sm text-purple-300 mt-0.5 block">₹2,072.00</strong>
           </div>
           <div class="bg-[#080c10] border border-[#2962ff] rounded-xl p-3">
-            <span class="text-[10px] text-[#60a5fa] block">OPTIMAL ENTRY</span>
-            <strong id="fc-entry" class="text-base text-white mt-0.5 block">₹2,112.30</strong>
+            <span class="text-[10px] text-[#60a5fa] block">ENTRY</span>
+            <strong id="fc-entry" class="text-sm sm:text-base text-white mt-0.5 block">₹2,112.30</strong>
           </div>
           <div class="bg-[#080c10] border border-[#ef4444] rounded-xl p-3">
             <span class="text-[10px] text-[#ef4444] block">STOP LOSS (SL)</span>
-            <strong id="fc-sl" class="text-base text-[#ef4444] mt-0.5 block">₹2,068.50</strong>
+            <strong id="fc-sl" class="text-sm sm:text-base text-[#ef4444] mt-0.5 block">₹2,068.50</strong>
           </div>
           <div class="bg-[#080c10] border border-[#10b981] rounded-xl p-3">
             <span class="text-[10px] text-[#10b981] block">TARGET 1 (TP1)</span>
-            <strong id="fc-tp1" class="text-base text-[#10b981] mt-0.5 block">₹2,222.90</strong>
+            <strong id="fc-tp1" class="text-sm sm:text-base text-[#10b981] mt-0.5 block">₹2,222.90</strong>
           </div>
           <div class="bg-[#080c10] border border-[#10b981] rounded-xl p-3">
-            <span class="text-[10px] text-[#10b981] block">TARGET 2 (TP2) &amp; R:R</span>
-            <strong id="fc-tp2" class="text-base text-[#10b981] mt-0.5 block">₹2,316.50 (1:2.8)</strong>
+            <span class="text-[10px] text-[#10b981] block">TARGET 2 (TP2)</span>
+            <strong id="fc-tp2" class="text-sm sm:text-base text-[#10b981] mt-0.5 block">₹2,316.50</strong>
           </div>
         </div>
 
@@ -309,23 +305,27 @@
       </div>
     </div>
 
-    <!-- TAB 3: CUSTOM OB CALCULATOR -->
+    <!-- TAB 3: OB + LIQUIDITY CALCULATOR -->
     <div id="view-finder" class="hidden space-y-4">
       <div class="t-card border t-border rounded-xl p-5">
-        <h2 class="text-base font-extrabold t-strong mb-4">Custom NSE F&amp;O Entry / SL / TP Calculator</h2>
+        <h2 class="text-base font-extrabold t-strong mb-4">Order Block + Liquidity Entry / SL / TP Calculator</h2>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="space-y-2.5">
-            <input id="calc-sym" type="text" value="COFORGE" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-bold t-strong uppercase" placeholder="Symbol" />
+            <select id="calc-bias" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-bold t-strong">
+              <option value="BULLISH">Bullish OB (Demand + Below Liquidity)</option>
+              <option value="BEARISH">Bearish OB (Supply + Above Liquidity)</option>
+            </select>
             <input id="calc-lot" type="number" value="150" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" placeholder="Lot Size" />
             <input id="calc-obhigh" type="number" step="0.05" value="2112.30" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" placeholder="OB High" />
             <input id="calc-oblow" type="number" step="0.05" value="2083.90" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" placeholder="OB Low" />
-            <button type="button" onclick="calculateCustomOB()" class="w-full py-2.5 rounded-lg text-xs font-extrabold bg-[#10b981] text-black">Calculate Entry, SL &amp; TP</button>
+            <input id="calc-liq" type="number" step="0.05" value="2072.00" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" placeholder="Liquidity Pool Level" />
+            <button type="button" onclick="calculateCustomOB()" class="w-full py-2.5 rounded-lg text-xs font-extrabold bg-[#10b981] text-black">Calculate OB Entry, SL &amp; TP</button>
           </div>
           <div class="md:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3 items-center font-num">
             <div class="t-bg border t-border rounded-xl p-3"><span class="text-[10px] t-muted block">ENTRY</span><strong id="c-entry" class="text-sm text-white">₹2,112.30</strong></div>
-            <div class="t-bg border t-border rounded-xl p-3"><span class="text-[10px] t-muted block">STOP LOSS</span><strong id="c-sl" class="text-sm text-[#ef4444]">₹2,075.40</strong></div>
-            <div class="t-bg border t-border rounded-xl p-3"><span class="text-[10px] t-muted block">TARGET (1:3)</span><strong id="c-tp" class="text-sm text-[#10b981]">₹2,223.00</strong></div>
-            <div class="t-bg border t-border rounded-xl p-3"><span class="text-[10px] t-muted block">RISK / LOT</span><strong id="c-risk" class="text-sm text-amber-400">₹5,535</strong></div>
+            <div class="t-bg border t-border rounded-xl p-3"><span class="text-[10px] t-muted block">STOP LOSS</span><strong id="c-sl" class="text-sm text-[#ef4444]">₹2,068.50</strong></div>
+            <div class="t-bg border t-border rounded-xl p-3"><span class="text-[10px] t-muted block">TP1 / TP2</span><strong id="c-tp" class="text-sm text-[#10b981]">₹2,222.90 / ₹2,316.50</strong></div>
+            <div class="t-bg border t-border rounded-xl p-3"><span class="text-[10px] t-muted block">RISK / LOT</span><strong id="c-risk" class="text-sm text-amber-400">₹6,570</strong></div>
           </div>
         </div>
       </div>
@@ -335,7 +335,7 @@
     <div id="view-journal" class="hidden space-y-4">
       <div class="t-card border t-border rounded-xl p-5">
         <div class="flex items-center justify-between mb-3">
-          <h3 class="text-base font-extrabold t-strong">Trade Journal &amp; P&amp;L</h3>
+          <h3 class="text-base font-extrabold t-strong">OB + Liquidity Trade Journal</h3>
           <span class="font-num font-bold text-[#10b981]">+₹55,450</span>
         </div>
         <div class="overflow-x-auto">
@@ -344,7 +344,7 @@
               <tr class="border-b t-border text-[10px] uppercase t-muted">
                 <th class="py-2 px-3">Date</th>
                 <th class="py-2 px-3">Symbol</th>
-                <th class="py-2 px-3">Setup</th>
+                <th class="py-2 px-3">OB / Liquidity Setup</th>
                 <th class="py-2 px-3">R:R</th>
                 <th class="py-2 px-3 text-right">P&amp;L</th>
               </tr>
@@ -390,28 +390,53 @@
       showToast('Brand updated!');
     }
 
+    // Order Block + Liquidity model helper
+    function recomputeOBLevels(s) {
+      const isBull = s.change >= 0;
+      const spread = Math.max(s.obHigh - s.obLow, s.ltp * 0.008);
+      if (isBull) {
+        s.buildup = 'BULLISH OB + LIQ';
+        s.entry = +s.obHigh.toFixed(2);
+        s.sl = +(Math.min(s.liq, s.obLow - spread * 0.25)).toFixed(2);
+        const risk = Math.max(s.entry - s.sl, s.ltp * 0.005);
+        s.tp1 = +(s.entry + risk * 2.0).toFixed(2);
+        s.tp2 = +(s.entry + risk * 3.0).toFixed(2);
+        s.s1 = s.obLow;
+      } else {
+        s.buildup = 'BEARISH OB + LIQ';
+        s.entry = +s.obLow.toFixed(2);
+        s.sl = +(Math.max(s.liq, s.obHigh + spread * 0.25)).toFixed(2);
+        const risk = Math.max(s.sl - s.entry, s.ltp * 0.005);
+        s.tp1 = +(s.entry - risk * 2.0).toFixed(2);
+        s.tp2 = +(s.entry - risk * 3.0).toFixed(2);
+        s.r1 = s.obHigh;
+      }
+    }
+
     const fnoStocks = [
-      { symbol: 'COFORGE', sector: 'IT', ltp: 2332.00, change: 3.49, oiChg: '+16.2%', buildup: 'LONG BUILD-UP', score: 96, lotSize: 150, rr: '1:2.8', obLow: 2083.90, obHigh: 2112.30, s1: 2080.10, r1: 2222.90, r2: 2316.50, entry: 2112.30, sl: 2068.50, tp1: 2222.90, tp2: 2316.50 },
-      { symbol: 'PERSISTENT', sector: 'IT', ltp: 6348.00, change: 2.86, oiChg: '+14.8%', buildup: 'LONG BUILD-UP', score: 94, lotSize: 100, rr: '1:2.8', obLow: 5977.50, obHigh: 6046.00, s1: 5912.65, r1: 6231.25, r2: 6371.90, entry: 6046.00, sl: 5912.65, tp1: 6231.25, tp2: 6371.90 },
-      { symbol: 'LTF', sector: 'Finance', ltp: 279.65, change: 1.76, oiChg: '+11.4%', buildup: 'LONG BUILD-UP', score: 90, lotSize: 2250, rr: '1:2.8', obLow: 270.45, obHigh: 279.65, s1: 266.00, r1: 276.00, r2: 280.10, entry: 274.50, sl: 266.00, tp1: 278.50, tp2: 282.10 },
-      { symbol: 'HDFCBANK', sector: 'Banking', ltp: 1764.50, change: 2.60, oiChg: '+12.1%', buildup: 'LONG BUILD-UP', score: 89, lotSize: 550, rr: '1:3.2', obLow: 1738.00, obHigh: 1745.00, s1: 1730.00, r1: 1778.00, r2: 1796.00, entry: 1745.00, sl: 1730.00, tp1: 1778.00, tp2: 1796.00 },
-      { symbol: 'MAXHEALTH', sector: 'Pharma', ltp: 1096.00, change: 3.10, oiChg: '+10.5%', buildup: 'LONG BUILD-UP', score: 88, lotSize: 525, rr: '1:3.1', obLow: 1075.00, obHigh: 1081.00, s1: 1069.50, r1: 1105.00, r2: 1118.00, entry: 1081.00, sl: 1069.50, tp1: 1105.00, tp2: 1118.00 },
-      { symbol: 'HCLTECH', sector: 'IT', ltp: 1842.00, change: 1.52, oiChg: '+9.4%', buildup: 'LONG BUILD-UP', score: 86, lotSize: 350, rr: '1:3.0', obLow: 1815.00, obHigh: 1824.00, s1: 1808.00, r1: 1855.00, r2: 1872.00, entry: 1824.00, sl: 1808.00, tp1: 1855.00, tp2: 1872.00 },
-      { symbol: 'ULTRACEMCO', sector: 'Metals', ltp: 11420.00, change: 1.59, oiChg: '+8.8%', buildup: 'LONG BUILD-UP', score: 85, lotSize: 50, rr: '1:3.0', obLow: 11260.00, obHigh: 11310.00, s1: 11210.00, r1: 11520.00, r2: 11640.00, entry: 11310.00, sl: 11210.00, tp1: 11520.00, tp2: 11640.00 },
-      { symbol: 'TECHM', sector: 'IT', ltp: 1698.00, change: 2.07, oiChg: '+9.9%', buildup: 'LONG BUILD-UP', score: 84, lotSize: 600, rr: '1:3.1', obLow: 1672.00, obHigh: 1680.00, s1: 1664.00, r1: 1715.00, r2: 1732.00, entry: 1680.00, sl: 1664.00, tp1: 1715.00, tp2: 1732.00 },
-      { symbol: 'INFY', sector: 'IT', ltp: 1874.20, change: 1.85, oiChg: '+8.2%', buildup: 'LONG BUILD-UP', score: 82, lotSize: 400, rr: '1:2.9', obLow: 1856.00, obHigh: 1862.00, s1: 1848.00, r1: 1888.00, r2: 1904.00, entry: 1862.00, sl: 1848.00, tp1: 1888.00, tp2: 1904.00 },
-      { symbol: 'APOLLOHOSP', sector: 'Pharma', ltp: 7240.00, change: 2.40, oiChg: '+11.0%', buildup: 'LONG BUILD-UP', score: 81, lotSize: 125, rr: '1:3.3', obLow: 7110.00, obHigh: 7145.00, s1: 7085.00, r1: 7295.00, r2: 7360.00, entry: 7145.00, sl: 7085.00, tp1: 7295.00, tp2: 7360.00 },
-      { symbol: 'INDUSINDBK', sector: 'Banking', ltp: 1084.50, change: 4.15, oiChg: '+15.4%', buildup: 'LONG BUILD-UP', score: 92, lotSize: 500, rr: '1:3.5', obLow: 1056.00, obHigh: 1062.50, s1: 1049.50, r1: 1095.00, r2: 1115.00, entry: 1062.50, sl: 1049.50, tp1: 1095.00, tp2: 1115.00 },
-      { symbol: 'AXISBANK', sector: 'Banking', ltp: 1192.40, change: 2.95, oiChg: '+10.7%', buildup: 'LONG BUILD-UP', score: 87, lotSize: 625, rr: '1:3.2', obLow: 1168.00, obHigh: 1174.50, s1: 1161.00, r1: 1202.00, r2: 1218.00, entry: 1174.50, sl: 1161.00, tp1: 1202.00, tp2: 1218.00 },
-      { symbol: 'TCS', sector: 'IT', ltp: 2382.40, change: -1.69, oiChg: '+15.3%', buildup: 'SHORT BUILD-UP', score: -94, lotSize: 175, rr: '1:3.0', obLow: 2382.40, obHigh: 2392.40, s1: 2354.95, r1: 2399.55, r2: 2412.00, entry: 2385.00, sl: 2399.55, tp1: 2354.95, tp2: 2317.85 },
-      { symbol: 'TATASTEEL', sector: 'Metals', ltp: 154.74, change: -3.48, oiChg: '+14.6%', buildup: 'SHORT BUILD-UP', score: -92, lotSize: 5500, rr: '1:2.8', obLow: 154.74, obHigh: 156.96, s1: 147.40, r1: 159.50, r2: 162.00, entry: 155.80, sl: 159.50, tp1: 147.40, tp2: 142.85 },
-      { symbol: 'KPITTECH', sector: 'IT', ltp: 526.45, change: -2.79, oiChg: '+12.8%', buildup: 'SHORT BUILD-UP', score: -89, lotSize: 800, rr: '1:2.8', obLow: 526.45, obHigh: 537.00, s1: 515.70, r1: 538.70, r2: 545.00, entry: 531.50, sl: 538.70, tp1: 522.25, tp2: 515.70 },
-      { symbol: 'KOTAKBANK', sector: 'Banking', ltp: 1782.00, change: -1.42, oiChg: '+9.5%', buildup: 'SHORT BUILD-UP', score: -85, lotSize: 400, rr: '1:2.9', obLow: 1792.00, obHigh: 1798.00, s1: 1762.00, r1: 1804.00, r2: 1815.00, entry: 1792.00, sl: 1804.00, tp1: 1762.00, tp2: 1748.00 },
-      { symbol: 'BAJAJFINSV', sector: 'Finance', ltp: 1642.00, change: -1.84, oiChg: '+10.2%', buildup: 'SHORT BUILD-UP', score: -84, lotSize: 500, rr: '1:3.0', obLow: 1654.00, obHigh: 1662.00, s1: 1620.00, r1: 1668.00, r2: 1680.00, entry: 1654.00, sl: 1668.00, tp1: 1620.00, tp2: 1602.00 },
-      { symbol: 'CHOLAFIN', sector: 'Finance', ltp: 1284.00, change: -1.55, oiChg: '+8.9%', buildup: 'SHORT BUILD-UP', score: -82, lotSize: 625, rr: '1:2.9', obLow: 1294.00, obHigh: 1301.00, s1: 1265.00, r1: 1306.00, r2: 1318.00, entry: 1294.00, sl: 1306.00, tp1: 1265.00, tp2: 1250.00 },
-      { symbol: 'VEDL', sector: 'Metals', ltp: 446.80, change: -2.90, oiChg: '+13.1%', buildup: 'SHORT BUILD-UP', score: -88, lotSize: 1150, rr: '1:3.2', obLow: 455.20, obHigh: 458.50, s1: 439.50, r1: 461.00, r2: 466.00, entry: 455.20, sl: 461.00, tp1: 439.50, tp2: 432.00 },
-      { symbol: 'ICICIGI', sector: 'Finance', ltp: 1895.00, change: -1.32, oiChg: '+7.8%', buildup: 'SHORT BUILD-UP', score: -80, lotSize: 325, rr: '1:2.8', obLow: 1908.00, obHigh: 1916.00, s1: 1872.00, r1: 1922.00, r2: 1935.00, entry: 1908.00, sl: 1922.00, tp1: 1872.00, tp2: 1858.00 }
+      { symbol: 'COFORGE', sector: 'IT', ltp: 2332.00, change: 3.49, lotSize: 150, rr: '1:3.0', obLow: 2083.90, obHigh: 2112.30, liq: 2072.00, s1: 2083.90, r1: 2222.90, entry: 2112.30, sl: 2068.50, tp1: 2222.90, tp2: 2316.50, buildup: 'BULLISH OB + LIQ' },
+      { symbol: 'PERSISTENT', sector: 'IT', ltp: 6348.00, change: 2.86, lotSize: 100, rr: '1:3.0', obLow: 5977.50, obHigh: 6046.00, liq: 5940.00, s1: 5977.50, r1: 6231.25, entry: 6046.00, sl: 5912.65, tp1: 6231.25, tp2: 6371.90, buildup: 'BULLISH OB + LIQ' },
+      { symbol: 'LTF', sector: 'Finance', ltp: 279.65, change: 1.76, lotSize: 2250, rr: '1:3.0', obLow: 270.45, obHigh: 274.50, liq: 267.80, s1: 270.45, r1: 278.50, entry: 274.50, sl: 266.00, tp1: 278.50, tp2: 282.10, buildup: 'BULLISH OB + LIQ' },
+      { symbol: 'HDFCBANK', sector: 'Banking', ltp: 1764.50, change: 2.60, lotSize: 550, rr: '1:3.0', obLow: 1738.00, obHigh: 1745.00, liq: 1732.00, s1: 1738.00, r1: 1778.00, entry: 1745.00, sl: 1730.00, tp1: 1778.00, tp2: 1796.00, buildup: 'BULLISH OB + LIQ' },
+      { symbol: 'MAXHEALTH', sector: 'Pharma', ltp: 1096.00, change: 3.10, lotSize: 525, rr: '1:3.0', obLow: 1075.00, obHigh: 1081.00, liq: 1071.00, s1: 1075.00, r1: 1105.00, entry: 1081.00, sl: 1069.50, tp1: 1105.00, tp2: 1118.00, buildup: 'BULLISH OB + LIQ' },
+      { symbol: 'HCLTECH', sector: 'IT', ltp: 1842.00, change: 1.52, lotSize: 350, rr: '1:3.0', obLow: 1815.00, obHigh: 1824.00, liq: 1810.00, s1: 1815.00, r1: 1855.00, entry: 1824.00, sl: 1808.00, tp1: 1855.00, tp2: 1872.00, buildup: 'BULLISH OB + LIQ' },
+      { symbol: 'ULTRACEMCO', sector: 'Metals', ltp: 11420.00, change: 1.59, lotSize: 50, rr: '1:3.0', obLow: 11260.00, obHigh: 11310.00, liq: 11230.00, s1: 11260.00, r1: 11520.00, entry: 11310.00, sl: 11210.00, tp1: 11520.00, tp2: 11640.00, buildup: 'BULLISH OB + LIQ' },
+      { symbol: 'TECHM', sector: 'IT', ltp: 1698.00, change: 2.07, lotSize: 600, rr: '1:3.0', obLow: 1672.00, obHigh: 1680.00, liq: 1666.00, s1: 1672.00, r1: 1715.00, entry: 1680.00, sl: 1664.00, tp1: 1715.00, tp2: 1732.00, buildup: 'BULLISH OB + LIQ' },
+      { symbol: 'INFY', sector: 'IT', ltp: 1874.20, change: 1.85, lotSize: 400, rr: '1:3.0', obLow: 1856.00, obHigh: 1862.00, liq: 1850.00, s1: 1856.00, r1: 1888.00, entry: 1862.00, sl: 1848.00, tp1: 1888.00, tp2: 1904.00, buildup: 'BULLISH OB + LIQ' },
+      { symbol: 'APOLLOHOSP', sector: 'Pharma', ltp: 7240.00, change: 2.40, lotSize: 125, rr: '1:3.0', obLow: 7110.00, obHigh: 7145.00, liq: 7095.00, s1: 7110.00, r1: 7295.00, entry: 7145.00, sl: 7085.00, tp1: 7295.00, tp2: 7360.00, buildup: 'BULLISH OB + LIQ' },
+      { symbol: 'INDUSINDBK', sector: 'Banking', ltp: 1084.50, change: 4.15, lotSize: 500, rr: '1:3.0', obLow: 1056.00, obHigh: 1062.50, liq: 1051.00, s1: 1056.00, r1: 1095.00, entry: 1062.50, sl: 1049.50, tp1: 1095.00, tp2: 1115.00, buildup: 'BULLISH OB + LIQ' },
+      { symbol: 'AXISBANK', sector: 'Banking', ltp: 1192.40, change: 2.95, lotSize: 625, rr: '1:3.0', obLow: 1168.00, obHigh: 1174.50, liq: 1163.00, s1: 1168.00, r1: 1202.00, entry: 1174.50, sl: 1161.00, tp1: 1202.00, tp2: 1218.00, buildup: 'BULLISH OB + LIQ' },
+      { symbol: 'TCS', sector: 'IT', ltp: 2382.40, change: -1.69, lotSize: 175, rr: '1:3.0', obLow: 2385.00, obHigh: 2394.00, liq: 2402.00, s1: 2354.95, r1: 2394.00, entry: 2385.00, sl: 2399.55, tp1: 2354.95, tp2: 2317.85, buildup: 'BEARISH OB + LIQ' },
+      { symbol: 'TATASTEEL', sector: 'Metals', ltp: 154.74, change: -3.48, lotSize: 5500, rr: '1:3.0', obLow: 155.80, obHigh: 157.40, liq: 160.50, s1: 147.40, r1: 157.40, entry: 155.80, sl: 159.50, tp1: 147.40, tp2: 142.85, buildup: 'BEARISH OB + LIQ' },
+      { symbol: 'KPITTECH', sector: 'IT', ltp: 526.45, change: -2.79, lotSize: 800, rr: '1:3.0', obLow: 531.50, obHigh: 536.20, liq: 540.00, s1: 515.70, r1: 536.20, entry: 531.50, sl: 538.70, tp1: 522.25, tp2: 515.70, buildup: 'BEARISH OB + LIQ' },
+      { symbol: 'KOTAKBANK', sector: 'Banking', ltp: 1782.00, change: -1.42, lotSize: 400, rr: '1:3.0', obLow: 1792.00, obHigh: 1799.00, liq: 1806.00, s1: 1762.00, r1: 1799.00, entry: 1792.00, sl: 1804.00, tp1: 1762.00, tp2: 1748.00, buildup: 'BEARISH OB + LIQ' },
+      { symbol: 'BAJAJFINSV', sector: 'Finance', ltp: 1642.00, change: -1.84, lotSize: 500, rr: '1:3.0', obLow: 1654.00, obHigh: 1662.00, liq: 1670.00, s1: 1620.00, r1: 1662.00, entry: 1654.00, sl: 1668.00, tp1: 1620.00, tp2: 1602.00, buildup: 'BEARISH OB + LIQ' },
+      { symbol: 'CHOLAFIN', sector: 'Finance', ltp: 1284.00, change: -1.55, lotSize: 625, rr: '1:3.0', obLow: 1294.00, obHigh: 1301.00, liq: 1308.00, s1: 1265.00, r1: 1301.00, entry: 1294.00, sl: 1306.00, tp1: 1265.00, tp2: 1250.00, buildup: 'BEARISH OB + LIQ' },
+      { symbol: 'VEDL', sector: 'Metals', ltp: 446.80, change: -2.90, lotSize: 1150, rr: '1:3.0', obLow: 455.20, obHigh: 458.50, liq: 462.50, s1: 439.50, r1: 458.50, entry: 455.20, sl: 461.00, tp1: 439.50, tp2: 432.00, buildup: 'BEARISH OB + LIQ' },
+      { symbol: 'ICICIGI', sector: 'Finance', ltp: 1895.00, change: -1.32, lotSize: 325, rr: '1:3.0', obLow: 1908.00, obHigh: 1916.00, liq: 1924.00, s1: 1872.00, r1: 1916.00, entry: 1908.00, sl: 1922.00, tp1: 1872.00, tp2: 1858.00, buildup: 'BEARISH OB + LIQ' }
     ];
+
+    fnoStocks.forEach(recomputeOBLevels);
 
     let selectedStock = fnoStocks[0];
     let sfSector = 'All Sectors';
@@ -430,6 +455,9 @@
       const bulls = fnoStocks.filter(s => s.change >= 0 && match(s));
       const bears = fnoStocks.filter(s => s.change < 0 && match(s));
 
+      document.getElementById('bull-count-lbl').textContent = bulls.length;
+      document.getElementById('bear-count-lbl').textContent = bears.length;
+
       document.getElementById('bull-mini-matrix').innerHTML = bulls.map((s, idx) => {
         const w1 = 45 + ((idx * 17) % 50);
         const w2 = 35 + ((idx * 23) % 55);
@@ -440,10 +468,10 @@
               <span class="font-extrabold text-[10px] text-white truncate">${s.symbol}</span>
               <span class="font-num text-[9px] font-bold text-[#10b981]">+${s.change.toFixed(2)}%</span>
             </div>
-            <div class="text-[8px] text-[#10b981]/80 font-num mt-0.5">LONG BUILD-UP</div>
+            <div class="text-[8px] text-amber-300 font-num mt-0.5 truncate">OB ${s.obLow.toFixed(0)}-${s.obHigh.toFixed(0)}</div>
             <div class="space-y-1 mt-1.5">
               <div class="h-1 bg-[#10b981]/20 rounded overflow-hidden"><div class="h-full bg-[#10b981]" style="width:${w1}%"></div></div>
-              <div class="h-1 bg-[#10b981]/20 rounded overflow-hidden"><div class="h-full bg-[#34d399]" style="width:${w2}%"></div></div>
+              <div class="h-1 bg-purple-500/20 rounded overflow-hidden"><div class="h-full bg-purple-400" style="width:${w2}%"></div></div>
             </div>
           </div>`;
       }).join('');
@@ -458,10 +486,10 @@
               <span class="font-extrabold text-[10px] text-white truncate">${s.symbol}</span>
               <span class="font-num text-[9px] font-bold text-[#ef4444]">${s.change.toFixed(2)}%</span>
             </div>
-            <div class="text-[8px] text-[#ef4444]/80 font-num mt-0.5">SHORT BUILD-UP</div>
+            <div class="text-[8px] text-amber-300 font-num mt-0.5 truncate">OB ${s.obLow.toFixed(0)}-${s.obHigh.toFixed(0)}</div>
             <div class="space-y-1 mt-1.5">
               <div class="h-1 bg-[#ef4444]/20 rounded overflow-hidden"><div class="h-full bg-[#ef4444]" style="width:${w1}%"></div></div>
-              <div class="h-1 bg-[#ef4444]/20 rounded overflow-hidden"><div class="h-full bg-[#f87171]" style="width:${w2}%"></div></div>
+              <div class="h-1 bg-purple-500/20 rounded overflow-hidden"><div class="h-full bg-purple-400" style="width:${w2}%"></div></div>
             </div>
           </div>`;
       }).join('');
@@ -472,25 +500,23 @@
             <div>
               <div class="flex items-center gap-2">
                 <span class="font-extrabold text-white text-sm sm:text-base">${s.symbol}</span>
-                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#10b981]/20 text-[#10b981]">LONG BUILD-UP</span>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#10b981]/20 text-[#10b981]">BULLISH OB</span>
               </div>
               <div class="flex items-center gap-2 mt-1">
-                <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-[#10b981] text-black">BULLISH</span>
-                <span class="font-num font-extrabold text-base sm:text-lg text-[#10b981]">+${s.change.toFixed(2)}%</span>
+                <span class="font-num font-extrabold text-base text-[#10b981]">+${s.change.toFixed(2)}%</span>
                 <span class="font-num text-xs text-slate-300">₹${s.ltp.toFixed(2)}</span>
               </div>
             </div>
             <div class="text-right font-num text-[10px]">
-              <span class="text-slate-400 block">ENTRY / SL</span>
-              <strong class="text-white block">₹${s.entry.toFixed(1)}</strong>
+              <span class="text-[#60a5fa] block">ENT ₹${s.entry.toFixed(1)}</span>
               <strong class="text-[#ef4444] block">SL ₹${s.sl.toFixed(1)}</strong>
             </div>
           </div>
           <div class="grid grid-cols-4 gap-1 mt-2 pt-2 border-t border-[#10b981]/20 font-num text-[9px]">
-            <div><span class="text-slate-400 block">SUPPORT 1</span><strong class="text-amber-400">${s.s1.toFixed(2)}</strong></div>
-            <div><span class="text-slate-400 block">ZONE</span><strong class="text-white">${s.obLow.toFixed(0)}-${s.obHigh.toFixed(0)}</strong></div>
-            <div><span class="text-slate-400 block">TARGET 1/2</span><strong class="text-[#10b981]">${s.tp1.toFixed(0)}/${s.tp2.toFixed(0)}</strong></div>
-            <div class="text-right"><span class="text-slate-400 block">RISK : REWARD</span><strong class="text-[#10b981]">${s.rr}</strong></div>
+            <div><span class="text-slate-400 block">OB ZONE</span><strong class="text-amber-400">${s.obLow.toFixed(0)}-${s.obHigh.toFixed(0)}</strong></div>
+            <div><span class="text-slate-400 block">LIQUIDITY</span><strong class="text-purple-300">${s.liq.toFixed(0)}</strong></div>
+            <div><span class="text-slate-400 block">TP1 / TP2</span><strong class="text-[#10b981]">${s.tp1.toFixed(0)}/${s.tp2.toFixed(0)}</strong></div>
+            <div class="text-right"><span class="text-slate-400 block">R : R</span><strong class="text-[#10b981]">${s.rr}</strong></div>
           </div>
         </div>
       `).join('');
@@ -501,25 +527,23 @@
             <div>
               <div class="flex items-center gap-2">
                 <span class="font-extrabold text-white text-sm sm:text-base">${s.symbol}</span>
-                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#ef4444]/20 text-[#ef4444]">SHORT BUILD-UP</span>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#ef4444]/20 text-[#ef4444]">BEARISH OB</span>
               </div>
               <div class="flex items-center gap-2 mt-1">
-                <span class="px-1.5 py-0.5 rounded text-[9px] font-extrabold bg-[#ef4444] text-white">BEARISH</span>
-                <span class="font-num font-extrabold text-base sm:text-lg text-[#ef4444]">${s.change.toFixed(2)}%</span>
+                <span class="font-num font-extrabold text-base text-[#ef4444]">${s.change.toFixed(2)}%</span>
                 <span class="font-num text-xs text-slate-300">₹${s.ltp.toFixed(2)}</span>
               </div>
             </div>
             <div class="text-right font-num text-[10px]">
-              <span class="text-slate-400 block">ENTRY / SL</span>
-              <strong class="text-white block">₹${s.entry.toFixed(1)}</strong>
+              <span class="text-[#60a5fa] block">ENT ₹${s.entry.toFixed(1)}</span>
               <strong class="text-[#ef4444] block">SL ₹${s.sl.toFixed(1)}</strong>
             </div>
           </div>
           <div class="grid grid-cols-4 gap-1 mt-2 pt-2 border-t border-[#ef4444]/20 font-num text-[9px]">
-            <div><span class="text-slate-400 block">RESISTANCE 1</span><strong class="text-amber-400">${s.r1.toFixed(2)}</strong></div>
-            <div><span class="text-slate-400 block">ZONE</span><strong class="text-white">${s.obLow.toFixed(0)}-${s.obHigh.toFixed(0)}</strong></div>
-            <div><span class="text-slate-400 block">TARGET 1/2</span><strong class="text-[#10b981]">${s.tp1.toFixed(0)}/${s.tp2.toFixed(0)}</strong></div>
-            <div class="text-right"><span class="text-slate-400 block">RISK : REWARD</span><strong class="text-[#ef4444]">${s.rr}</strong></div>
+            <div><span class="text-slate-400 block">OB ZONE</span><strong class="text-amber-400">${s.obLow.toFixed(0)}-${s.obHigh.toFixed(0)}</strong></div>
+            <div><span class="text-slate-400 block">LIQUIDITY</span><strong class="text-purple-300">${s.liq.toFixed(0)}</strong></div>
+            <div><span class="text-slate-400 block">TP1 / TP2</span><strong class="text-[#10b981]">${s.tp1.toFixed(0)}/${s.tp2.toFixed(0)}</strong></div>
+            <div class="text-right"><span class="text-slate-400 block">R : R</span><strong class="text-[#ef4444]">${s.rr}</strong></div>
           </div>
         </div>
       `).join('');
@@ -551,21 +575,21 @@
       ctx.strokeStyle = '#334155';
       ctx.beginPath(); ctx.moveTo(0, midY); ctx.lineTo(w, midY); ctx.stroke();
 
-      for (let i = 0; i < 18; i++) {
-        const y = 16 + i * ((midY - 24) / 18);
-        const bw = (0.2 + Math.abs(Math.sin(i * 0.9)) * 0.7) * (spineX * 0.55);
-        ctx.fillStyle = 'rgba(16, 185, 129, 0.14)';
+      for (let i = 0; i < 16; i++) {
+        const y = 16 + i * ((midY - 24) / 16);
+        const bw = (0.25 + Math.abs(Math.sin(i * 0.9)) * 0.65) * (spineX * 0.55);
+        ctx.fillStyle = 'rgba(16, 185, 129, 0.16)';
         ctx.fillRect(8, y, bw, 5);
       }
-      for (let i = 0; i < 22; i++) {
-        const y = midY + 8 + i * ((h - midY - 16) / 22);
-        const bw = (0.2 + Math.abs(Math.cos(i * 0.8)) * 0.75) * (spineX * 0.65);
-        ctx.fillStyle = 'rgba(239, 68, 68, 0.14)';
+      for (let i = 0; i < 20; i++) {
+        const y = midY + 8 + i * ((h - midY - 16) / 20);
+        const bw = (0.25 + Math.abs(Math.cos(i * 0.8)) * 0.7) * (spineX * 0.65);
+        ctx.fillStyle = 'rgba(239, 68, 68, 0.16)';
         ctx.fillRect(8, y, bw, 5);
       }
 
-      for (let i = 0; i < 14; i++) {
-        const sy = 20 + i * ((midY - 28) / 14);
+      for (let i = 0; i < 12; i++) {
+        const sy = 20 + i * ((midY - 28) / 12);
         ctx.strokeStyle = 'rgba(16, 185, 129, 0.25)';
         ctx.lineWidth = 1.4;
         ctx.beginPath();
@@ -573,8 +597,8 @@
         ctx.bezierCurveTo(spineX * 0.45, sy, spineX * 0.55, midY * 0.45, spineX, midY * 0.35 + i * 3);
         ctx.stroke();
       }
-      for (let i = 0; i < 18; i++) {
-        const sy = midY + 12 + i * ((h - midY - 20) / 18);
+      for (let i = 0; i < 16; i++) {
+        const sy = midY + 12 + i * ((h - midY - 20) / 16);
         ctx.strokeStyle = 'rgba(239, 68, 68, 0.25)';
         ctx.lineWidth = 1.4;
         ctx.beginPath();
@@ -592,25 +616,12 @@
       ctx.fillRect(spineX - 14, midY + 4, 28, h - midY - 22);
       ctx.strokeStyle = '#ef4444';
       ctx.strokeRect(spineX - 14, midY + 4, 28, h - midY - 22);
-
-      for (let i = 0; i < 6; i++) {
-        ctx.strokeStyle = 'rgba(16, 185, 129, 0.4)';
-        ctx.beginPath();
-        ctx.moveTo(spineX + 14, 30 + i * 24);
-        ctx.bezierCurveTo(spineX + 45, 30 + i * 24, w - 35, 25 + i * 28, w, 25 + i * 28);
-        ctx.stroke();
-
-        ctx.strokeStyle = 'rgba(239, 68, 68, 0.4)';
-        ctx.beginPath();
-        ctx.moveTo(spineX + 14, midY + 24 + i * 32);
-        ctx.bezierCurveTo(spineX + 45, midY + 24 + i * 32, w - 35, midY + 20 + i * 36, w, midY + 20 + i * 36);
-        ctx.stroke();
-      }
     }
 
     function selectStock(symbol) {
       const s = fnoStocks.find(x => x.symbol === symbol);
       if (!s) return;
+      recomputeOBLevels(s);
       selectedStock = s;
       const isBull = s.change >= 0;
 
@@ -626,21 +637,23 @@
       bLtp.textContent = `₹${s.ltp.toFixed(2)} (${isBull ? '+' : ''}${s.change.toFixed(2)}%)`;
       bLtp.className = `font-num text-sm font-bold ${isBull ? 'text-[#10b981]' : 'text-[#ef4444]'}`;
       document.getElementById('bar-lot').textContent = `Lot: ${s.lotSize}`;
-      document.getElementById('bar-zone').textContent = `${s.obLow.toFixed(2)} – ${s.obHigh.toFixed(2)}`;
+      document.getElementById('bar-zone').textContent = `${s.obLow.toFixed(1)} – ${s.obHigh.toFixed(1)}`;
+      document.getElementById('bar-liq').textContent = `₹${s.liq.toFixed(1)}`;
       document.getElementById('bar-entry').textContent = `₹${s.entry.toFixed(2)}`;
       document.getElementById('bar-sl').textContent = `₹${s.sl.toFixed(2)}`;
       document.getElementById('bar-tp1').textContent = `₹${s.tp1.toFixed(2)}`;
-      document.getElementById('bar-tp2').textContent = `₹${s.tp2.toFixed(2)} (${s.rr})`;
+      document.getElementById('bar-tp2').textContent = `₹${s.tp2.toFixed(2)}`;
 
       const selEl = document.getElementById('chart-stock-selector');
       if (selEl) selEl.value = s.symbol;
       document.getElementById('fc-bias-badge').textContent = `${isBull ? 'BULLISH OB' : 'BEARISH OB'} • ${s.buildup}`;
       document.getElementById('fc-ltp').textContent = `₹${s.ltp.toFixed(2)} (${isBull ? '+' : ''}${s.change.toFixed(2)}%)`;
       document.getElementById('fc-zone').textContent = `₹${s.obLow.toFixed(2)} – ₹${s.obHigh.toFixed(2)}`;
+      document.getElementById('fc-liq').textContent = `₹${s.liq.toFixed(2)}`;
       document.getElementById('fc-entry').textContent = `₹${s.entry.toFixed(2)}`;
       document.getElementById('fc-sl').textContent = `₹${s.sl.toFixed(2)}`;
       document.getElementById('fc-tp1').textContent = `₹${s.tp1.toFixed(2)}`;
-      document.getElementById('fc-tp2').textContent = `₹${s.tp2.toFixed(2)} (${s.rr})`;
+      document.getElementById('fc-tp2').textContent = `₹${s.tp2.toFixed(2)}`;
 
       renderAllMatrix();
       drawCandlestickChart('inline-live-canvas', s);
@@ -667,12 +680,12 @@
       ctx.fillStyle = '#06090d';
       ctx.fillRect(0, 0, w, h);
 
-      const padL = 12, padR = 86, padT = 18, padB = 20;
+      const padL = 12, padR = 90, padT = 18, padB = 20;
       const plotW = w - padL - padR, plotH = h - padT - padB;
       const isBull = s.change >= 0;
 
-      const minP = Math.min(s.sl, s.tp2, s.obLow, s.ltp) * 0.996;
-      const maxP = Math.max(s.sl, s.tp2, s.obHigh, s.ltp) * 1.004;
+      const minP = Math.min(s.sl, s.tp2, s.obLow, s.liq, s.ltp) * 0.996;
+      const maxP = Math.max(s.sl, s.tp2, s.obHigh, s.liq, s.ltp) * 1.004;
       const pToY = p => padT + ((maxP - p) / (maxP - minP)) * plotH;
 
       ctx.strokeStyle = '#111924';
@@ -681,13 +694,14 @@
         ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
       }
 
+      // Order Block Zone highlight
       const zTop = pToY(s.obHigh), zBot = pToY(s.obLow);
       ctx.fillStyle = isBull ? 'rgba(16, 185, 129, 0.16)' : 'rgba(239, 68, 68, 0.16)';
       ctx.fillRect(padL, zTop, plotW, Math.max(zBot - zTop, 10));
       ctx.strokeStyle = isBull ? '#10b981' : '#ef4444';
       ctx.strokeRect(padL, zTop, plotW, Math.max(zBot - zTop, 10));
 
-      const drawTradeLine = (price, label, color) => {
+      const drawTradeLine = (price, label, color, textColor = '#06090d') => {
         const y = pToY(price);
         ctx.save();
         ctx.setLineDash([4, 3]);
@@ -698,7 +712,7 @@
 
         ctx.fillStyle = color;
         ctx.fillRect(w - padR + 2, y - 8, padR - 4, 16);
-        ctx.fillStyle = '#06090d';
+        ctx.fillStyle = textColor;
         ctx.font = 'bold 9px "JetBrains Mono", monospace';
         ctx.textAlign = 'left';
         ctx.fillText(`${label} ${price.toFixed(1)}`, w - padR + 5, y + 3);
@@ -707,7 +721,8 @@
       drawTradeLine(s.tp2, 'TP2', '#10b981');
       drawTradeLine(s.tp1, 'TP1', '#34d399');
       drawTradeLine(s.entry, 'ENT', '#60a5fa');
-      drawTradeLine(s.sl, 'SL ', '#ef4444');
+      drawTradeLine(s.liq, 'LIQ', '#a855f7', '#ffffff');
+      drawTradeLine(s.sl, 'SL ', '#ef4444', '#ffffff');
 
       const tfFactor = currentTf === '1m' ? 0.7 : currentTf === '15m' ? 1.3 : 1;
       const count = 38;
@@ -736,27 +751,43 @@
 
     function copySelectedLevels() {
       const s = selectedStock;
-      const txt = `${brand.name} | ${s.symbol} (${s.buildup})\nEntry: ₹${s.entry} | Stop Loss: ₹${s.sl}\nTP1: ₹${s.tp1} | TP2: ₹${s.tp2} (${s.rr})`;
+      const txt = `${brand.name} | ${s.symbol} (${s.buildup})\nOB: ₹${s.obLow} - ₹${s.obHigh} | LIQ: ₹${s.liq}\nEntry: ₹${s.entry} | SL: ₹${s.sl}\nTP1: ₹${s.tp1} | TP2: ₹${s.tp2}`;
       navigator.clipboard?.writeText(txt);
-      showToast(`Copied ${s.symbol} Entry / SL / TP levels!`);
+      showToast(`Copied ${s.symbol} OB / LIQ / SL / TP levels!`);
     }
 
     function calculateCustomOB() {
+      const bias = document.getElementById('calc-bias').value;
       const lot = parseInt(document.getElementById('calc-lot').value, 10) || 150;
       const obH = parseFloat(document.getElementById('calc-obhigh').value) || 2112.3;
       const obL = parseFloat(document.getElementById('calc-oblow').value) || 2083.9;
-      const sl = +(obL - (obH - obL) * 0.3).toFixed(2);
-      const tp = +(obH + (obH - sl) * 3).toFixed(2);
-      document.getElementById('c-entry').textContent = `₹${obH}`;
-      document.getElementById('c-sl').textContent = `₹${sl}`;
-      document.getElementById('c-tp').textContent = `₹${tp}`;
-      document.getElementById('c-risk').textContent = `₹${Math.round((obH - sl) * lot).toLocaleString('en-IN')}`;
+      const liq = parseFloat(document.getElementById('calc-liq').value) || 2072.0;
+
+      let entry, sl, tp1, tp2, riskPts;
+      if (bias === 'BULLISH') {
+        entry = obH;
+        sl = Math.min(liq, obL - (obH - obL) * 0.25);
+        riskPts = Math.max(entry - sl, 0.5);
+        tp1 = entry + riskPts * 2;
+        tp2 = entry + riskPts * 3;
+      } else {
+        entry = obL;
+        sl = Math.max(liq, obH + (obH - obL) * 0.25);
+        riskPts = Math.max(sl - entry, 0.5);
+        tp1 = entry - riskPts * 2;
+        tp2 = entry - riskPts * 3;
+      }
+
+      document.getElementById('c-entry').textContent = `₹${entry.toFixed(2)}`;
+      document.getElementById('c-sl').textContent = `₹${sl.toFixed(2)}`;
+      document.getElementById('c-tp').textContent = `₹${tp1.toFixed(2)} / ₹${tp2.toFixed(2)}`;
+      document.getElementById('c-risk').textContent = `₹${Math.round(riskPts * lot).toLocaleString('en-IN')}`;
     }
 
     let journal = [
-      { date: '2026-11-19', sym: 'COFORGE', setup: 'LONG BUILD-UP + OB', rr: '1:2.8', pnl: '+₹22,500' },
-      { date: '2026-11-20', sym: 'TCS', setup: 'SHORT BUILD-UP + OB', rr: '1:3.0', pnl: '+₹18,750' },
-      { date: '2026-11-20', sym: 'PERSISTENT', setup: 'LONG BUILD-UP + OB', rr: '1:2.8', pnl: '+₹14,200' }
+      { date: '2026-11-19', sym: 'COFORGE', setup: 'BULLISH OB + LIQ SWEEP', rr: '1:3.0', pnl: '+₹22,500' },
+      { date: '2026-11-20', sym: 'TCS', setup: 'BEARISH OB + LIQ SWEEP', rr: '1:3.0', pnl: '+₹18,750' },
+      { date: '2026-11-20', sym: 'PERSISTENT', setup: 'BULLISH OB + LIQ SWEEP', rr: '1:3.0', pnl: '+₹14,200' }
     ];
 
     function renderJournal() {
@@ -769,7 +800,7 @@
     function logCurrentToJournal() {
       journal.unshift({ date: new Date().toISOString().split('T')[0], sym: selectedStock.symbol, setup: selectedStock.buildup, rr: selectedStock.rr, pnl: 'OPEN' });
       renderJournal();
-      showToast(`Logged ${selectedStock.symbol} to Journal!`);
+      showToast(`Logged ${selectedStock.symbol} OB setup to Journal!`);
     }
 
     function setTf(tf) {
@@ -791,9 +822,7 @@
       document.getElementById('sim-btn-label').textContent = isSimActive ? 'LIVE ON' : 'PAUSED';
     }
 
-    // DHAN LIVE SERVER CONNECTION (WITH AUTO-FALLBACK)
     const DHAN_API_URL = 'https://icy-math-a205.mh4962898.workers.dev';
-    let isDhanLiveConnected = false;
 
     async function fetchDhanLive() {
       if (!isSimActive) return;
@@ -805,7 +834,6 @@
         const data = await res.json();
 
         if (data.status === 'LIVE_DHAN' && data.stocks && Object.keys(data.stocks).length > 0) {
-          isDhanLiveConnected = true;
           document.getElementById('ist-clock-display').textContent = `${timeStr} • 🟢 DHAN LIVE`;
           document.getElementById('sim-btn-label').textContent = 'DHAN LIVE';
 
@@ -814,20 +842,20 @@
             if (live && live.ltp) {
               s.ltp = +live.ltp;
               if (typeof live.change === 'number') s.change = +live.change;
+              recomputeOBLevels(s);
             }
           });
           selectStock(selectedStock.symbol);
           return;
         }
-      } catch (e) {
-        isDhanLiveConnected = false;
-      }
+      } catch (e) {}
 
       document.getElementById('ist-clock-display').textContent = `${timeStr} • SIM MODE`;
       fnoStocks.forEach(s => {
         const d = (Math.random() - 0.49) * 0.09;
         s.change = +(s.change + d).toFixed(2);
         s.ltp = +(s.ltp * (1 + d / 100)).toFixed(2);
+        recomputeOBLevels(s);
       });
       selectStock(selectedStock.symbol);
     }
