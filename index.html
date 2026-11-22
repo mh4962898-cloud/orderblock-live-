@@ -3,22 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ORDER BLOCK • NSE LIQUIDITY TERMINAL</title>
-
-  <!-- Optional Google Fonts with clean system fallbacks for 100% offline reliability -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <title>Order Block • NSE Liquidity Terminal</title>
 
   <style>
     /* =========================================================================
-       1. DESIGN TOKENS & BASE RESET (Zero external CSS framework required)
+       1. DESIGN TOKENS & BASE RESET (Zero external CDN dependencies)
        ========================================================================= */
     :root {
-      --bg-base: #06090f;
-      --bg-panel: #0d131f;
-      --bg-card: #0a101b;
-      --bg-elevated: #111a2a;
+      --bg-base: #070b14;
+      --bg-panel: #0d1424;
+      --bg-card: #0b1120;
+      --bg-elevated: #121c30;
       --border-subtle: #1c2638;
       --border-strong: #283852;
       --text-primary: #e6edf7;
@@ -34,1205 +29,47 @@
       --bear-border: rgba(255, 59, 92, 0.34);
       --amber: #ffb300;
       --amber-soft: rgba(255, 179, 0, 0.14);
-      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, 'Cascadia Code', Menlo, Monaco, Consolas, monospace;
       --radius-sm: 6px;
       --radius-md: 8px;
       --radius-lg: 12px;
       color-scheme: dark;
     }
-
-    *, *::before, *::after {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    html, body {
-      min-height: 100%;
-      background-color: var(--bg-base);
-      color: var(--text-primary);
-      font-family: var(--font-sans);
-      font-size: 13px;
-      line-height: 1.35;
-      overflow-x: hidden;
-      -webkit-font-smoothing: antialiased;
-    }
-
-    .mono {
-      font-family: var(--font-mono);
-      font-variant-numeric: tabular-nums;
-    }
-
-    /* Crisp thin dark scrollbars */
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: var(--bg-base); }
-    ::-webkit-scrollbar-thumb { background: #1e2c42; border-radius: 999px; }
-    ::-webkit-scrollbar-thumb:hover { background: #2e4466; }
-
-    button, input, label { font-family: inherit; }
-
-    /* =========================================================================
-       2. TOP TERMINAL BAR
-       ========================================================================= */
-    .app-shell {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 40;
-      background: rgba(8, 12, 20, 0.96);
-      backdrop-filter: blur(8px);
-      border-bottom: 1px solid var(--border-subtle);
-      padding: 8px 12px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .topbar-left, .topbar-center, .topbar-right {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .brand-icon {
-      width: 28px;
-      height: 28px;
-      border-radius: var(--radius-sm);
-      background: linear-gradient(135deg, rgba(0, 230, 118, 0.22), rgba(0, 210, 255, 0.16));
-      border: 1px solid rgba(0, 230, 118, 0.48);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--bull);
-      box-shadow: 0 0 12px rgba(0, 230, 118, 0.18);
-      flex-shrink: 0;
-    }
-
-    .brand-title {
-      font-size: 13px;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      color: #f8fafc;
-      line-height: 1.1;
-    }
-    .brand-title .dot { color: var(--bull); }
-    .brand-title .accent { color: var(--cyan); }
-
-    .brand-sub {
-      font-size: 10px;
-      color: var(--text-secondary);
-      margin-top: 2px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* Search Input */
-    .search-wrap {
-      position: relative;
-      width: 195px;
-    }
-    .search-wrap svg {
-      position: absolute;
-      left: 9px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-muted);
-      pointer-events: none;
-    }
-    .search-input {
-      width: 100%;
-      background: var(--bg-panel);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 5px 24px 5px 28px;
-      color: var(--text-primary);
-      font-size: 11.5px;
-      font-family: var(--font-mono);
-      outline: none;
-      transition: border-color 0.15s, box-shadow 0.15s;
-    }
-    .search-input:focus {
-      border-color: var(--cyan);
-      box-shadow: 0 0 0 2px rgba(0, 210, 255, 0.14);
-    }
-    .search-clear {
-      position: absolute;
-      right: 6px;
-      top: 50%;
-      transform: translateY(-50%);
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      font-size: 14px;
-      display: none;
-      padding: 0 3px;
-    }
-    .search-clear.visible { display: block; }
-    .search-clear:hover { color: #fff; }
-
-    /* Sector Filter Pills */
-    .sector-bar {
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      gap: 4px;
-    }
-    .sector-pill {
-      background: var(--bg-panel);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-secondary);
-      border-radius: 5px;
-      padding: 3px 7px;
-      font-size: 10px;
-      font-weight: 700;
-      font-family: var(--font-mono);
-      cursor: pointer;
-      transition: all 0.14s ease;
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-    }
-    .sector-pill:hover {
-      border-color: var(--border-strong);
-      color: var(--text-primary);
-    }
-    .sector-pill.active {
-      background: rgba(0, 210, 255, 0.16);
-      border-color: var(--cyan);
-      color: #ffffff;
-      box-shadow: 0 0 10px rgba(0, 210, 255, 0.18);
-    }
-    .sector-pill .sec-chg { font-size: 9px; font-weight: 600; }
-    .sec-up { color: var(--bull); }
-    .sec-dn { color: var(--bear); }
-
-    /* Breadth Readout */
-    .breadth-box {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--bg-panel);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 4px 10px;
-    }
-    .breadth-item {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .breadth-lbl {
-      font-size: 9.5px;
-      font-weight: 800;
-      letter-spacing: 0.05em;
-    }
-    .breadth-num {
-      font-size: 13.5px;
-      font-weight: 800;
-    }
-    .bull-txt { color: var(--bull); }
-    .bear-txt { color: var(--bear); }
-    .cyan-txt { color: var(--cyan); }
-    .amber-txt { color: var(--amber); }
-
-    /* Mode Switcher & Controls */
-    .mode-switch {
-      display: inline-flex;
-      background: var(--bg-base);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-sm);
-      padding: 2px;
-      gap: 2px;
-    }
-    .mode-btn {
-      border: none;
-      background: transparent;
-      color: var(--text-secondary);
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      font-weight: 700;
-      padding: 4px 8px;
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.15s ease;
-    }
-    .mode-btn:hover { color: #fff; }
-    .mode-btn.active-mcp {
-      background: rgba(0, 230, 118, 0.18);
-      color: var(--bull);
-      box-shadow: inset 0 0 0 1px rgba(0, 230, 118, 0.45);
-    }
-    .mode-btn.active-sim {
-      background: rgba(0, 210, 255, 0.18);
-      color: var(--cyan);
-      box-shadow: inset 0 0 0 1px rgba(0, 210, 255, 0.45);
-    }
-
-    .status-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 8px;
-      border-radius: var(--radius-sm);
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 700;
-      border: 1px solid var(--border-subtle);
-      white-space: nowrap;
-    }
-    .status-pill.connected {
-      background: rgba(0, 230, 118, 0.12);
-      border-color: rgba(0, 230, 118, 0.45);
-      color: var(--bull);
-    }
-    .status-pill.offline {
-      background: rgba(255, 179, 0, 0.12);
-      border-color: rgba(255, 179, 0, 0.45);
-      color: var(--amber);
-    }
-    .status-pill.sim {
-      background: rgba(0, 210, 255, 0.12);
-      border-color: rgba(0, 210, 255, 0.4);
-      color: var(--cyan);
-    }
-    .pulse-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: currentColor;
-      animation: pulseAnim 1.5s infinite;
-    }
-    @keyframes pulseAnim {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.45; transform: scale(0.85); }
-    }
-
-    .icon-btn, .upload-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      background: var(--bg-panel);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-primary);
-      border-radius: var(--radius-sm);
-      padding: 5px 8px;
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.14s ease;
-    }
-    .icon-btn:hover, .upload-btn:hover {
-      border-color: var(--cyan);
-      color: #fff;
-      background: #121c2e;
-    }
-    .upload-btn {
-      border-color: rgba(0, 210, 255, 0.35);
-      color: var(--cyan);
-    }
-
-    /* Settings Popover */
-    .settings-anchor { position: relative; }
-    .settings-popover {
-      position: absolute;
-      top: calc(100% + 8px);
-      right: 0;
-      width: 320px;
-      max-width: 92vw;
-      background: #0c1320;
-      border: 1px solid var(--border-strong);
-      border-radius: var(--radius-md);
-      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.72);
-      padding: 12px;
-      z-index: 60;
-      display: none;
-    }
-    .settings-popover.open { display: block; }
-    .pop-title {
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.05em;
-      color: #fff;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .field-group { margin-bottom: 9px; }
-    .field-label {
-      display: block;
-      font-size: 10px;
-      font-family: var(--font-mono);
-      color: var(--text-secondary);
-      margin-bottom: 4px;
-    }
-    .field-input {
-      width: 100%;
-      background: var(--bg-base);
-      border: 1px solid var(--border-subtle);
-      border-radius: 5px;
-      padding: 6px 8px;
-      color: #fff;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      outline: none;
-    }
-    .field-input:focus { border-color: var(--cyan); }
-    .pop-actions {
-      display: flex;
-      gap: 6px;
-      margin-top: 10px;
-    }
-    .btn-primary {
-      flex: 1;
-      background: rgba(0, 210, 255, 0.16);
-      border: 1px solid var(--cyan);
-      color: var(--cyan);
-      border-radius: 5px;
-      padding: 6px 8px;
-      font-size: 11px;
-      font-weight: 700;
-      font-family: var(--font-mono);
-      cursor: pointer;
-    }
-    .btn-primary:hover { background: rgba(0, 210, 255, 0.26); color: #fff; }
-    .btn-save {
-      background: rgba(0, 230, 118, 0.16);
-      border: 1px solid var(--bull);
-      color: var(--bull);
-      border-radius: 5px;
-      padding: 6px 10px;
-      font-size: 11px;
-      font-weight: 700;
-      font-family: var(--font-mono);
-      cursor: pointer;
-    }
-    .btn-save:hover { background: rgba(0, 230, 118, 0.26); color: #fff; }
-    .test-result {
-      margin-top: 8px;
-      font-size: 10px;
-      font-family: var(--font-mono);
-      padding: 6px 8px;
-      border-radius: 5px;
-      display: none;
-      word-break: break-word;
-    }
-
-    /* Non-intrusive Bridge Offline Banner */
-    .offline-banner {
-      display: none;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
-      background: rgba(255, 179, 0, 0.1);
-      border-bottom: 1px solid rgba(255, 179, 0, 0.35);
-      padding: 6px 12px;
-      font-size: 11px;
-      font-family: var(--font-mono);
-      color: #ffd573;
-    }
-    .offline-banner.visible { display: flex; }
-    .offline-banner code {
-      background: rgba(0, 0, 0, 0.45);
-      padding: 2px 6px;
-      border-radius: 4px;
-      color: #fff;
-      border: 1px solid rgba(255, 179, 0, 0.3);
-    }
-    .banner-actions { display: flex; gap: 6px; }
-    .banner-btn {
-      background: rgba(255, 179, 0, 0.18);
-      border: 1px solid rgba(255, 179, 0, 0.5);
-      color: #ffe08a;
-      border-radius: 4px;
-      padding: 3px 8px;
-      font-size: 10px;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    .banner-btn:hover { background: rgba(255, 179, 0, 0.3); color: #fff; }
-
-    /* =========================================================================
-       3. THREE-PANEL HIGH-DENSITY GRID LAYOUT
-       ========================================================================= */
-    .main-grid {
-      flex: 1;
-      display: grid;
-      grid-template-columns: 1fr;
-      gap: 8px;
-      padding: 8px;
-    }
-
-    @media (min-width: 1120px) {
-      .main-grid {
-        grid-template-columns: 4fr 4.2fr 3.8fr;
-        height: calc(100vh - 96px);
-        overflow: hidden;
-      }
-    }
-
-    .panel {
-      background: var(--bg-panel);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-      min-height: 0;
-    }
-
-    .panel-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 6px 10px;
-      border-bottom: 1px solid var(--border-subtle);
-      background: #0a101c;
-      flex-shrink: 0;
-    }
-    .panel-title {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      font-size: 11px;
-      font-weight: 800;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: var(--text-primary);
-    }
-    .panel-meta {
-      font-size: 10px;
-      font-family: var(--font-mono);
-      color: var(--text-secondary);
-    }
-
-    /* Left Panel: Spider Chart */
-    .spider-panel { min-height: 460px; }
-    .spider-canvas-wrap {
-      position: relative;
-      flex: 1;
-      width: 100%;
-      min-height: 420px;
-      background: var(--bg-base);
-      cursor: crosshair;
-      overflow: hidden;
-    }
-    #spiderCanvas { display: block; width: 100%; height: 100%; }
-
-    .spider-tooltip {
-      position: absolute;
-      z-index: 20;
-      pointer-events: none;
-      display: none;
-      background: rgba(10, 16, 28, 0.96);
-      border: 1px solid rgba(0, 210, 255, 0.55);
-      border-radius: 6px;
-      padding: 6px 9px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.65);
-      min-width: 150px;
-    }
-    .spider-tooltip.visible { display: block; }
-
-    /* Middle Panel: Split Bullish & Bearish Grids */
-    .middle-col {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-height: 0;
-    }
-    .half-panel {
-      flex: 1;
-      min-height: 250px;
-      display: flex;
-      flex-direction: column;
-      background: var(--bg-panel);
-      border-radius: var(--radius-md);
-      overflow: hidden;
-    }
-    .half-panel.bull-border { border: 1px solid rgba(0, 230, 118, 0.25); }
-    .half-panel.bear-border { border: 1px solid rgba(255, 59, 92, 0.25); }
-
-    .bull-hdr { background: rgba(0, 230, 118, 0.06); border-bottom: 1px solid rgba(0, 230, 118, 0.18); }
-    .bear-hdr { background: rgba(255, 59, 92, 0.06); border-bottom: 1px solid rgba(255, 59, 92, 0.18); }
-
-    .stock-grid {
-      flex: 1;
-      overflow-y: auto;
-      padding: 6px;
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 6px;
-      align-content: start;
-    }
-    @media (min-width: 640px) {
-      .stock-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-    }
-
-    .stock-card {
-      border-radius: var(--radius-sm);
-      padding: 7px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 4px;
-      transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
-      user-select: none;
-    }
-    .stock-card.bull {
-      background: linear-gradient(155deg, rgba(0, 230, 118, 0.10) 0%, #09101a 68%);
-      border: 1px solid rgba(0, 230, 118, 0.26);
-    }
-    .stock-card.bull:hover {
-      border-color: var(--bull);
-      box-shadow: 0 0 14px rgba(0, 230, 118, 0.18);
-      transform: translateY(-1px);
-    }
-    .stock-card.bear {
-      background: linear-gradient(155deg, rgba(255, 59, 92, 0.11) 0%, #120a12 68%);
-      border: 1px solid rgba(255, 59, 92, 0.26);
-    }
-    .stock-card.bear:hover {
-      border-color: var(--bear);
-      box-shadow: 0 0 14px rgba(255, 59, 92, 0.18);
-      transform: translateY(-1px);
-    }
-    .stock-card.match-ring, .pick-card.match-ring {
-      box-shadow: 0 0 0 1.5px var(--cyan), 0 0 16px rgba(0, 210, 255, 0.35) !important;
-    }
-
-    .sc-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      gap: 4px;
-    }
-    .sc-sym {
-      font-size: 11px;
-      font-weight: 800;
-      color: #fff;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .sc-ltp { font-size: 9.5px; color: var(--text-secondary); }
-    .sc-pct { font-size: 11px; font-weight: 800; text-align: right; }
-    .sc-vol { font-size: 9px; color: var(--amber); text-align: right; font-weight: 600; }
-    .sc-foot {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 4px;
-    }
-    .sc-tag {
-      font-size: 8px;
-      font-weight: 700;
-      padding: 1px 4px;
-      border-radius: 3px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .sc-tag.bull { background: rgba(0, 230, 118, 0.14); color: #69f0ae; border: 1px solid rgba(0, 230, 118, 0.3); }
-    .sc-tag.bear { background: rgba(255, 59, 92, 0.14); color: #ff8096; border: 1px solid rgba(255, 59, 92, 0.3); }
-    .sc-conv { font-size: 9px; font-weight: 700; color: var(--text-secondary); }
-
-    /* Right Panel: High-Conviction Institutional Picks */
-    .picks-list {
-      flex: 1;
-      overflow-y: auto;
-      padding: 7px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .pick-card {
-      border-radius: var(--radius-md);
-      padding: 9px 10px;
-      cursor: pointer;
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-      transition: transform 0.13s ease, border-color 0.13s ease, box-shadow 0.13s ease;
-    }
-    .pick-card.bull {
-      background: linear-gradient(135deg, rgba(0, 230, 118, 0.14) 0%, #09131c 48%, #0a101b 100%);
-      border: 1px solid rgba(0, 230, 118, 0.38);
-    }
-    .pick-card.bull:hover {
-      border-color: var(--bull);
-      box-shadow: 0 0 20px rgba(0, 230, 118, 0.18);
-      transform: translateY(-1px);
-    }
-    .pick-card.bear {
-      background: linear-gradient(135deg, rgba(255, 59, 92, 0.14) 0%, #190b15 48%, #0e0a12 100%);
-      border: 1px solid rgba(255, 59, 92, 0.38);
-    }
-    .pick-card.bear:hover {
-      border-color: var(--bear);
-      box-shadow: 0 0 20px rgba(255, 59, 92, 0.18);
-      transform: translateY(-1px);
-    }
-
-    .pick-main {
-      display: grid;
-      grid-template-columns: 1fr 1.1fr;
-      gap: 8px;
-      align-items: center;
-    }
-    .pick-badges {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      flex-wrap: wrap;
-      margin-bottom: 3px;
-    }
-    .pick-sym { font-size: 13.5px; font-weight: 800; color: #fff; }
-    .badge {
-      font-family: var(--font-mono);
-      font-size: 9px;
-      font-weight: 800;
-      padding: 1.5px 5px;
-      border-radius: 4px;
-    }
-    .badge-bull { background: rgba(0, 230, 118, 0.18); color: var(--bull); border: 1px solid rgba(0, 230, 118, 0.45); }
-    .badge-bear { background: rgba(255, 59, 92, 0.18); color: var(--bear); border: 1px solid rgba(255, 59, 92, 0.45); }
-    .badge-conv { background: rgba(255, 179, 0, 0.16); color: var(--amber); border: 1px solid rgba(255, 179, 0, 0.45); }
-
-    .pick-pct { font-size: 18px; font-weight: 800; line-height: 1.05; }
-    .pick-ltp { font-size: 11px; color: #e2e8f0; margin-top: 2px; }
-    .pick-vwap { font-size: 9.5px; font-weight: 700; margin-top: 3px; }
-
-    .pick-mini-canvas {
-      width: 100%;
-      height: 64px;
-      display: block;
-      border-radius: 5px;
-      background: #06090f;
-      border: 1px solid rgba(28, 38, 56, 0.9);
-    }
-
-    .pick-levels {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 4px;
-      padding-top: 6px;
-      border-top: 1px solid rgba(148, 163, 184, 0.16);
-      font-family: var(--font-mono);
-    }
-    .lvl-lbl { font-size: 8px; color: var(--text-muted); text-transform: uppercase; }
-    .lvl-val { font-size: 9.5px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-
-    /* =========================================================================
-       4. FOOTER BAR
-       ========================================================================= */
-    .footer {
-      background: #05080d;
-      border-top: 1px solid var(--border-subtle);
-      padding: 6px 12px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 10px;
-      font-family: var(--font-mono);
-      color: var(--text-muted);
-    }
-    .footer-tag {
-      background: rgba(0, 210, 255, 0.12);
-      border: 1px solid rgba(0, 210, 255, 0.35);
-      color: var(--cyan);
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-weight: 700;
-    }
-    .link-btn {
-      background: none;
-      border: none;
-      color: var(--cyan);
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      font-weight: 700;
-      text-decoration: underline;
-      cursor: pointer;
-    }
-    .link-btn:hover { color: #fff; }
-
-    /* =========================================================================
-       5. INTERACTIVE ORDER BLOCK CANDLESTICK MODAL
-       ========================================================================= */
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      z-index: 80;
-      background: rgba(3, 6, 12, 0.86);
-      backdrop-filter: blur(6px);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      padding: 12px;
-    }
-    .modal-backdrop.open { display: flex; }
-
-    .modal-card {
-      width: 100%;
-      max-width: 1020px;
-      max-height: 94vh;
-      background: var(--bg-panel);
-      border-radius: var(--radius-lg);
-      border: 1px solid var(--bull-border);
-      box-shadow: 0 0 50px rgba(0, 230, 118, 0.16);
-      display: flex;
-      flex-direction: column;
-      overflow: hidden;
-    }
-    .modal-card.bear-mode {
-      border-color: var(--bear-border);
-      box-shadow: 0 0 50px rgba(255, 59, 92, 0.18);
-    }
-
-    .modal-hdr {
-      padding: 11px 16px;
-      background: #0a101c;
-      border-bottom: 1px solid var(--border-subtle);
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-    .modal-close {
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      background: var(--bg-elevated);
-      border: 1px solid var(--border-strong);
-      color: var(--text-primary);
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .modal-close:hover { background: #1a2942; color: #fff; }
-
-    .modal-stats {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      padding: 10px 16px;
-      background: #080d17;
-      border-bottom: 1px solid var(--border-subtle);
-      font-family: var(--font-mono);
-    }
-    @media (min-width: 768px) {
-      .modal-stats { grid-template-columns: repeat(6, minmax(0, 1fr)); }
-    }
-    .stat-box {
-      background: var(--bg-panel);
-      border: 1px solid var(--border-subtle);
-      border-radius: 6px;
-      padding: 6px 9px;
-    }
-    .stat-k { font-size: 9px; color: var(--text-muted); text-transform: uppercase; }
-    .stat-v { font-size: 11.5px; font-weight: 700; margin-top: 2px; color: #fff; }
-
-    .modal-chart-wrap {
-      position: relative;
-      flex: 1;
-      min-height: 360px;
-      background: var(--bg-base);
-      padding: 8px;
-    }
-    #modalCanvas {
-      display: block;
-      width: 100%;
-      height: 100%;
-      min-height: 344px;
-      cursor: crosshair;
-    }
-
-    .chart-hud {
-      position: absolute;
-      top: 12px;
-      left: 16px;
-      z-index: 10;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      background: rgba(6, 9, 15, 0.88);
-      border: 1px solid var(--border-subtle);
-      border-radius: 5px;
-      padding: 4px 10px;
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      pointer-events: none;
-    }
-
-    .modal-foot {
-      padding: 8px 16px;
-      background: #0a101c;
-      border-top: 1px solid var(--border-subtle);
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      gap: 8px;
-      font-size: 10px;
-      font-family: var(--font-mono);
-      color: var(--text-secondary);
-    }
-    .legend-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
-    .legend-item { display: inline-flex; align-items: center; gap: 5px; }
-
-    /* Toast Notifications */
-    .toast-stack {
-      position: fixed;
-      top: 62px;
-      right: 14px;
-      z-index: 95;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      pointer-events: none;
-      max-width: 380px;
-    }
-    .toast {
-      pointer-events: auto;
-      padding: 8px 12px;
-      border-radius: 7px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.65);
-      backdrop-filter: blur(8px);
-      border: 1px solid var(--border-strong);
-      background: rgba(13, 19, 31, 0.96);
-      color: var(--text-primary);
-      transition: opacity 0.25s, transform 0.25s;
-    }
-    .toast.success { border-color: rgba(0, 230, 118, 0.55); color: #8affc1; }
-    .toast.warn { border-color: rgba(255, 179, 0, 0.55); color: #ffd97d; }
-    .toast.error { border-color: rgba(255, 59, 92, 0.55); color: #ff8fa3; }
-    .toast.info { border-color: rgba(0, 210, 255, 0.55); color: #8be9ff; }
-  </style>
-</head>
-<body>
-  <div class="app-shell">
-
-    <!-- ==================== 1. TOP TERMINAL BAR ==================== -->
-    <header class="topbar">
-      <!-- Brand + Search -->
-      <div class="topbar-left">
-        <div class="brand">
-          <div class="brand-icon" aria-hidden="true">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
-              <polyline points="16 7 22 7 22 13"></polyline>
-            </svg>
-          </div>
-          <div>
-            <div class="brand-title">ORDER BLOCK <span class="dot">•</span> <span class="accent">NSE LIQUIDITY TERMINAL</span></div>
-            <div class="brand-sub mono">
-              <span id="istClock">IST 09:15:00</span>
-              <span>|</span>
-              <span id="universeMeta">40 TRACKED NSE F&amp;O</span>
-            </div>
-          </div>
-        </div>
-
-        <div class="search-wrap">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input id="stockSearch" class="search-input" type="text" placeholder="Search NSE stocks..." autocomplete="off" />
-          <button id="clearSearchBtn" class="search-clear" title="Clear search">&times;</button>
-        </div>
-      </div>
-
-      <!-- Sector Filter Pills + Breadth Readout -->
-      <div class="topbar-center">
-        <div id="sectorBar" class="sector-bar" role="group" aria-label="Sector filter"></div>
-
-        <div class="breadth-box mono">
-          <div class="breadth-item">
-            <span class="breadth-lbl bull-txt">BULLISH</span>
-            <span id="breadthBull" class="breadth-num bull-txt">24</span>
-          </div>
-          <span style="color:#475569;font-size:11px;">vs</span>
-          <div class="breadth-item">
-            <span class="breadth-lbl bear-txt">BEARISH</span>
-            <span id="breadthBear" class="breadth-num bear-txt">16</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Data Source Controls -->
-      <div class="topbar-right">
-        <div class="mode-switch" role="group" aria-label="Data source mode">
-          <button id="btnLiveMcp" class="mode-btn" type="button">LIVE NSE MCP</button>
-          <button id="btnSimMode" class="mode-btn active-sim" type="button">SIM MODE</button>
-        </div>
-
-        <div id="statusPill" class="status-pill sim">
-          <span class="pulse-dot"></span>
-          <span id="statusText">SIMULATION 2s</span>
-        </div>
-
-        <!-- Settings Gear Popover -->
-        <div class="settings-anchor">
-          <button id="settingsBtn" class="icon-btn" type="button" title="Configure Local NSE MCP Bridge">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="3"></circle>
-              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.85 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-            </svg>
-          </button>
-
-          <div id="settingsPopover" class="settings-popover">
-            <div class="pop-title">
-              <span>NSE MCP BRIDGE CONFIG</span>
-              <button id="closeSettingsBtn" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:15px;">&times;</button>
-            </div>
-            <div class="field-group">
-              <label class="field-label" for="bridgeUrlInput">Local Python MCP Bridge URL</label>
-              <input id="bridgeUrlInput" class="field-input" type="text" value="http://127.0.0.1:8000/api/nse-mcp-live" />
-            </div>
-            <div class="field-group">
-              <label class="field-label" for="pollIntervalInput">Poll Interval (seconds)</label>
-              <input id="pollIntervalInput" class="field-input" type="number" min="3" max="120" value="15" />
-            </div>
-            <div class="pop-actions">
-              <button id="testBridgeBtn" class="btn-primary" type="button">Test Connection</button>
-              <button id="saveBridgeBtn" class="btn-save" type="button">Save</button>
-            </div>
-            <div id="testResultBox" class="test-result"></div>
-          </div>
-        </div>
-
-        <!-- Upload NSE CSV -->
-        <label class="upload-btn" for="csvUploadInput" title="Upload NSE Bhavcopy / Market Watch CSV">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="17 8 12 3 7 8"></polyline>
-            <line x1="12" y1="3" x2="12" y2="15"></line>
-          </svg>
-          <span>Upload NSE CSV</span>
-          <input id="csvUploadInput" type="file" accept=".csv,text/csv" style="display:none;" />
-        </label>
-      </div>
-    </header>
-
-    <!-- Non-intrusive Offline Bridge Banner -->
-    <div id="offlineBanner" class="offline-banner">
-      <div>
-        <strong>MCP Bridge Offline:</strong> Start your local bridge with
-        <code>uvicorn nse_mcp_bridge:app --port 8000</code>
-        to stream live NSE MCP quotes from 09:15 IST.
-      </div>
-      <div class="banner-actions">
-        <button id="bannerRetryBtn" class="banner-btn" type="button">Retry MCP</button>
-        <button id="bannerSimBtn" class="banner-btn" type="button">Fallback to SIM MODE</button>
-      </div>
-    </div>
-
-    <!-- Toast Container -->
-    <div id="toastStack" class="toast-stack"></div>
-
-    <!-- ==================== 2. THREE-PANEL MAIN LAYOUT ==================== -->
-    <main class="main-grid">
-
-      <!-- LEFT PANEL: INTRADAY LIQUIDITY FLOW SPIDER CHART -->
-      <section class="panel spider-panel">
-        <div class="panel-header">
-          <div class="panel-title">
-            <span style="width:7px;height:7px;border-radius:50%;background:var(--cyan);display:inline-block;"></span>
-            <span>Intraday Liquidity Flow</span>
-            <span class="mono" style="color:var(--text-muted);font-weight:500;">(09:15 → LIVE)</span>
-          </div>
-          <div class="panel-meta">
-            <span id="spiderBullPct" class="bull-txt">60.0% BULL</span>
-            <span style="color:#475569;"> / </span>
-            <span id="spiderBearPct" class="bear-txt">40.0% BEAR</span>
-          </div>
-        </div>
-        <div id="spiderWrap" class="spider-canvas-wrap">
-          <canvas id="spiderCanvas"></canvas>
-          <div id="spiderTooltip" class="spider-tooltip">
-            <div style="display:flex;justify-content:space-between;gap:12px;">
-              <strong id="ttSym" style="color:#fff;">INDUSINDBK</strong>
-              <strong id="ttPct" class="bull-txt">+8.60%</strong>
-            </div>
-            <div style="display:flex;justify-content:space-between;gap:12px;margin-top:3px;color:#94a3b8;font-size:10px;">
-              <span id="ttSec">BANKING</span>
-              <span id="ttLtp" style="color:#e2e8f0;">₹1,003.00</span>
-            </div>
-            <div style="display:flex;justify-content:space-between;gap:12px;margin-top:2px;font-size:9.5px;">
-              <span id="ttVol" class="amber-txt">3.15x VOL</span>
-              <span class="cyan-txt">Click for OB</span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- MIDDLE PANEL: SPLIT BULLISH & BEARISH MOMENTUM GRIDS -->
-      <section class="middle-col">
-        <!-- Top Half: Bullish -->
-        <div class="half-panel bull-border">
-          <div class="panel-header bull-hdr">
-            <div class="panel-title bull-txt">▲ BULLISH MOMENTUM / LONG BUILD-UP</div>
-            <div id="bullGridMeta" class="panel-meta bull-txt">TOP 12</div>
-          </div>
-          <div id="bullishGrid" class="stock-grid"></div>
-        </div>
-
-        <!-- Bottom Half: Bearish -->
-        <div class="half-panel bear-border">
-          <div class="panel-header bear-hdr">
-            <div class="panel-title bear-txt">▼ BEARISH MOMENTUM / SHORT BUILD-UP</div>
-            <div id="bearGridMeta" class="panel-meta bear-txt">TOP 12</div>
-          </div>
-          <div id="bearishGrid" class="stock-grid"></div>
-        </div>
-      </section>
-
-      <!-- RIGHT PANEL: HIGH-CONVICTION INSTITUTIONAL PICKS -->
-      <section class="panel">
-        <div class="panel-header">
-          <div class="panel-title">
-            <span style="width:7px;height:7px;border-radius:50%;background:var(--amber);display:inline-block;"></span>
-            <span>High-Conviction Institutional Picks</span>
-          </div>
-          <div class="panel-meta amber-txt">TOP 3 BULL • TOP 3 BEAR</div>
-        </div>
-        <div id="picksList" class="picks-list"></div>
-      </section>
-
-    </main>
-
-    <!-- ==================== 3. FOOTER ==================== -->
-    <footer class="footer">
-      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-        <span id="footerSourceBadge" class="footer-tag">SIMULATION FEED</span>
-        <span>Switch to <strong>LIVE NSE MCP</strong> after starting your local Python bridge (`nse_mcp_bridge.py`)</span>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px;">
-        <span>Click any card or trajectory for 5m Order Block &amp; VWAP inspection</span>
-        <button id="sampleCsvBtn" class="link-btn" type="button">Sample CSV</button>
-      </div>
-    </footer>
-  </div>
-
-  <!-- ==================== 4. INTERACTIVE ORDER BLOCK CANDLESTICK MODAL ==================== -->
-  <div id="obModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="mSymbol">
-    <div id="obModalCard" class="modal-card">
-      <div class="modal-hdr">
-        <div>
-          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-            <h2 id="mSymbol" style="font-size:18px;font-weight:800;color:#fff;letter-spacing:0.02em;">INDUSINDBK</h2>
-            <span id="mSector" class="mono cyan-txt" style="font-size:11px;font-weight:700;">BANKING</span>
-            <span id="mDirBadge" class="badge badge-bull">BULLISH PICK #1</span>
-            <span id="mConvBadge" class="badge badge-conv">CONV 98</span>
-          </div>
-          <div class="mono" style="display:flex;align-items:center;gap:10px;margin-top:4px;font-size:12px;">
-            <strong id="mLtp" style="font-size:15px;color:#fff;">₹1,003.00</strong>
-            <span id="mChg" class="bull-txt" style="font-weight:700;">+8.60% (+79.45)</span>
-            <span style="color:#475569;">|</span>
-            <span id="mVolSurge" class="amber-txt" style="font-weight:700;">3.15x VOL</span>
-          </div>
-        </div>
-        <button id="closeModalBtn" class="modal-close" type="button" title="Close (Esc)">&times;</button>
-      </div>
-
-      <div class="modal-stats">
-        <div class="stat-box">
-          <div class="stat-k">VWAP Alignment</div>
-          <div id="mVwapStat" class="stat-v cyan-txt">₹974.20 (ABOVE)</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-k">Morning OB Zone</div>
-          <div id="mOb1Stat" class="stat-v bull-txt">936.0 - 944.5</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-k">Midday OB Zone</div>
-          <div id="mOb2Stat" class="stat-v amber-txt">978.4 - 986.2</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-k">Support S1</div>
-          <div id="mS1Stat" class="stat-v">₹971.50</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-k">Targets R1 / R2</div>
-          <div id="mR1R2Stat" class="stat-v">1021.0 / 1042.0</div>
-        </div>
-        <div class="stat-box">
-          <div class="stat-k">Risk : Reward</div>
-          <div id="mRrStat" class="stat-v cyan-txt">1 : 2.0</div>
-        </div>
-      </div>
-
-      <div class="modal-chart-wrap">
-        <div class="chart-hud">
-          <span style="color:#64748b;">5m INTRADAY</span>
-          <span id="hudTime" style="color:#fff;font-weight:700;">15:15</span>
-          <span>O <strong id="hudO">-</strong></span>
-          <span>H <strong id="hudH" class="bull-txt">-</strong></span>
-          <span>L <strong id="hudL" class="bear-txt">-</strong></span>
-          <span>C <strong id="hudC" style="color:#fff;">-</strong></span>
-          <span>V <strong id="hudV" class="amber-txt">-</strong></span>
-          <span class="cyan-txt">VWAP <strong id="hudVwap">-</strong></span>
-        </div>
-        <canvas id="modalCanvas"></canvas>
-      </div>
-
-      <div class="modal-foot">
-        <div class="legend-row">
-          <span class="legend-item">
-            <span style="width:12px;height:8px;background:rgba(0,230,118,0.28);border:1px solid #00e676;display:inline-block;border-radius:2px;"></span>
-            Morning &amp; Midday OB Zones
-          </span>
-          <span class="legend-item">
-            <span style="width:14px;border-top:2px dashed #00d2ff;display:inline-block;"></span>
-            Intraday VWAP
-          </span>
-          <span class="legend-item">
-            <span style="width:14px;border-top:1.5px dotted #ffb300;display:inline-block;"></span>
-            R1 / R2 / S1 Levels
-          </span>
-        </div>
-        <span>Hover or drag across candles for live 5m OHLCV &amp; VWAP crosshair</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- ==================== 5. APPLICATION ENGINE ==================== -->
-  <script>
-    'use strict';
-
+/* ... existing code ... -->
     /* -------------------------------------------------------------------------
        A. CONSTANTS, SECTORS & INITIAL 40-STOCK NSE UNIVERSE
        ------------------------------------------------------------------------- */
-    const SECTORS = ['ALL', 'BANKING', 'CAP MKTS', 'IT', 'REALTY', 'PHARMA', 'AUTO'];
+    const CORE_SECTORS = ['ALL', 'BANKING', 'CAP MKTS', 'IT', 'REALTY', 'PHARMA', 'AUTO'];
+
+    // Automatic sector lookup for major NSE cash & F&O symbols (unmapped -> OTHER)
+    const SYMBOL_SECTOR_MAP = {
+      // BANKING & FINANCIALS
+      INDUSINDBK: 'BANKING', AXISBANK: 'BANKING', HDFCBANK: 'BANKING', ICICIBANK: 'BANKING',
+      SBIN: 'BANKING', KOTAKBANK: 'BANKING', CUB: 'BANKING', FEDERALBNK: 'BANKING',
+      PNB: 'BANKING', BANKBARODA: 'BANKING', AUBANK: 'BANKING', UNIONBANK: 'BANKING',
+      IDFCFIRSTB: 'BANKING', YESBANK: 'BANKING', BANDHANBNK: 'BANKING', RBLBANK: 'BANKING',
+      LICHSGFIN: 'BANKING', PNBHOUSING: 'BANKING', HDFCLIFE: 'BANKING', SBILIFE: 'BANKING',
+      ICICIGI: 'BANKING', MFSL: 'BANKING', UGROCAP: 'BANKING', CANBK: 'BANKING',
+      // CAPITAL MARKETS & NBFC LEADERS
+      ANGELONE: 'CAP MKTS', CDSL: 'CAP MKTS', MCX: 'CAP MKTS', CAMS: 'CAP MKTS',
+      BSE: 'CAP MKTS', BAJFINANCE: 'CAP MKTS', BAJAJHLDNG: 'CAP MKTS',
+      // IT & TECH
+      PERSISTENT: 'IT', TCS: 'IT', WIPRO: 'IT', TECHM: 'IT', TATAELXSI: 'IT',
+      MPHASIS: 'IT', LTM: 'IT', LTIM: 'IT', INFY: 'IT', HCLTECH: 'IT', COFORGE: 'IT',
+      // REALTY & INFRA
+      DLF: 'REALTY', GODREJPROP: 'REALTY', LODHA: 'REALTY', AJMERA: 'REALTY',
+      OBEROIRLTY: 'REALTY', ATGL: 'REALTY', ULTRACEMCO: 'REALTY', AMBUJACEM: 'REALTY',
+      // PHARMA & HEALTHCARE
+      APOLLOHOSP: 'PHARMA', MAXHEALTH: 'PHARMA', TORNTPHARM: 'PHARMA',
+      SUNPHARMA: 'PHARMA', CIPLA: 'PHARMA', LAURUSLABS: 'PHARMA',
+      BIOCON: 'PHARMA', AUROPHARMA: 'PHARMA', JLHL: 'PHARMA',
+      // AUTO & INDUSTRIALS
+      MARUTI: 'AUTO', 'M&M': 'AUTO', MOTHERSON: 'AUTO', TATAMOTORS: 'AUTO',
+      TMCV: 'AUTO', TMPV: 'AUTO', SHIVAMAUTO: 'AUTO', ALICON: 'AUTO',
+      BIMETAL: 'AUTO', COCHINSHIP: 'AUTO', DIXON: 'AUTO', TATASTEEL: 'AUTO',
+      HINDALCO: 'AUTO', JINDALSTEL: 'AUTO', HAL: 'AUTO'
+    };
 
     const INITIAL_SEED_STOCKS = [
       // Top 12 Bullish Momentum / Long Build-Up
@@ -1368,11 +205,23 @@
     /* -------------------------------------------------------------------------
        D. CONVICTION SCORE, ORDER BLOCK & 5m CANDLE MODEL BUILDER
        ------------------------------------------------------------------------- */
-    function computeConviction(pChange, volRatio, ltp, vwap) {
+    function computeConviction(pChange, volRatio, ltp, vwap, high, low, volume) {
       const absChg = Math.abs(pChange);
       const isBull = pChange >= 0;
+      const hasRange = high > low && low > 0;
+      const rawRangePos = hasRange ? Math.max(0, Math.min(1, (ltp - low) / (high - low))) : (isBull ? 0.8 : 0.2);
+      const directionalPos = isBull ? rawRangePos : (1 - rawRangePos);
+      const rangePct = hasRange ? ((high - low) / low) * 100 : absChg;
+
+      if (!volume || volume <= 0) {
+        // Graceful volume === 0 scoring: pChange magnitude (0-45) + Day High/Low proximity (0-35) + Intraday range % (0-20)
+        const chgScore = Math.min(45, absChg * 6.5);
+        const posScore = directionalPos * 35;
+        const rngScore = Math.min(20, rangePct * 2.2);
+        return Math.min(99, Math.max(38, Math.round(chgScore + posScore + rngScore)));
+      }
+
       const vwapAligned = isBull ? (ltp >= vwap) : (ltp <= vwap);
-      // Combine |pChange| (0-45), volRatio (0-35), VWAP alignment (0-20)
       const chgScore = Math.min(45, absChg * 7.2);
       const volScore = Math.min(35, Math.max(0, (volRatio - 0.8) * 14.5));
       const vwapScore = vwapAligned ? 18 : 4;
@@ -1380,17 +229,22 @@
     }
 
     function buildStockObject(raw, livePoints = null) {
-      const rand = seededRand(raw.symbol + '_NSE_OB_V3');
+      const sym = String(raw.symbol || '').trim().toUpperCase();
+      const rand = seededRand(sym + '_NSE_OB_V4');
       const ltp = Number(raw.ltp || 100);
       const pChange = Number(raw.pChange || 0);
       const isBull = pChange >= 0;
       const prevClose = Number(raw.prevClose || (ltp / (1 + pChange / 100)));
+      const rawHigh = Number(raw.high || 0);
+      const rawLow = Number(raw.low || 0);
       const open = Number(raw.open || (prevClose * (1 + (isBull ? 0.002 : -0.002))));
-      const volRatio = Number(raw.volRatio || (1.2 + Math.min(2.8, Math.abs(pChange) * 0.35)));
-      const volume = Number(raw.volume || 2500000);
+      const hasRealVol = Number(raw.volume || 0) > 0;
+      const volume = hasRealVol ? Number(raw.volume) : 0;
+      const visualVolBase = hasRealVol ? volume : 1800000;
+      const volRatio = Number(raw.volRatio || (hasRealVol ? (1.2 + Math.min(2.8, Math.abs(pChange) * 0.35)) : 0));
       const totalMove = ltp - open;
 
-      // Build 72 intraday 5m candles with Morning OB (4..11) and Midday OB (30..39)
+      // Build 72 intraday 5m candles anchored cleanly within dayHigh / dayLow
       const numBars = 72;
       const ob1Start = 4, ob1End = 11;
       const ob2Start = 30, ob2End = 39;
@@ -1410,12 +264,19 @@
         const inOb = (i >= ob1Start && i <= ob1End) || (i >= ob2Start && i <= ob2End);
         const amp = Math.max(Math.abs(totalMove), ltp * 0.006);
         const noise = (rand() - 0.5) * 2 * amp * (inOb ? 0.018 : 0.045);
-        const c = (i === numBars - 1) ? ltp : open + totalMove * prog + noise;
+        let c = (i === numBars - 1) ? ltp : open + totalMove * prog + noise;
+        if (rawHigh > 0 && rawLow > 0 && rawHigh >= rawLow) {
+          c = Math.max(rawLow, Math.min(rawHigh, c));
+        }
         const o = prevC;
-        const h = Math.max(o, c) + amp * (0.01 + rand() * 0.022);
-        const l = Math.min(o, c) - amp * (0.01 + rand() * 0.022);
+        let h = Math.max(o, c) + amp * (0.01 + rand() * 0.022);
+        let l = Math.min(o, c) - amp * (0.01 + rand() * 0.022);
+        if (rawHigh > 0 && rawLow > 0 && rawHigh >= rawLow) {
+          h = Math.min(rawHigh, h);
+          l = Math.max(rawLow, l);
+        }
         const isImpulse = (i >= 12 && i <= 17) || (i >= 40 && i <= 46);
-        const v = Math.round((volume / numBars) * (isImpulse ? (1.9 + rand() * 1.3) : (0.55 + rand() * 0.85)));
+        const v = Math.round((visualVolBase / numBars) * (isImpulse ? (1.9 + rand() * 1.3) : (0.55 + rand() * 0.85)));
 
         cumPV += ((h + l + c) / 3) * v;
         cumV += v;
@@ -1426,10 +287,20 @@
         prevC = c;
       }
 
-      // Clamp day high/low if provided by live MCP feed
-      const dayHigh = Number(raw.high || Math.max(...candles.map(b => b.h)));
-      const dayLow = Number(raw.low || Math.min(...candles.map(b => b.l)));
-      const vwap = Number(raw.vwap || candles[candles.length - 1].vwap);
+      const dayHigh = rawHigh > 0 ? Math.max(rawHigh, ltp) : Math.max(...candles.map(b => b.h));
+      const dayLow = rawLow > 0 ? Math.min(rawLow, ltp) : Math.min(...candles.map(b => b.l));
+      const vwap = Number(raw.vwap || (dayHigh > dayLow ? (dayHigh + dayLow + ltp) / 3 : candles[candles.length - 1].vwap));
+
+      // Intraday range metrics (especially informative when NSE MCP returns volume === 0)
+      const rangePos = (dayHigh > dayLow) ? Math.max(0, Math.min(1, (ltp - dayLow) / (dayHigh - dayLow))) : (isBull ? 1 : 0);
+      const directionalPosPct = Math.round((isBull ? rangePos : (1 - rangePos)) * 100);
+      const rangePct = dayLow > 0 ? ((dayHigh - dayLow) / dayLow) * 100 : Math.abs(pChange);
+      const strengthLabel = hasRealVol
+        ? `${volRatio.toFixed(2)}x VOL`
+        : `STR ${directionalPosPct}% • RNG ${rangePct.toFixed(1)}%`;
+      const compactStrength = hasRealVol
+        ? `${volRatio.toFixed(2)}x VOL`
+        : `RNG ${directionalPosPct}%`;
 
       // Compute Morning OB & Midday OB from OHLC/VWAP structure
       const ob1Slice = candles.slice(ob1Start, ob1End + 1);
@@ -1449,23 +320,23 @@
         label: 'MIDDAY OB'
       };
 
-      // Key Institutional Levels with 1:2 R:R structure
-      const riskDist = Math.max(Math.abs(ltp - (isBull ? ob2.low : ob2.high)), ltp * 0.008);
-      const support1 = isBull ? Math.max(dayLow, ob2.low - riskDist * 0.15) : (ltp - riskDist * 1.2);
-      const resistance1 = isBull ? (ltp + riskDist * 1.0) : Math.min(dayHigh, ob2.high + riskDist * 0.15);
+      // Key Institutional Levels derived from dayHigh, dayLow, and LTP with 1:2 R:R
+      const intraSpan = Math.max(dayHigh - dayLow, ltp * 0.012);
+      const riskDist = Math.max(Math.abs(ltp - (isBull ? ob2.low : ob2.high)), intraSpan * 0.28);
+      const support1 = isBull ? Math.max(dayLow, ltp - riskDist) : (ltp - riskDist * 1.2);
+      const resistance1 = isBull ? (ltp + riskDist * 1.0) : Math.min(dayHigh, ltp + riskDist);
       const resistance2 = isBull ? (ltp + riskDist * 2.0) : (ltp - riskDist * 2.0);
       const vwapDiffPct = ((ltp - vwap) / Math.max(0.01, vwap)) * 100;
-      const conviction = computeConviction(pChange, volRatio, ltp, vwap);
+      const conviction = computeConviction(pChange, volRatio, ltp, vwap, dayHigh, dayLow, volume);
 
-      // Trajectory array used by Spider Chart (uses real appended livePoints in MCP mode if >= 2 points)
       let trajectory = simTrajectory;
       if (livePoints && livePoints.length >= 2) {
         trajectory = livePoints.map(pt => pt.pct);
       }
 
       return {
-        symbol: String(raw.symbol || '').toUpperCase(),
-        sector: normalizeSector(raw.sector),
+        symbol: sym,
+        sector: normalizeSector(raw.sector, sym),
         ltp,
         open,
         high: dayHigh,
@@ -1474,7 +345,13 @@
         pChange,
         pointChange: ltp - prevClose,
         volume,
+        hasRealVol,
         volRatio,
+        rangePos,
+        directionalPosPct,
+        rangePct,
+        strengthLabel,
+        compactStrength,
         vwap,
         vwapDiffPct,
         isBull,
@@ -1491,8 +368,11 @@
       };
     }
 
-    function normalizeSector(sec) {
-      if (!sec) return 'BANKING';
+    function normalizeSector(sec, symbol = '') {
+      if (symbol && SYMBOL_SECTOR_MAP[symbol]) {
+        return SYMBOL_SECTOR_MAP[symbol];
+      }
+      if (!sec) return 'OTHER';
       const u = String(sec).toUpperCase().trim();
       if (u.includes('BANK') || u.includes('FIN')) return 'BANKING';
       if (u.includes('CAP') || u.includes('BROK') || u.includes('EXCH')) return 'CAP MKTS';
@@ -1500,7 +380,7 @@
       if (u.includes('REAL') || u.includes('INFRA')) return 'REALTY';
       if (u.includes('PHARM') || u.includes('HEALTH')) return 'PHARMA';
       if (u.includes('AUTO') || u.includes('DEF') || u.includes('METAL')) return 'AUTO';
-      return SECTORS.includes(u) ? u : 'BANKING';
+      return CORE_SECTORS.includes(u) ? u : 'OTHER';
     }
 
     /* -------------------------------------------------------------------------
@@ -1517,7 +397,10 @@
 
     function renderSectorPills() {
       const bar = document.getElementById('sectorBar');
-      bar.innerHTML = SECTORS.map(sec => {
+      const hasOther = state.stocks.some(s => s.sector === 'OTHER');
+      const sectorsToShow = hasOther ? [...CORE_SECTORS, 'OTHER'] : CORE_SECTORS;
+
+      bar.innerHTML = sectorsToShow.map(sec => {
         const subset = sec === 'ALL' ? state.stocks : state.stocks.filter(s => s.sector === sec);
         const avg = subset.length ? subset.reduce((acc, s) => acc + s.pChange, 0) / subset.length : 0;
         const activeCls = state.activeSector === sec ? 'active' : '';
@@ -1672,7 +555,7 @@
               </div>
               <div>
                 <div class="sc-pct mono ${txtCls}">${fmtPct(s.pChange)}</div>
-                <div class="sc-vol mono">${s.volRatio.toFixed(2)}x VOL</div>
+                <div class="sc-vol mono">${s.compactStrength}</div>
               </div>
             </div>
             ${buildSparklineSVG(s)}
@@ -1730,7 +613,7 @@
                   <span class="badge badge-conv">CONV ${s.conviction}</span>
                 </div>
                 <div class="pick-pct mono ${txtCls}">${fmtPct(s.pChange)}</div>
-                <div class="pick-ltp mono">₹${fmtPrice(s.ltp)} <span class="amber-txt">• ${s.volRatio.toFixed(2)}x VOL</span></div>
+                <div class="pick-ltp mono">₹${fmtPrice(s.ltp)} <span class="amber-txt">• ${s.compactStrength}</span></div>
                 <div class="pick-vwap mono ${vwapAligned ? 'cyan-txt' : 'bear-txt'}">${vwapTxt}</div>
               </div>
               <canvas id="miniPickCanvas_${idx}" class="pick-mini-canvas"></canvas>
@@ -2042,7 +925,7 @@
           pctEl.className = s.isBull ? 'bull-txt' : 'bear-txt';
           document.getElementById('ttSec').textContent = s.sector;
           document.getElementById('ttLtp').textContent = `₹${fmtPrice(s.ltp)}`;
-          document.getElementById('ttVol').textContent = `${s.volRatio.toFixed(2)}x VOL`;
+          document.getElementById('ttVol').textContent = s.strengthLabel;
 
           tooltip.classList.add('visible');
           tooltip.style.left = `${Math.min(rect.width - 170, Math.max(8, mx + 14))}px`;
@@ -2097,7 +980,7 @@
       chg.textContent = `${fmtPct(s.pChange)} (${s.pointChange >= 0 ? '+' : ''}${s.pointChange.toFixed(2)})`;
       chg.className = s.isBull ? 'bull-txt' : 'bear-txt';
 
-      document.getElementById('mVolSurge').textContent = `${s.volRatio.toFixed(2)}x VOL`;
+      document.getElementById('mVolSurge').textContent = s.strengthLabel;
       document.getElementById('mVwapStat').textContent = `₹${fmtPrice(s.vwap)} (${s.vwapDiffPct >= 0 ? 'ABOVE' : 'BELOW'})`;
       document.getElementById('mOb1Stat').textContent = `${s.ob1.low.toFixed(2)} - ${s.ob1.high.toFixed(2)}`;
       document.getElementById('mOb2Stat').textContent = `${s.ob2.low.toFixed(2)} - ${s.ob2.high.toFixed(2)}`;
@@ -2356,29 +1239,18 @@
       const txt = document.getElementById('statusText');
       const banner = document.getElementById('offlineBanner');
       const footerBadge = document.getElementById('footerSourceBadge');
-
-      if (state.mode === 'MCP') {
-        btnMcp.classList.add('active-mcp');
-        btnSim.classList.remove('active-sim');
-        if (state.mcpConnected) {
-          pill.className = 'status-pill connected';
-          txt.textContent = `MCP CONNECTED • ${state.lastMcpUpdate}`;
-          banner.classList.remove('visible');
-          footerBadge.textContent = 'LIVE NSE MCP FEED';
-        } else {
-          pill.className = 'status-pill offline';
-          txt.textContent = 'MCP OFFLINE (SIM)';
-          banner.classList.add('visible');
-          footerBadge.textContent = 'MCP OFFLINE • FALLBACK SIM';
-        }
-      } else {
-        btnSim.classList.add('active-sim');
-        btnMcp.classList.remove('active-mcp');
-        pill.className = 'status-pill sim';
-        txt.textContent = 'SIMULATION 2s';
-        banner.classList.remove('visible');
-        footerBadge.textContent = 'SIMULATION FEED';
+    function seedInitialLiveCurve(symbol, targetPct, stampHM) {
+      const rand = seededRand(symbol + '_LIVE_SEED');
+      const steps = 16;
+      const pts = [];
+      for (let i = 0; i < steps; i++) {
+        const t = i / (steps - 1);
+        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+        const wiggle = (i === 0 || i === steps - 1) ? 0 : (rand() - 0.5) * Math.max(0.25, Math.abs(targetPct) * 0.14);
+        const val = i === 0 ? 0 : (i === steps - 1 ? targetPct : Number((targetPct * eased + wiggle).toFixed(2)));
+        pts.push({ time: i === 0 ? '09:15' : stampHM, pct: val });
       }
+      return pts;
     }
 
     async function pollMcpBridge(isManualTest = false) {
@@ -2395,20 +1267,25 @@
         }
 
         const stamp = payload.updated_at || getIstTimeStr();
+        const stampHM = stamp.slice(0, 5);
         state.mcpConnected = true;
         state.lastMcpUpdate = stamp;
 
-        // Append timestamped pChange point to intraday liveHistory starting from 09:15
+        // Seed smooth 09:15 -> current curve on first load, then append live polls
         const built = payload.stocks.map(raw => {
-          const sym = String(raw.symbol || '').toUpperCase();
-          if (!state.liveHistory[sym]) {
-            state.liveHistory[sym] = [{ time: '09:15', pct: 0 }];
-          }
-          const hist = state.liveHistory[sym];
+          const sym = String(raw.symbol || '').trim().toUpperCase();
           const pct = Number(raw.pChange || 0);
-          hist.push({ time: stamp.slice(0, 5), pct });
-          if (hist.length > 120) hist.shift();
-          return buildStockObject(raw, hist);
+          if (!state.liveHistory[sym]) {
+            state.liveHistory[sym] = seedInitialLiveCurve(sym, pct, stampHM);
+          } else {
+            const hist = state.liveHistory[sym];
+            const last = hist[hist.length - 1];
+            if (!last || last.time !== stampHM || last.pct !== pct) {
+              hist.push({ time: stampHM, pct });
+              if (hist.length > 140) hist.shift();
+            }
+          }
+          return buildStockObject(raw, state.liveHistory[sym]);
         });
 
         state.stocks = built;
@@ -2437,12 +1314,18 @@
         const drift = (Math.random() - 0.485) * 0.15;
         s.pChange = Number((s.pChange + drift).toFixed(2));
         s.ltp = Number((s.prevClose * (1 + s.pChange / 100)).toFixed(2));
+        s.high = Math.max(s.high, s.ltp);
+        s.low = Math.min(s.low, s.ltp);
         s.pointChange = s.ltp - s.prevClose;
         s.isBull = s.pChange >= 0;
         s.buildUp = s.isBull ? 'LONG BUILD-UP' : 'SHORT BUILD-UP';
-        s.volRatio = Math.max(0.8, Number((s.volRatio + (Math.random() - 0.48) * 0.05).toFixed(2)));
+        if (s.hasRealVol) {
+          s.volRatio = Math.max(0.8, Number((s.volRatio + (Math.random() - 0.48) * 0.05).toFixed(2)));
+          s.compactStrength = `${s.volRatio.toFixed(2)}x VOL`;
+          s.strengthLabel = s.compactStrength;
+        }
         s.vwapDiffPct = ((s.ltp - s.vwap) / Math.max(0.01, s.vwap)) * 100;
-        s.conviction = computeConviction(s.pChange, s.volRatio, s.ltp, s.vwap);
+        s.conviction = computeConviction(s.pChange, s.volRatio, s.ltp, s.vwap, s.high, s.low, s.volume);
 
         const last = s.candles[s.candles.length - 1];
         last.c = s.ltp;
