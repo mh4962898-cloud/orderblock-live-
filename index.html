@@ -3,12 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Order Block • NSE Liquidity Terminal</title>
-
+  <title>Order Block Terminal — NSE F&amp;O Live Flow</title>
   <style>
-    /* =========================================================================
-       1. DESIGN TOKENS & BASE RESET (Zero external CDN dependencies)
-       ========================================================================= */
     :root {
       --bg-base: #070b14;
       --bg-panel: #0d1424;
@@ -27,1539 +23,1294 @@
       --bear: #ff3b5c;
       --bear-soft: rgba(255, 59, 92, 0.14);
       --bear-border: rgba(255, 59, 92, 0.34);
-      --amber: #ffb300;
-      --amber-soft: rgba(255, 179, 0, 0.14);
-      --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-      --font-mono: ui-monospace, SFMono-Regular, 'Cascadia Code', Menlo, Monaco, Consolas, monospace;
-      --radius-sm: 6px;
-      --radius-md: 8px;
-      --radius-lg: 12px;
-      color-scheme: dark;
+      --amber: #f59e0b;
+      --amber-soft: rgba(245, 158, 11, 0.14);
+      --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Inter, Helvetica, Arial, sans-serif;
+      --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     }
-/* ... existing code ... -->
-    /* -------------------------------------------------------------------------
-       A. CONSTANTS, SECTORS & INITIAL 40-STOCK NSE UNIVERSE
-       ------------------------------------------------------------------------- */
-    const CORE_SECTORS = ['ALL', 'BANKING', 'CAP MKTS', 'IT', 'REALTY', 'PHARMA', 'AUTO'];
 
-    // Automatic sector lookup for major NSE cash & F&O symbols (unmapped -> OTHER)
-    const SYMBOL_SECTOR_MAP = {
-      // BANKING & FINANCIALS
-      INDUSINDBK: 'BANKING', AXISBANK: 'BANKING', HDFCBANK: 'BANKING', ICICIBANK: 'BANKING',
-      SBIN: 'BANKING', KOTAKBANK: 'BANKING', CUB: 'BANKING', FEDERALBNK: 'BANKING',
-      PNB: 'BANKING', BANKBARODA: 'BANKING', AUBANK: 'BANKING', UNIONBANK: 'BANKING',
-      IDFCFIRSTB: 'BANKING', YESBANK: 'BANKING', BANDHANBNK: 'BANKING', RBLBANK: 'BANKING',
-      LICHSGFIN: 'BANKING', PNBHOUSING: 'BANKING', HDFCLIFE: 'BANKING', SBILIFE: 'BANKING',
-      ICICIGI: 'BANKING', MFSL: 'BANKING', UGROCAP: 'BANKING', CANBK: 'BANKING',
-      // CAPITAL MARKETS & NBFC LEADERS
-      ANGELONE: 'CAP MKTS', CDSL: 'CAP MKTS', MCX: 'CAP MKTS', CAMS: 'CAP MKTS',
-      BSE: 'CAP MKTS', BAJFINANCE: 'CAP MKTS', BAJAJHLDNG: 'CAP MKTS',
-      // IT & TECH
-      PERSISTENT: 'IT', TCS: 'IT', WIPRO: 'IT', TECHM: 'IT', TATAELXSI: 'IT',
-      MPHASIS: 'IT', LTM: 'IT', LTIM: 'IT', INFY: 'IT', HCLTECH: 'IT', COFORGE: 'IT',
-      // REALTY & INFRA
-      DLF: 'REALTY', GODREJPROP: 'REALTY', LODHA: 'REALTY', AJMERA: 'REALTY',
-      OBEROIRLTY: 'REALTY', ATGL: 'REALTY', ULTRACEMCO: 'REALTY', AMBUJACEM: 'REALTY',
-      // PHARMA & HEALTHCARE
-      APOLLOHOSP: 'PHARMA', MAXHEALTH: 'PHARMA', TORNTPHARM: 'PHARMA',
-      SUNPHARMA: 'PHARMA', CIPLA: 'PHARMA', LAURUSLABS: 'PHARMA',
-      BIOCON: 'PHARMA', AUROPHARMA: 'PHARMA', JLHL: 'PHARMA',
-      // AUTO & INDUSTRIALS
-      MARUTI: 'AUTO', 'M&M': 'AUTO', MOTHERSON: 'AUTO', TATAMOTORS: 'AUTO',
-      TMCV: 'AUTO', TMPV: 'AUTO', SHIVAMAUTO: 'AUTO', ALICON: 'AUTO',
-      BIMETAL: 'AUTO', COCHINSHIP: 'AUTO', DIXON: 'AUTO', TATASTEEL: 'AUTO',
-      HINDALCO: 'AUTO', JINDALSTEL: 'AUTO', HAL: 'AUTO'
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      line-height: 1.45;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Header */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(7, 11, 20, 0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 12px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .brand-logo {
+      width: 36px;
+      height: 36px;
+      border-radius: 9px;
+      background: linear-gradient(135deg, #00e676 0%, #00d2ff 100%);
+      display: grid;
+      place-items: center;
+      color: #041019;
+      font-weight: 900;
+      font-family: var(--font-mono);
+      font-size: 15px;
+      box-shadow: 0 0 18px rgba(0, 210, 255, 0.25);
+    }
+    .brand-title {
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .brand-sub {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+    .badge {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      letter-spacing: 0.4px;
+      border: 1px solid var(--border-strong);
+      color: var(--cyan);
+      background: var(--cyan-soft);
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    .status-pill {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-panel);
+    }
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--amber);
+    }
+    .status-pill.live {
+      border-color: var(--bull-border);
+      background: var(--bull-soft);
+      color: var(--bull);
+    }
+    .status-pill.live .status-dot {
+      background: var(--bull);
+      box-shadow: 0 0 10px var(--bull);
+      animation: pulse 1.4s infinite;
+    }
+    .status-pill.error {
+      border-color: var(--bear-border);
+      background: var(--bear-soft);
+      color: var(--bear);
+    }
+    .status-pill.error .status-dot { background: var(--bear); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(1.25); }
+    }
+
+    .btn {
+      cursor: pointer;
+      border: 1px solid var(--border-strong);
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.15s ease;
+    }
+    .btn:hover { background: #1a2742; border-color: var(--cyan); }
+    .btn-live {
+      background: rgba(0, 230, 118, 0.12);
+      border-color: var(--bull-border);
+      color: var(--bull);
+    }
+    .btn-live.active {
+      background: var(--bull);
+      color: #03150b;
+      border-color: var(--bull);
+      box-shadow: 0 0 16px rgba(0, 230, 118, 0.35);
+    }
+    .btn-icon { padding: 7px 10px; }
+
+    /* Container */
+    .container {
+      max-width: 1480px;
+      margin: 0 auto;
+      padding: 16px 20px 40px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Alert Banner */
+    .alert-banner {
+      display: none;
+      padding: 10px 14px;
+      border-radius: 10px;
+      background: var(--bear-soft);
+      border: 1px solid var(--bear-border);
+      color: #ffd0d8;
+      font-size: 12px;
+      font-family: var(--font-mono);
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .alert-banner.show { display: flex; }
+
+    /* Metrics Strip */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+    }
+    .metric-card {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 13px 15px;
+    }
+    .metric-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+    }
+    .metric-value {
+      font-size: 20px;
+      font-weight: 800;
+      font-family: var(--font-mono);
+    }
+    .metric-sub {
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+      font-family: var(--font-mono);
+    }
+    .breadth-bar {
+      height: 7px;
+      border-radius: 999px;
+      background: var(--bear);
+      overflow: hidden;
+      margin-top: 8px;
+      display: flex;
+    }
+    .breadth-bull {
+      background: var(--bull);
+      height: 100%;
+      transition: width 0.4s ease;
+    }
+
+    /* Panels */
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: 14px;
+      padding: 16px;
+    }
+    .panel-header {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .panel-title {
+      font-size: 14px;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .panel-subtitle {
+      font-size: 11px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+    }
+
+    /* Chart Canvas */
+    .chart-wrap {
+      position: relative;
+      width: 100%;
+      height: 290px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    #spiderCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .chart-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .legend-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      padding: 3px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .legend-item:hover { border-color: var(--cyan); }
+    .legend-swatch {
+      width: 9px;
+      height: 9px;
+      border-radius: 2px;
+    }
+
+    /* Sector Strip */
+    .sector-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .sector-pill {
+      cursor: pointer;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 10px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      transition: all 0.15s ease;
+    }
+    .sector-pill:hover { border-color: var(--border-strong); background: var(--bg-elevated); }
+    .sector-pill.active { border-color: var(--cyan); background: var(--cyan-soft); }
+    .sector-name { font-weight: 700; color: var(--text-primary); }
+    .sector-pct.up { color: var(--bull); font-weight: 700; }
+    .sector-pct.dn { color: var(--bear); font-weight: 700; }
+    .sector-count { font-size: 10px; color: var(--text-muted); }
+
+    /* Filters Bar */
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .search-input {
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      min-width: 210px;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--cyan); }
+    .filter-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .tab-btn {
+      cursor: pointer;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      padding: 6px 11px;
+      border-radius: 7px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .tab-btn.active {
+      background: var(--cyan-soft);
+      border-color: var(--cyan);
+      color: var(--cyan);
+    }
+    select.sort-select {
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      padding: 7px 10px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      outline: none;
+    }
+
+    /* Dual Columns */
+    .columns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+    @media (max-width: 960px) {
+      .columns { grid-template-columns: 1fr; }
+    }
+    .col-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 10px;
+      margin-bottom: 12px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .col-title-bull { color: var(--bull); font-weight: 800; font-size: 14px; font-family: var(--font-mono); }
+    .col-title-bear { color: var(--bear); font-weight: 800; font-size: 14px; font-family: var(--font-mono); }
+
+    .stock-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 680px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .stock-list::-webkit-scrollbar { width: 6px; }
+    .stock-list::-webkit-scrollbar-thumb { background: var(--border-strong); border-radius: 4px; }
+
+    .stock-card {
+      cursor: pointer;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 11px;
+      padding: 12px 14px;
+      transition: transform 0.12s ease, border-color 0.15s ease;
+    }
+    .stock-card:hover { transform: translateY(-1px); border-color: var(--border-strong); background: var(--bg-elevated); }
+    .stock-card.bull { border-left: 3px solid var(--bull); }
+    .stock-card.bear { border-left: 3px solid var(--bear); }
+
+    .card-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .sym-wrap { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .sym { font-family: var(--font-mono); font-weight: 800; font-size: 14px; }
+    .sec-tag {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: #131f36;
+      color: var(--text-secondary);
+      border: 1px solid var(--border-subtle);
+    }
+    .price-wrap { text-align: right; font-family: var(--font-mono); }
+    .ltp { font-size: 14px; font-weight: 800; }
+    .chg { font-size: 12px; font-weight: 700; }
+    .chg.up { color: var(--bull); }
+    .chg.dn { color: var(--bear); }
+
+    .card-meta {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-secondary);
+      margin-bottom: 7px;
+      flex-wrap: wrap;
+    }
+    .pill-mini {
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-weight: 700;
+      font-size: 10px;
+    }
+    .pill-conv-high { background: var(--bull-soft); color: var(--bull); border: 1px solid var(--bull-border); }
+    .pill-conv-bear { background: var(--bear-soft); color: var(--bear); border: 1px solid var(--bear-border); }
+    .pill-conv-mid { background: var(--cyan-soft); color: var(--cyan); border: 1px solid rgba(0,210,255,0.3); }
+
+    .range-track {
+      position: relative;
+      height: 5px;
+      background: #1a253a;
+      border-radius: 999px;
+      overflow: visible;
+    }
+    .range-fill-bull { height: 100%; background: linear-gradient(90deg, #0ea5e9, #00e676); border-radius: 999px; }
+    .range-fill-bear { height: 100%; background: linear-gradient(90deg, #ff3b5c, #f59e0b); border-radius: 999px; }
+    .range-labels {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 28px 12px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+
+    /* Modals */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 60;
+      background: rgba(3, 6, 14, 0.78);
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-backdrop.open { display: flex; }
+    .modal {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-strong);
+      border-radius: 14px;
+      width: 100%;
+      max-width: 480px;
+      padding: 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+    }
+    .modal-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+    .modal-title { font-size: 16px; font-weight: 800; font-family: var(--font-mono); }
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 20px;
+      cursor: pointer;
+    }
+    .close-btn:hover { color: var(--text-primary); }
+    .detail-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+    .detail-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 9px;
+      padding: 10px;
+      font-family: var(--font-mono);
+    }
+    .detail-box .lbl { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
+    .detail-box .val { font-size: 14px; font-weight: 800; }
+    .form-group { margin-bottom: 12px; }
+    .form-group label { display: block; font-size: 11px; color: var(--text-secondary); font-family: var(--font-mono); margin-bottom: 5px; }
+    .form-group input {
+      width: 100%;
+      background: var(--bg-card);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      padding: 9px 11px;
+      border-radius: 8px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <div class="brand-logo">OB</div>
+      <div>
+        <div class="brand-title">
+          ORDER BLOCK TERMINAL
+          <span class="badge">NSE F&amp;O LIVE</span>
+        </div>
+        <div class="brand-sub" id="clockSub">Institutional Momentum &amp; Intraday Range Flow</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <div class="status-pill" id="statusPill">
+        <span class="status-dot"></span>
+        <span id="statusText">SIM MODE</span>
+      </div>
+      <button class="btn btn-live" id="liveToggleBtn" onclick="toggleLiveMode()">⚡ LIVE NSE MCP: OFF</button>
+      <button class="btn" id="refreshBtn" onclick="manualRefresh()">↻ Refresh</button>
+      <button class="btn btn-icon" title="Bridge Settings" onclick="openSettings()">⚙</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <div class="alert-banner" id="alertBanner">
+      <span id="alertText">Local Python bridge not reachable. Run Start_NSE_Live.bat on your PC.</span>
+      <button class="btn" style="padding:4px 9px;font-size:11px;" onclick="hideAlert()">Dismiss</button>
+    </div>
+
+    <!-- Summary Strip -->
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-label">F&amp;O Market Breadth</div>
+        <div class="metric-value" id="breadthValue">-- / --</div>
+        <div class="breadth-bar"><div class="breadth-bull" id="breadthBar" style="width:50%"></div></div>
+        <div class="metric-sub" id="breadthSub">Bullish vs Bearish</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Top Bullish Leader</div>
+        <div class="metric-value" style="color:var(--bull)" id="topBullSym">--</div>
+        <div class="metric-sub" id="topBullSub">Waiting for data...</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Top Bearish Leader</div>
+        <div class="metric-value" style="color:var(--bear)" id="topBearSym">--</div>
+        <div class="metric-sub" id="topBearSub">Waiting for data...</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Strongest Sector</div>
+        <div class="metric-value" style="color:var(--cyan)" id="topSectorSym">--</div>
+        <div class="metric-sub" id="topSectorSub">Avg sector momentum</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-label">Last Sync / Source</div>
+        <div class="metric-value" id="lastSyncVal">--:--:--</div>
+        <div class="metric-sub" id="stockCountSub">0 F&amp;O stocks loaded</div>
+      </div>
+    </section>
+
+    <!-- Intraday Spider / Trajectory Chart -->
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">📈 Intraday Momentum Spider Chart (09:15 → Live)</div>
+          <div class="panel-subtitle">Tracks % Change trajectory of Top Bullish &amp; Bearish F&amp;O movers</div>
+        </div>
+        <div class="panel-subtitle" id="chartPointsInfo">Live polls recorded: 1</div>
+      </div>
+      <div class="chart-wrap">
+        <canvas id="spiderCanvas"></canvas>
+      </div>
+      <div class="chart-legend" id="chartLegend"></div>
+    </section>
+
+    <!-- Sector Breadth -->
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <div class="panel-title">🧭 Sector Momentum Breadth</div>
+          <div class="panel-subtitle">Click any sector pill to filter order blocks below</div>
+        </div>
+        <button class="tab-btn" onclick="selectSector('ALL')">Reset Sector</button>
+      </div>
+      <div class="sector-grid" id="sectorGrid"></div>
+    </section>
+
+    <!-- Filter & Search -->
+    <section class="panel">
+      <div class="filter-bar">
+        <input type="text" class="search-input" id="searchInput" placeholder="Search F&amp;O symbol (e.g. HDFCBANK)..." oninput="renderAll()" />
+        <div class="filter-tabs">
+          <button class="tab-btn active" data-filter="ALL" onclick="setFilter('ALL', this)">ALL</button>
+          <button class="tab-btn" data-filter="BULL" onclick="setFilter('BULL', this)">BULLISH ONLY</button>
+          <button class="tab-btn" data-filter="BEAR" onclick="setFilter('BEAR', this)">BEARISH ONLY</button>
+          <button class="tab-btn" data-filter="HIGH" onclick="setFilter('HIGH', this)">HIGH CONVICTION (75+)</button>
+        </div>
+        <select class="sort-select" id="sortSelect" onchange="renderAll()">
+          <option value="conviction">Sort: Conviction Score</option>
+          <option value="pchange">Sort: % Change Magnitude</option>
+          <option value="range">Sort: Intraday Range %</option>
+          <option value="strength">Sort: Close Strength %</option>
+        </select>
+      </div>
+    </section>
+
+    <!-- Dual Order Block Columns -->
+    <section class="columns">
+      <div class="panel">
+        <div class="col-header">
+          <span class="col-title-bull">▲ BULLISH ORDER BLOCKS (DEMAND)</span>
+          <span class="badge" id="bullCountBadge">0</span>
+        </div>
+        <div class="stock-list" id="bullList"></div>
+      </div>
+
+      <div class="panel">
+        <div class="col-header">
+          <span class="col-title-bear">▼ BEARISH ORDER BLOCKS (SUPPLY)</span>
+          <span class="badge" style="color:var(--bear);background:var(--bear-soft);border-color:var(--bear-border);" id="bearCountBadge">0</span>
+        </div>
+        <div class="stock-list" id="bearList"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Stock Detail Modal -->
+  <div class="modal-backdrop" id="detailModal" onclick="if(event.target===this) closeDetail()">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title" id="modalSymTitle">SYMBOL</div>
+        <button class="close-btn" onclick="closeDetail()">&times;</button>
+      </div>
+      <div class="detail-grid" id="modalDetailGrid"></div>
+      <div class="detail-box" style="margin-bottom:12px;">
+        <div class="lbl">INSTITUTIONAL ORDER BLOCK READ</div>
+        <div id="modalAnalysisText" style="font-size:12px;color:var(--text-primary);line-height:1.5;margin-top:4px;"></div>
+      </div>
+      <button class="btn" style="width:100%;justify-content:center;" onclick="closeDetail()">Close</button>
+    </div>
+  </div>
+
+  <!-- Settings Modal -->
+  <div class="modal-backdrop" id="settingsModal" onclick="if(event.target===this) closeSettings()">
+    <div class="modal">
+      <div class="modal-head">
+        <div class="modal-title">⚙ NSE MCP Bridge Settings</div>
+        <button class="close-btn" onclick="closeSettings()">&times;</button>
+      </div>
+      <div class="form-group">
+        <label>Local Bridge API URL</label>
+        <input type="text" id="bridgeUrlInput" value="http://127.0.0.1:8000/api/nse-mcp-live" />
+      </div>
+      <div class="form-group">
+        <label>Auto-Poll Interval (Seconds)</label>
+        <input type="number" id="pollSecInput" value="15" min="5" max="300" />
+      </div>
+      <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
+        <button class="btn" onclick="closeSettings()">Cancel</button>
+        <button class="btn btn-live active" onclick="saveSettings()">Save &amp; Apply</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Sector Map for NSE F&O Stocks
+    const SECTOR_MAP = {
+      // Banking
+      HDFCBANK: 'BANKING', ICICIBANK: 'BANKING', SBIN: 'BANKING', AXISBANK: 'BANKING',
+      KOTAKBANK: 'BANKING', INDUSINDBK: 'BANKING', BANKBARODA: 'BANKING', PNB: 'BANKING',
+      UNIONBANK: 'BANKING', CANBK: 'BANKING', FEDERALBNK: 'BANKING', AUBANK: 'BANKING',
+      IDFCFIRSTB: 'BANKING', BANDHANBNK: 'BANKING', CUB: 'BANKING', RBLBANK: 'BANKING',
+      YESBANK: 'BANKING', INDIANB: 'BANKING', BANKINDIA: 'BANKING',
+      // Financials & Capital Markets
+      BAJFINANCE: 'FINANCIALS', BAJAJFINSV: 'FINANCIALS', JIOFIN: 'FINANCIALS', SHRIRAMFIN: 'FINANCIALS',
+      CHOLAFIN: 'FINANCIALS', PFC: 'FINANCIALS', RECLTD: 'FINANCIALS', HDFCLIFE: 'FINANCIALS',
+      SBILIFE: 'FINANCIALS', ICICIGI: 'FINANCIALS', ICICIPRULI: 'FINANCIALS', MFSL: 'FINANCIALS',
+      ANGELONE: 'FINANCIALS', CDSL: 'FINANCIALS', BSE: 'FINANCIALS', MCX: 'FINANCIALS',
+      CAMS: 'FINANCIALS', KFINTECH: 'FINANCIALS', PNBHOUSING: 'FINANCIALS', LICHSGFIN: 'FINANCIALS',
+      MUTHOOTFIN: 'FINANCIALS', MANAPPURAM: 'FINANCIALS', ABCAPITAL: 'FINANCIALS', LTF: 'FINANCIALS',
+      SBICARD: 'FINANCIALS', HDFCAMC: 'FINANCIALS', HUDCO: 'FINANCIALS', IREDA: 'FINANCIALS',
+      IRFC: 'FINANCIALS', LICI: 'FINANCIALS', POONAWALLA: 'FINANCIALS', IIFL: 'FINANCIALS',
+      // IT
+      TCS: 'IT', INFY: 'IT', HCLTECH: 'IT', WIPRO: 'IT', TECHM: 'IT', LTIM: 'IT', LTM: 'IT',
+      PERSISTENT: 'IT', COFORGE: 'IT', MPHASIS: 'IT', TATAELXSI: 'IT', KPITTECH: 'IT',
+      LTTS: 'IT', OFSS: 'IT', BSOFT: 'IT', CYIENT: 'IT', TATATECH: 'IT',
+      // Auto
+      MARUTI: 'AUTO', M_M: 'AUTO', 'M&M': 'AUTO', TATAMOTORS: 'AUTO', TMPV: 'AUTO', TMCV: 'AUTO',
+      'BAJAJ-AUTO': 'AUTO', EICHERMOT: 'AUTO', HEROMOTOCO: 'AUTO', TVSMOTOR: 'AUTO',
+      ASHOKLEY: 'AUTO', BHARATFORG: 'AUTO', BALKRISIND: 'AUTO', APOLLOTYRE: 'AUTO',
+      MOTHERSON: 'AUTO', EXIDEIND: 'AUTO', SONACOMS: 'AUTO', ESCORTS: 'AUTO', UNOMINDA: 'AUTO', MRF: 'AUTO',
+      // Pharma & Healthcare
+      SUNPHARMA: 'PHARMA', DRREDDY: 'PHARMA', CIPLA: 'PHARMA', DIVISLAB: 'PHARMA',
+      APOLLOHOSP: 'PHARMA', MAXHEALTH: 'PHARMA', TORNTPHARM: 'PHARMA', LUPIN: 'PHARMA',
+      AUROPHARMA: 'PHARMA', ALKEM: 'PHARMA', BIOCON: 'PHARMA', GLENMARK: 'PHARMA',
+      LAURUSLABS: 'PHARMA', ZYDUSLIFE: 'PHARMA', FORTIS: 'PHARMA', MANKIND: 'PHARMA',
+      SYNGENE: 'PHARMA', GRANULES: 'PHARMA', PPLPHARMA: 'PHARMA', METROPOLIS: 'PHARMA',
+      // Energy & Power
+      RELIANCE: 'ENERGY', ONGC: 'ENERGY', BPCL: 'ENERGY', IOC: 'ENERGY', HINDPETRO: 'ENERGY',
+      GAIL: 'ENERGY', NTPC: 'ENERGY', POWERGRID: 'ENERGY', TATAPOWER: 'ENERGY',
+      ADANIPOWER: 'ENERGY', ADANIGREEN: 'ENERGY', ADANIENSOL: 'ENERGY', TORNTPOWER: 'ENERGY',
+      JSWENERGY: 'ENERGY', NHPC: 'ENERGY', SJVN: 'ENERGY', CESC: 'ENERGY', IGL: 'ENERGY',
+      MGL: 'ENERGY', PETRONET: 'ENERGY', OIL: 'ENERGY', ATGL: 'ENERGY', COALINDIA: 'ENERGY',
+      // Metals
+      TATASTEEL: 'METAL', HINDALCO: 'METAL', JSWSTEEL: 'METAL', JINDALSTEL: 'METAL',
+      VEDL: 'METAL', NMDC: 'METAL', SAIL: 'METAL', NATIONALUM: 'METAL', HINDCOPPER: 'METAL',
+      JSL: 'METAL', APLAPOLLO: 'METAL',
+      // Realty & Infra & Cement
+      DLF: 'REALTY', GODREJPROP: 'REALTY', OBEROIRLTY: 'REALTY', LODHA: 'REALTY',
+      PRESTIGE: 'REALTY', PHOENIXLTD: 'REALTY',
+      LT: 'INFRA', ULTRACEMCO: 'INFRA', GRASIM: 'INFRA', AMBUJACEM: 'INFRA', ACC: 'INFRA',
+      SHREECEM: 'INFRA', DALBHARAT: 'INFRA', ADANIPORTS: 'INFRA', ADANIENT: 'INFRA',
+      GMRAIRPORT: 'INFRA', INDIGO: 'INFRA', CONCOR: 'INFRA', NBCC: 'INFRA', NCC: 'INFRA',
+      RVNL: 'INFRA', IRCTC: 'INFRA',
+      // Defence & Capital Goods
+      HAL: 'DEFENCE', BEL: 'DEFENCE', BDL: 'DEFENCE', MAZDOCK: 'DEFENCE', COCHINSHIP: 'DEFENCE',
+      ABB: 'DEFENCE', SIEMENS: 'DEFENCE', BHEL: 'DEFENCE', CGPOWER: 'DEFENCE',
+      CUMMINSIND: 'DEFENCE', POLYCAB: 'DEFENCE', HAVELLS: 'DEFENCE', SOLARINDS: 'DEFENCE',
+      DIXON: 'DEFENCE', KAYNES: 'DEFENCE', KEI: 'DEFENCE', TITAGARH: 'DEFENCE',
+      // FMCG & Consumer
+      HINDUNILVR: 'FMCG', ITC: 'FMCG', NESTLEIND: 'FMCG', BRITANNIA: 'FMCG',
+      TATACONSUM: 'FMCG', VBL: 'FMCG', DABUR: 'FMCG', MARICO: 'FMCG', GODREJCP: 'FMCG',
+      COLPAL: 'FMCG', UNITDSPR: 'FMCG', TITAN: 'FMCG', TRENT: 'FMCG', DMART: 'FMCG',
+      PIDILITIND: 'FMCG', ASIANPAINT: 'FMCG', INDHOTEL: 'FMCG', JUBLFOOD: 'FMCG',
+      ZOMATO: 'FMCG', NYKAA: 'FMCG', PAYTM: 'FMCG', POLICYBZR: 'FMCG', NAUKRI: 'FMCG',
+      BHARTIARTL: 'INFRA', INDUSTOWER: 'INFRA', IDEA: 'INFRA'
     };
 
-    const INITIAL_SEED_STOCKS = [
-      // Top 12 Bullish Momentum / Long Build-Up
-      { symbol: 'INDUSINDBK', sector: 'BANKING',  ltp: 1003.00,  pChange: 8.60,  volRatio: 3.15, volume: 19100000 },
-      { symbol: 'ANGELONE',   sector: 'CAP MKTS', ltp: 312.90,   pChange: 7.90,  volRatio: 3.40, volume: 8420000 },
-      { symbol: 'LODHA',      sector: 'REALTY',   ltp: 1067.40,  pChange: 6.44,  volRatio: 2.85, volume: 5190000 },
-      { symbol: 'CDSL',       sector: 'CAP MKTS', ltp: 1322.70,  pChange: 5.65,  volRatio: 2.92, volume: 6340000 },
-      { symbol: 'APOLLOHOSP', sector: 'PHARMA',   ltp: 9200.00,  pChange: 5.30,  volRatio: 2.12, volume: 1420000 },
-      { symbol: 'AXISBANK',   sector: 'BANKING',  ltp: 1446.00,  pChange: 4.70,  volRatio: 2.20, volume: 21500000 },
-      { symbol: 'CAMS',       sector: 'CAP MKTS', ltp: 4218.50,  pChange: 4.49,  volRatio: 2.48, volume: 1240000 },
-      { symbol: 'PERSISTENT', sector: 'IT',       ltp: 6124.00,  pChange: 4.20,  volRatio: 2.83, volume: 1810000 },
-      { symbol: 'COCHINSHIP', sector: 'AUTO',     ltp: 1584.20,  pChange: 3.55,  volRatio: 2.65, volume: 4320000 },
-      { symbol: 'MCX',        sector: 'CAP MKTS', ltp: 6412.00,  pChange: 3.44,  volRatio: 2.31, volume: 2180000 },
-      { symbol: 'MARUTI',     sector: 'AUTO',     ltp: 14011.00, pChange: 3.10,  volRatio: 1.75, volume: 1620000 },
-      { symbol: 'HDFCBANK',   sector: 'BANKING',  ltp: 1742.00,  pChange: 2.90,  volRatio: 1.97, volume: 70100000 },
-
-      // Top 12 Bearish Momentum / Short Build-Up
-      { symbol: 'DIXON',      sector: 'AUTO',     ltp: 14820.00, pChange: -2.42, volRatio: 2.60, volume: 1120000 },
-      { symbol: 'LAURUSLABS', sector: 'PHARMA',   ltp: 482.60,   pChange: -2.34, volRatio: 2.95, volume: 7250000 },
-      { symbol: 'BANDHANBNK', sector: 'BANKING',  ltp: 174.30,   pChange: -2.10, volRatio: 2.40, volume: 14800000 },
-      { symbol: 'ATGL',       sector: 'REALTY',   ltp: 718.90,   pChange: -1.92, volRatio: 2.15, volume: 3420000 },
-      { symbol: 'BIOCON',     sector: 'PHARMA',   ltp: 336.45,   pChange: -1.84, volRatio: 2.05, volume: 6180000 },
-      { symbol: 'COFORGE',    sector: 'IT',       ltp: 7845.00,  pChange: -1.78, volRatio: 1.98, volume: 1490000 },
-      { symbol: 'WIPRO',      sector: 'IT',       ltp: 562.20,   pChange: -1.65, volRatio: 1.85, volume: 9820000 },
-      { symbol: 'LICHSGFIN',  sector: 'BANKING',  ltp: 618.75,   pChange: -1.58, volRatio: 1.78, volume: 4120000 },
-      { symbol: 'MPHASIS',    sector: 'IT',       ltp: 2914.50,  pChange: -1.51, volRatio: 2.34, volume: 1680000 },
-      { symbol: 'TATASTEEL',  sector: 'AUTO',     ltp: 148.90,   pChange: -1.44, volRatio: 1.65, volume: 32400000 },
-      { symbol: 'FEDERALBNK', sector: 'BANKING',  ltp: 198.20,   pChange: -1.35, volRatio: 1.54, volume: 11200000 },
-      { symbol: 'INFY',       sector: 'IT',       ltp: 1842.30,  pChange: -1.12, volRatio: 1.48, volume: 7840000 },
-
-      // Additional 16 Liquidity Spider Universe Stocks (total 40)
-      { symbol: 'BSE',        sector: 'CAP MKTS', ltp: 4680.00,  pChange: 3.15,  volRatio: 2.24, volume: 3100000 },
-      { symbol: 'DLF',        sector: 'REALTY',   ltp: 842.50,   pChange: 2.48,  volRatio: 1.92, volume: 5400000 },
-      { symbol: 'OBEROIRLTY', sector: 'REALTY',   ltp: 1985.00,  pChange: 2.15,  volRatio: 1.80, volume: 1450000 },
-      { symbol: 'MOTHERSON',  sector: 'AUTO',     ltp: 196.40,   pChange: 2.64,  volRatio: 2.10, volume: 15400000 },
-      { symbol: 'TATAMOTORS', sector: 'AUTO',     ltp: 912.60,   pChange: 1.92,  volRatio: 1.68, volume: 11200000 },
-      { symbol: 'SBIN',       sector: 'BANKING',  ltp: 846.40,   pChange: 2.25,  volRatio: 1.88, volume: 19400000 },
-      { symbol: 'ICICIBANK',  sector: 'BANKING',  ltp: 1328.00,  pChange: 1.84,  volRatio: 1.72, volume: 14200000 },
-      { symbol: 'SUNPHARMA',  sector: 'PHARMA',   ltp: 1864.00,  pChange: 1.70,  volRatio: 1.60, volume: 2800000 },
-      { symbol: 'CIPLA',      sector: 'PHARMA',   ltp: 1540.20,  pChange: 1.42,  volRatio: 1.44, volume: 2150000 },
-      { symbol: 'GODREJPROP', sector: 'REALTY',   ltp: 2890.00,  pChange: 1.88,  volRatio: 1.75, volume: 1120000 },
-      { symbol: 'TCS',        sector: 'IT',       ltp: 4148.00,  pChange: 1.15,  volRatio: 1.32, volume: 3200000 },
-      { symbol: 'HCLTECH',    sector: 'IT',       ltp: 1894.00,  pChange: 0.95,  volRatio: 1.28, volume: 2940000 },
-      { symbol: 'LTIM',       sector: 'IT',       ltp: 5890.00,  pChange: -0.96, volRatio: 1.42, volume: 980000 },
-      { symbol: 'TECHM',      sector: 'IT',       ltp: 1644.00,  pChange: -1.04, volRatio: 1.50, volume: 2350000 },
-      { symbol: 'AUROPHARMA', sector: 'PHARMA',   ltp: 1292.00,  pChange: -1.48, volRatio: 1.72, volume: 1900000 },
-      { symbol: 'RBLBANK',    sector: 'BANKING',  ltp: 186.90,   pChange: -2.02, volRatio: 2.25, volume: 12400000 }
+    // Fallback SIM Mode F&O Dataset (so page is never empty)
+    const SIM_STOCKS = [
+      { symbol: 'INDUSINDBK', ltp: 1003.00, pChange: 8.59, volume: 0, high: 1003.00, low: 906.00 },
+      { symbol: 'CUB', ltp: 248.80, pChange: 6.25, volume: 0, high: 251.00, low: 230.15 },
+      { symbol: 'APOLLOHOSP', ltp: 9200.00, pChange: 5.29, volume: 0, high: 9282.50, low: 8800.00 },
+      { symbol: 'AXISBANK', ltp: 1446.00, pChange: 4.72, volume: 0, high: 1450.00, low: 1368.80 },
+      { symbol: 'UNIONBANK', ltp: 218.85, pChange: 4.21, volume: 0, high: 219.10, low: 206.76 },
+      { symbol: 'PERSISTENT', ltp: 6124.00, pChange: 4.15, volume: 0, high: 6215.00, low: 5831.00 },
+      { symbol: 'ANGELONE', ltp: 348.30, pChange: 3.52, volume: 0, high: 350.90, low: 331.35 },
+      { symbol: 'MARUTI', ltp: 14011.00, pChange: 3.11, volume: 0, high: 14047.00, low: 13505.00 },
+      { symbol: 'ULTRACEMCO', ltp: 12939.00, pChange: 3.02, volume: 0, high: 12939.00, low: 12575.00 },
+      { symbol: 'HDFCBANK', ltp: 846.00, pChange: 2.94, volume: 0, high: 850.35, low: 815.50 },
+      { symbol: 'BAJFINANCE', ltp: 1122.00, pChange: 2.67, volume: 0, high: 1125.00, low: 1078.15 },
+      { symbol: 'KOTAKBANK', ltp: 515.80, pChange: 2.54, volume: 0, high: 516.60, low: 499.00 },
+      { symbol: 'DLF', ltp: 785.00, pChange: 2.21, volume: 0, high: 792.00, low: 761.00 },
+      { symbol: 'HAL', ltp: 4809.00, pChange: 1.03, volume: 0, high: 4819.00, low: 4742.40 },
+      { symbol: 'INFY', ltp: 1582.40, pChange: -1.45, volume: 0, high: 1618.00, low: 1579.00 },
+      { symbol: 'SUNPHARMA', ltp: 1712.00, pChange: -1.82, volume: 0, high: 1752.00, low: 1708.50 },
+      { symbol: 'TATASTEEL', ltp: 142.30, pChange: -2.18, volume: 0, high: 146.90, low: 141.80 },
+      { symbol: 'ASIANPAINT', ltp: 2415.00, pChange: -2.64, volume: 0, high: 2489.00, low: 2410.00 },
+      { symbol: 'TRENT', ltp: 5410.00, pChange: -3.12, volume: 0, high: 5610.00, low: 5395.00 }
     ];
 
-    /* -------------------------------------------------------------------------
-       B. APPLICATION STATE
-       ------------------------------------------------------------------------- */
-    const state = {
-      mode: 'SIM', // 'SIM' | 'MCP'
-      bridgeUrl: localStorage.getItem('ob_bridge_url') || 'http://127.0.0.1:8000/api/nse-mcp-live',
-      pollIntervalSec: Number(localStorage.getItem('ob_poll_sec') || 15),
-      mcpConnected: false,
-      lastMcpUpdate: '--:--:--',
-      activeSector: 'ALL',
-      searchQuery: '',
-      stocks: [],
-      // Live intraday trajectory history map: symbol -> [{ time, pct }]
-      liveHistory: {},
-      timeLabels: [],
-      simTimer: null,
-      mcpTimer: null,
-      hoveredSpiderIdx: -1,
-      activeModalSymbol: null,
-      modalMouse: { x: 0, y: 0, inside: false }
-    };
+    // App State
+    let bridgeUrl = localStorage.getItem('ob_bridge_url') || 'http://127.0.0.1:8000/api/nse-mcp-live';
+    let pollSeconds = Number(localStorage.getItem('ob_poll_sec') || 15);
+    let isLiveMode = false;
+    let pollTimer = null;
+    let rawStocks = [];
+    let enrichedStocks = [];
+    let selectedSector = 'ALL';
+    let activeFilter = 'ALL';
+    let historySeries = {}; // { SYMBOL: [{ t: '09:15', v: 0 }, ...] }
+    let timeLabels = [];
 
-    /* -------------------------------------------------------------------------
-       C. UTILITY & MATH HELPERS
-       ------------------------------------------------------------------------- */
-    function seededRand(seed) {
-      let h = 2166136261 >>> 0;
-      for (let i = 0; i < seed.length; i++) {
-        h ^= seed.charCodeAt(i);
-        h = Math.imul(h, 16777619);
-      }
-      return function () {
-        h += 0x6D2B79F5;
-        let t = Math.imul(h ^ (h >>> 15), 1 | h);
-        t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
-        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-      };
+    function getSector(sym) {
+      return SECTOR_MAP[sym] || 'OTHER';
     }
 
-    function fmtPrice(v) {
-      return Number(v || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    }
-    function fmtPct(v) {
-      const n = Number(v || 0);
-      return `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`;
-    }
-    function fmtVol(v) {
-      if (v >= 1e7) return (v / 1e7).toFixed(2) + 'Cr';
-      if (v >= 1e5) return (v / 1e5).toFixed(2) + 'L';
-      if (v >= 1e3) return (v / 1e3).toFixed(1) + 'K';
-      return String(v);
-    }
-    function getIstTimeStr() {
-      return new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: false });
-    }
-    function getIstShortHM() {
-      return getIstTimeStr().slice(0, 5);
-    }
+    function enrichStock(s) {
+      const ltp = Number(s.ltp) || 0;
+      const pChange = Number(s.pChange) || 0;
+      const high = Math.max(Number(s.high) || ltp, ltp);
+      const low = Math.min(Number(s.low) || ltp, ltp);
+      const span = Math.max(high - low, 0.0001);
+      const rangePct = ltp > 0 ? ((high - low) / ltp) * 100 : 0;
 
-    function generate5mLabels(count = 72) {
-      const out = [];
-      let m = 9 * 60 + 15;
-      for (let i = 0; i < count; i++) {
-        out.push(`${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`);
-        m += 5;
-      }
-      return out;
-    }
-    const BASE_5M_LABELS = generate5mLabels(72);
+      // Close Strength: 100% = at day high, 0% = at day low
+      const closePos = ((ltp - low) / span) * 100;
+      const directionalStrength = pChange >= 0 ? closePos : (100 - closePos);
 
-    function showToast(msg, type = 'info') {
-      const stack = document.getElementById('toastStack');
-      const el = document.createElement('div');
-      el.className = `toast ${type}`;
-      el.textContent = msg;
-      stack.appendChild(el);
-      setTimeout(() => {
-        el.style.opacity = '0';
-        el.style.transform = 'translateX(14px)';
-        setTimeout(() => el.remove(), 260);
-      }, 3600);
-    }
-
-    /* -------------------------------------------------------------------------
-       D. CONVICTION SCORE, ORDER BLOCK & 5m CANDLE MODEL BUILDER
-       ------------------------------------------------------------------------- */
-    function computeConviction(pChange, volRatio, ltp, vwap, high, low, volume) {
-      const absChg = Math.abs(pChange);
-      const isBull = pChange >= 0;
-      const hasRange = high > low && low > 0;
-      const rawRangePos = hasRange ? Math.max(0, Math.min(1, (ltp - low) / (high - low))) : (isBull ? 0.8 : 0.2);
-      const directionalPos = isBull ? rawRangePos : (1 - rawRangePos);
-      const rangePct = hasRange ? ((high - low) / low) * 100 : absChg;
-
-      if (!volume || volume <= 0) {
-        // Graceful volume === 0 scoring: pChange magnitude (0-45) + Day High/Low proximity (0-35) + Intraday range % (0-20)
-        const chgScore = Math.min(45, absChg * 6.5);
-        const posScore = directionalPos * 35;
-        const rngScore = Math.min(20, rangePct * 2.2);
-        return Math.min(99, Math.max(38, Math.round(chgScore + posScore + rngScore)));
-      }
-
-      const vwapAligned = isBull ? (ltp >= vwap) : (ltp <= vwap);
-      const chgScore = Math.min(45, absChg * 7.2);
-      const volScore = Math.min(35, Math.max(0, (volRatio - 0.8) * 14.5));
-      const vwapScore = vwapAligned ? 18 : 4;
-      return Math.min(99, Math.max(40, Math.round(chgScore + volScore + vwapScore)));
-    }
-
-    function buildStockObject(raw, livePoints = null) {
-      const sym = String(raw.symbol || '').trim().toUpperCase();
-      const rand = seededRand(sym + '_NSE_OB_V4');
-      const ltp = Number(raw.ltp || 100);
-      const pChange = Number(raw.pChange || 0);
-      const isBull = pChange >= 0;
-      const prevClose = Number(raw.prevClose || (ltp / (1 + pChange / 100)));
-      const rawHigh = Number(raw.high || 0);
-      const rawLow = Number(raw.low || 0);
-      const open = Number(raw.open || (prevClose * (1 + (isBull ? 0.002 : -0.002))));
-      const hasRealVol = Number(raw.volume || 0) > 0;
-      const volume = hasRealVol ? Number(raw.volume) : 0;
-      const visualVolBase = hasRealVol ? volume : 1800000;
-      const volRatio = Number(raw.volRatio || (hasRealVol ? (1.2 + Math.min(2.8, Math.abs(pChange) * 0.35)) : 0));
-      const totalMove = ltp - open;
-
-      // Build 72 intraday 5m candles anchored cleanly within dayHigh / dayLow
-      const numBars = 72;
-      const ob1Start = 4, ob1End = 11;
-      const ob2Start = 30, ob2End = 39;
-      const candles = [];
-      const simTrajectory = [];
-      let prevC = open;
-      let cumPV = 0, cumV = 0;
-
-      for (let i = 0; i < numBars; i++) {
-        let prog;
-        if (i < ob1Start) prog = (i / ob1Start) * 0.14;
-        else if (i <= ob1End) prog = 0.14 + ((i - ob1Start) / (ob1End - ob1Start)) * 0.05;
-        else if (i < ob2Start) prog = 0.19 + ((i - ob1End) / (ob2Start - ob1End)) * 0.37;
-        else if (i <= ob2End) prog = 0.56 + ((i - ob2Start) / (ob2End - ob2Start)) * 0.05;
-        else prog = 0.61 + ((i - ob2End) / (numBars - 1 - ob2End)) * 0.39;
-
-        const inOb = (i >= ob1Start && i <= ob1End) || (i >= ob2Start && i <= ob2End);
-        const amp = Math.max(Math.abs(totalMove), ltp * 0.006);
-        const noise = (rand() - 0.5) * 2 * amp * (inOb ? 0.018 : 0.045);
-        let c = (i === numBars - 1) ? ltp : open + totalMove * prog + noise;
-        if (rawHigh > 0 && rawLow > 0 && rawHigh >= rawLow) {
-          c = Math.max(rawLow, Math.min(rawHigh, c));
-        }
-        const o = prevC;
-        let h = Math.max(o, c) + amp * (0.01 + rand() * 0.022);
-        let l = Math.min(o, c) - amp * (0.01 + rand() * 0.022);
-        if (rawHigh > 0 && rawLow > 0 && rawHigh >= rawLow) {
-          h = Math.min(rawHigh, h);
-          l = Math.max(rawLow, l);
-        }
-        const isImpulse = (i >= 12 && i <= 17) || (i >= 40 && i <= 46);
-        const v = Math.round((visualVolBase / numBars) * (isImpulse ? (1.9 + rand() * 1.3) : (0.55 + rand() * 0.85)));
-
-        cumPV += ((h + l + c) / 3) * v;
-        cumV += v;
-        const barVwap = cumPV / Math.max(1, cumV);
-
-        candles.push({ time: BASE_5M_LABELS[i], o, h, l, c, v, vwap: barVwap });
-        simTrajectory.push(((c - prevClose) / Math.max(0.01, prevClose)) * 100);
-        prevC = c;
-      }
-
-      const dayHigh = rawHigh > 0 ? Math.max(rawHigh, ltp) : Math.max(...candles.map(b => b.h));
-      const dayLow = rawLow > 0 ? Math.min(rawLow, ltp) : Math.min(...candles.map(b => b.l));
-      const vwap = Number(raw.vwap || (dayHigh > dayLow ? (dayHigh + dayLow + ltp) / 3 : candles[candles.length - 1].vwap));
-
-      // Intraday range metrics (especially informative when NSE MCP returns volume === 0)
-      const rangePos = (dayHigh > dayLow) ? Math.max(0, Math.min(1, (ltp - dayLow) / (dayHigh - dayLow))) : (isBull ? 1 : 0);
-      const directionalPosPct = Math.round((isBull ? rangePos : (1 - rangePos)) * 100);
-      const rangePct = dayLow > 0 ? ((dayHigh - dayLow) / dayLow) * 100 : Math.abs(pChange);
-      const strengthLabel = hasRealVol
-        ? `${volRatio.toFixed(2)}x VOL`
-        : `STR ${directionalPosPct}% • RNG ${rangePct.toFixed(1)}%`;
-      const compactStrength = hasRealVol
-        ? `${volRatio.toFixed(2)}x VOL`
-        : `RNG ${directionalPosPct}%`;
-
-      // Compute Morning OB & Midday OB from OHLC/VWAP structure
-      const ob1Slice = candles.slice(ob1Start, ob1End + 1);
-      const ob2Slice = candles.slice(ob2Start, ob2End + 1);
-      const ob1 = {
-        startIdx: ob1Start,
-        endIdx: ob1End,
-        low: Math.min(...ob1Slice.map(b => b.l)),
-        high: Math.max(...ob1Slice.map(b => b.h)),
-        label: 'MORNING OB'
-      };
-      const ob2 = {
-        startIdx: ob2Start,
-        endIdx: ob2End,
-        low: Math.min(...ob2Slice.map(b => b.l)),
-        high: Math.max(...ob2Slice.map(b => b.h)),
-        label: 'MIDDAY OB'
-      };
-
-      // Key Institutional Levels derived from dayHigh, dayLow, and LTP with 1:2 R:R
-      const intraSpan = Math.max(dayHigh - dayLow, ltp * 0.012);
-      const riskDist = Math.max(Math.abs(ltp - (isBull ? ob2.low : ob2.high)), intraSpan * 0.28);
-      const support1 = isBull ? Math.max(dayLow, ltp - riskDist) : (ltp - riskDist * 1.2);
-      const resistance1 = isBull ? (ltp + riskDist * 1.0) : Math.min(dayHigh, ltp + riskDist);
-      const resistance2 = isBull ? (ltp + riskDist * 2.0) : (ltp - riskDist * 2.0);
-      const vwapDiffPct = ((ltp - vwap) / Math.max(0.01, vwap)) * 100;
-      const conviction = computeConviction(pChange, volRatio, ltp, vwap, dayHigh, dayLow, volume);
-
-      let trajectory = simTrajectory;
-      if (livePoints && livePoints.length >= 2) {
-        trajectory = livePoints.map(pt => pt.pct);
-      }
+      // Conviction Score (0-100): works smoothly even when volume === 0
+      const moveScore = Math.min(Math.abs(pChange) * 11, 45);
+      const strengthScore = (directionalStrength / 100) * 35;
+      const rangeScore = Math.min(rangePct * 4.5, 20);
+      const conviction = Math.round(Math.min(100, moveScore + strengthScore + rangeScore));
 
       return {
-        symbol: sym,
-        sector: normalizeSector(raw.sector, sym),
+        symbol: String(s.symbol || '').toUpperCase(),
+        sector: getSector(String(s.symbol || '').toUpperCase()),
         ltp,
-        open,
-        high: dayHigh,
-        low: dayLow,
-        prevClose,
         pChange,
-        pointChange: ltp - prevClose,
-        volume,
-        hasRealVol,
-        volRatio,
-        rangePos,
-        directionalPosPct,
-        rangePct,
-        strengthLabel,
-        compactStrength,
-        vwap,
-        vwapDiffPct,
-        isBull,
-        conviction,
-        buildUp: isBull ? 'LONG BUILD-UP' : 'SHORT BUILD-UP',
-        support1,
-        resistance1,
-        resistance2,
-        rr: '1:2',
-        ob1,
-        ob2,
-        candles,
-        trajectory
+        volume: Number(s.volume) || 0,
+        high,
+        low,
+        rangePct: Number(rangePct.toFixed(2)),
+        closePos: Math.round(closePos),
+        directionalStrength: Math.round(directionalStrength),
+        conviction
       };
     }
 
-    function normalizeSector(sec, symbol = '') {
-      if (symbol && SYMBOL_SECTOR_MAP[symbol]) {
-        return SYMBOL_SECTOR_MAP[symbol];
-      }
-      if (!sec) return 'OTHER';
-      const u = String(sec).toUpperCase().trim();
-      if (u.includes('BANK') || u.includes('FIN')) return 'BANKING';
-      if (u.includes('CAP') || u.includes('BROK') || u.includes('EXCH')) return 'CAP MKTS';
-      if (u.includes('IT') || u.includes('TECH') || u.includes('SOFT')) return 'IT';
-      if (u.includes('REAL') || u.includes('INFRA')) return 'REALTY';
-      if (u.includes('PHARM') || u.includes('HEALTH')) return 'PHARMA';
-      if (u.includes('AUTO') || u.includes('DEF') || u.includes('METAL')) return 'AUTO';
-      return CORE_SECTORS.includes(u) ? u : 'OTHER';
-    }
-
-    /* -------------------------------------------------------------------------
-       E. FILTERING & SECTOR BREADTH
-       ------------------------------------------------------------------------- */
-    function getFilteredStocks() {
-      const q = state.searchQuery.trim().toUpperCase();
-      return state.stocks.filter(s => {
-        const secOk = state.activeSector === 'ALL' || s.sector === state.activeSector;
-        const qOk = !q || s.symbol.includes(q) || s.sector.includes(q);
-        return secOk && qOk;
-      });
-    }
-
-    function renderSectorPills() {
-      const bar = document.getElementById('sectorBar');
-      const hasOther = state.stocks.some(s => s.sector === 'OTHER');
-      const sectorsToShow = hasOther ? [...CORE_SECTORS, 'OTHER'] : CORE_SECTORS;
-
-      bar.innerHTML = sectorsToShow.map(sec => {
-        const subset = sec === 'ALL' ? state.stocks : state.stocks.filter(s => s.sector === sec);
-        const avg = subset.length ? subset.reduce((acc, s) => acc + s.pChange, 0) / subset.length : 0;
-        const activeCls = state.activeSector === sec ? 'active' : '';
-        const chgCls = avg >= 0 ? 'sec-up' : 'sec-dn';
-        const chgTxt = sec === 'ALL' ? '' : `<span class="sec-chg ${chgCls}">${avg >= 0 ? '+' : ''}${avg.toFixed(1)}%</span>`;
-        return `<button class="sector-pill ${activeCls}" data-sector="${sec}" type="button">${sec}${chgTxt}</button>`;
-      }).join('');
-
-      bar.querySelectorAll('.sector-pill').forEach(btn => {
-        btn.addEventListener('click', () => {
-          state.activeSector = btn.dataset.sector;
-          renderAll();
+    function seedHistoryIfEmpty(stocks, nowLabel) {
+      if (timeLabels.length > 0) return;
+      const seedTimes = ['09:15', '09:30', '10:00', '10:30', '11:15', nowLabel];
+      timeLabels = seedTimes;
+      stocks.forEach((st) => {
+        const target = st.pChange;
+        const curve = [0, 0.18, 0.42, 0.65, 0.84, 1.0].map((f, idx) => {
+          const jitter = idx === 0 || idx === 5 ? 0 : (Math.sin(st.symbol.length + idx * 1.7) * 0.08 * target);
+          return Number((target * f + jitter).toFixed(2));
         });
+        historySeries[st.symbol] = curve;
       });
     }
 
-    function updateBreadthReadout() {
-      const subset = state.activeSector === 'ALL'
-        ? state.stocks
-        : state.stocks.filter(s => s.sector === state.activeSector);
-      const bullCount = subset.filter(s => s.isBull).length;
-      const bearCount = subset.length - bullCount;
-      document.getElementById('breadthBull').textContent = bullCount;
-      document.getElementById('breadthBear').textContent = bearCount;
-      document.getElementById('universeMeta').textContent = `${state.stocks.length} TRACKED NSE STOCKS`;
-    }
-
-    /* -------------------------------------------------------------------------
-       F. INLINE SVG SPARKLINES & MINI ORDER BLOCK CANVAS
-       ------------------------------------------------------------------------- */
-    function buildSparklineSVG(stock) {
-      const pts = stock.trajectory;
-      const w = 100, h = 24;
-      const min = Math.min(...pts);
-      const max = Math.max(...pts);
-      const span = Math.max(max - min, 0.01);
-      const coords = pts.map((v, i) => {
-        const x = (i / Math.max(1, pts.length - 1)) * w;
-        const y = h - 2 - ((v - min) / span) * (h - 4);
-        return `${x.toFixed(1)},${y.toFixed(1)}`;
-      }).join(' ');
-      const stroke = stock.isBull ? '#00e676' : '#ff3b5c';
-      const fill = stock.isBull ? 'rgba(0,230,118,0.16)' : 'rgba(255,59,92,0.16)';
-      return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:24px;display:block;" preserveAspectRatio="none">
-        <polygon points="0,${h} ${coords} ${w},${h}" fill="${fill}" />
-        <polyline points="${coords}" fill="none" stroke="${stroke}" stroke-width="1.5" stroke-linejoin="round" />
-      </svg>`;
-    }
-
-    function drawMiniPickCanvas(canvas, stock) {
-      if (!canvas) return;
-      const dpr = window.devicePixelRatio || 1;
-      const W = canvas.clientWidth || 160;
-      const H = canvas.clientHeight || 64;
-      canvas.width = Math.round(W * dpr);
-      canvas.height = Math.round(H * dpr);
-      const ctx = canvas.getContext('2d');
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      ctx.fillStyle = '#06090f';
-      ctx.fillRect(0, 0, W, H);
-
-      const candles = stock.candles;
-      const allP = candles.flatMap(c => [c.h, c.l]).concat([stock.support1, stock.resistance1]);
-      const minP = Math.min(...allP) * 0.999;
-      const maxP = Math.max(...allP) * 1.001;
-      const span = Math.max(maxP - minP, 0.01);
-
-      const mapX = i => 4 + (i / (candles.length - 1)) * (W - 8);
-      const mapY = p => H - 4 - ((p - minP) / span) * (H - 8);
-
-      // Shaded OB1 & OB2 Zones
-      const fillCol = stock.isBull ? 'rgba(0,230,118,0.18)' : 'rgba(255,59,92,0.20)';
-      const strokeCol = stock.isBull ? 'rgba(0,230,118,0.6)' : 'rgba(255,59,92,0.6)';
-      [stock.ob1, stock.ob2].forEach(ob => {
-        const x = mapX(ob.startIdx);
-        const y = mapY(ob.high);
-        const bh = Math.max(4, mapY(ob.low) - y);
-        ctx.fillStyle = fillCol;
-        ctx.fillRect(x, y, W - x - 2, bh);
-        ctx.strokeStyle = strokeCol;
-        ctx.lineWidth = 0.7;
-        ctx.strokeRect(x, y, W - x - 2, bh);
-      });
-
-      // R1 dotted line
-      ctx.save();
-      ctx.strokeStyle = 'rgba(255,179,0,0.55)';
-      ctx.setLineDash([2, 2]);
-      ctx.beginPath();
-      const r1y = mapY(stock.resistance1);
-      ctx.moveTo(0, r1y);
-      ctx.lineTo(W, r1y);
-      ctx.stroke();
-      ctx.restore();
-
-      // Dashed Cyan VWAP
-      ctx.save();
-      ctx.strokeStyle = 'rgba(0,210,255,0.75)';
-      ctx.lineWidth = 1;
-      ctx.setLineDash([3, 2]);
-      ctx.beginPath();
-      candles.forEach((c, i) => {
-        const x = mapX(i), y = mapY(c.vwap);
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      });
-      ctx.stroke();
-      ctx.restore();
-
-      // Price close curve
-      ctx.strokeStyle = stock.isBull ? '#00e676' : '#ff3b5c';
-      ctx.lineWidth = 1.6;
-      ctx.beginPath();
-      candles.forEach((c, i) => {
-        const x = mapX(i), y = mapY(c.c);
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      });
-      ctx.stroke();
-
-      // OB label
-      ctx.fillStyle = stock.isBull ? '#00e676' : '#ff3b5c';
-      ctx.font = 'bold 8px "JetBrains Mono", monospace';
-      ctx.fillText('OB ZONE', mapX(stock.ob2.startIdx) + 3, Math.max(10, mapY(stock.ob2.high) - 2));
-    }
-
-    /* -------------------------------------------------------------------------
-       G. RENDER MIDDLE GRIDS & RIGHT HIGH-CONVICTION PANEL
-       ------------------------------------------------------------------------- */
-    function renderMiddleGrids() {
-      const q = state.searchQuery.trim().toUpperCase();
-      const filtered = getFilteredStocks();
-
-      const bulls = filtered.filter(s => s.isBull).sort((a, b) => b.pChange - a.pChange).slice(0, 12);
-      const bears = filtered.filter(s => !s.isBull).sort((a, b) => a.pChange - b.pChange).slice(0, 12);
-
-      document.getElementById('bullGridMeta').textContent = `${bulls.length} LEADERS`;
-      document.getElementById('bearGridMeta').textContent = `${bears.length} LAGGARDS`;
-
-      const bullEl = document.getElementById('bullishGrid');
-      const bearEl = document.getElementById('bearishGrid');
-
-      const cardHTML = s => {
-        const dir = s.isBull ? 'bull' : 'bear';
-        const txtCls = s.isBull ? 'bull-txt' : 'bear-txt';
-        const matchCls = q && s.symbol.includes(q) ? 'match-ring' : '';
-        return `
-          <div class="stock-card ${dir} ${matchCls}" onclick="openOrderBlockModal('${s.symbol}')">
-            <div class="sc-top">
-              <div style="min-width:0;">
-                <div class="sc-sym">${s.symbol}</div>
-                <div class="sc-ltp mono">₹${fmtPrice(s.ltp)}</div>
-              </div>
-              <div>
-                <div class="sc-pct mono ${txtCls}">${fmtPct(s.pChange)}</div>
-                <div class="sc-vol mono">${s.compactStrength}</div>
-              </div>
-            </div>
-            ${buildSparklineSVG(s)}
-            <div class="sc-foot mono">
-              <span class="sc-tag ${dir}">${s.buildUp}</span>
-              <span class="sc-conv">${s.conviction}</span>
-            </div>
-          </div>
-        `;
-      };
-
-      bullEl.innerHTML = bulls.length
-        ? bulls.map(cardHTML).join('')
-        : `<div class="mono" style="grid-column:1/-1;text-align:center;color:#64748b;padding:24px 0;font-size:11px;">No bullish stocks in current filter</div>`;
-
-      bearEl.innerHTML = bears.length
-        ? bears.map(cardHTML).join('')
-        : `<div class="mono" style="grid-column:1/-1;text-align:center;color:#64748b;padding:24px 0;font-size:11px;">No bearish stocks in current filter</div>`;
-    }
-
-    function renderHighConvictionPicks() {
-      const list = document.getElementById('picksList');
-      const q = state.searchQuery.trim().toUpperCase();
-      const filtered = getFilteredStocks();
-
-      const top3Bull = filtered.filter(s => s.isBull)
-        .sort((a, b) => (b.conviction - a.conviction) || (b.pChange - a.pChange))
-        .slice(0, 3);
-      const top3Bear = filtered.filter(s => !s.isBull)
-        .sort((a, b) => (b.conviction - a.conviction) || (a.pChange - b.pChange))
-        .slice(0, 3);
-
-      const picks = [...top3Bull, ...top3Bear];
-      if (!picks.length) {
-        list.innerHTML = `<div class="mono" style="text-align:center;color:#64748b;padding:30px 0;">No high-conviction picks match filter</div>`;
+    function appendLiveTick(stocks, nowLabel) {
+      if (timeLabels.length === 0) {
+        seedHistoryIfEmpty(stocks, nowLabel);
         return;
       }
+      if (timeLabels[timeLabels.length - 1] === nowLabel) return;
+      timeLabels.push(nowLabel);
+      if (timeLabels.length > 24) timeLabels.shift();
 
-      list.innerHTML = picks.map((s, idx) => {
-        const dir = s.isBull ? 'bull' : 'bear';
-        const txtCls = s.isBull ? 'bull-txt' : 'bear-txt';
-        const matchCls = q && s.symbol.includes(q) ? 'match-ring' : '';
-        const vwapAligned = s.vwapDiffPct >= 0;
-        const vwapTxt = vwapAligned
-          ? `▲ ABOVE VWAP (+${s.vwapDiffPct.toFixed(1)}%)`
-          : `▼ BELOW VWAP (${s.vwapDiffPct.toFixed(1)}%)`;
+      const lookup = {};
+      stocks.forEach(s => { lookup[s.symbol] = s.pChange; });
 
-        return `
-          <div class="pick-card ${dir} ${matchCls}" onclick="openOrderBlockModal('${s.symbol}')">
-            <div class="pick-main">
-              <div>
-                <div class="pick-badges">
-                  <span class="pick-sym">${s.symbol}</span>
-                  <span class="badge ${s.isBull ? 'badge-bull' : 'badge-bear'}">${s.isBull ? 'BULLISH' : 'BEARISH'}</span>
-                  <span class="badge badge-conv">CONV ${s.conviction}</span>
-                </div>
-                <div class="pick-pct mono ${txtCls}">${fmtPct(s.pChange)}</div>
-                <div class="pick-ltp mono">₹${fmtPrice(s.ltp)} <span class="amber-txt">• ${s.compactStrength}</span></div>
-                <div class="pick-vwap mono ${vwapAligned ? 'cyan-txt' : 'bear-txt'}">${vwapTxt}</div>
-              </div>
-              <canvas id="miniPickCanvas_${idx}" class="pick-mini-canvas"></canvas>
+      Object.keys(historySeries).forEach(sym => {
+        const arr = historySeries[sym];
+        const nextVal = lookup[sym] !== undefined ? lookup[sym] : arr[arr.length - 1];
+        arr.push(Number(nextVal.toFixed(2)));
+        if (arr.length > 24) arr.shift();
+      });
+
+      stocks.forEach(s => {
+        if (!historySeries[s.symbol]) {
+          historySeries[s.symbol] = timeLabels.map((_, i) =>
+            Number((s.pChange * (i / Math.max(1, timeLabels.length - 1))).toFixed(2))
+          );
+        }
+      });
+    }
+
+    function loadData(stocks, timestampLabel, isLive) {
+      rawStocks = stocks;
+      enrichedStocks = stocks.map(enrichStock);
+      if (isLive) {
+        appendLiveTick(enrichedStocks, timestampLabel);
+      } else {
+        timeLabels = [];
+        historySeries = {};
+        seedHistoryIfEmpty(enrichedStocks, timestampLabel);
+      }
+
+      document.getElementById('lastSyncVal').textContent = timestampLabel;
+      document.getElementById('stockCountSub').textContent = `${enrichedStocks.length} F&O stocks (${isLive ? 'LIVE MCP' : 'SIM MODE'})`;
+      document.getElementById('chartPointsInfo').textContent = `Intraday points: ${timeLabels.length}`;
+
+      renderMetrics();
+      renderSectors();
+      renderAll();
+      drawSpiderChart();
+    }
+
+    async function fetchLiveFromBridge() {
+      const pill = document.getElementById('statusPill');
+      const statusText = document.getElementById('statusText');
+      try {
+        const res = await fetch(bridgeUrl, { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+
+        const list = Array.isArray(data.stocks) ? data.stocks : [];
+        if (list.length === 0) {
+          showAlert('Bridge connected, but NSE MCP returned 0 stocks. Wait for market update or check bridge.');
+          return;
+        }
+        hideAlert();
+        pill.className = 'status-pill live';
+        statusText.textContent = `LIVE MCP (${list.length})`;
+        loadData(list, data.updated_at || formatTimeNow(), true);
+      } catch (err) {
+        pill.className = 'status-pill error';
+        statusText.textContent = 'BRIDGE OFFLINE';
+        showAlert(`Cannot reach ${bridgeUrl}. Make sure Start_NSE_Live.bat is running on your PC. (${err.message})`);
+      }
+    }
+
+    function toggleLiveMode() {
+      isLiveMode = !isLiveMode;
+      const btn = document.getElementById('liveToggleBtn');
+      const pill = document.getElementById('statusPill');
+      const statusText = document.getElementById('statusText');
+
+      if (pollTimer) { clearInterval(pollTimer); pollTimer = null; }
+
+      if (isLiveMode) {
+        btn.classList.add('active');
+        btn.textContent = '⚡ LIVE NSE MCP: ON';
+        timeLabels = [];
+        historySeries = {};
+        fetchLiveFromBridge();
+        pollTimer = setInterval(fetchLiveFromBridge, pollSeconds * 1000);
+      } else {
+        btn.classList.remove('active');
+        btn.textContent = '⚡ LIVE NSE MCP: OFF';
+        pill.className = 'status-pill';
+        statusText.textContent = 'SIM MODE';
+        hideAlert();
+        loadData(SIM_STOCKS, formatTimeNow(), false);
+      }
+    }
+
+    function manualRefresh() {
+      if (isLiveMode) {
+        fetchLiveFromBridge();
+      } else {
+        loadData(SIM_STOCKS, formatTimeNow(), false);
+      }
+    }
+
+    function renderMetrics() {
+      const bulls = enrichedStocks.filter(s => s.pChange >= 0).sort((a, b) => b.pChange - a.pChange);
+      const bears = enrichedStocks.filter(s => s.pChange < 0).sort((a, b) => a.pChange - b.pChange);
+      const total = Math.max(enrichedStocks.length, 1);
+      const bullPct = Math.round((bulls.length / total) * 100);
+
+      document.getElementById('breadthValue').textContent = `${bulls.length} ▲ / ${bears.length} ▼`;
+      document.getElementById('breadthBar').style.width = `${bullPct}%`;
+      document.getElementById('breadthSub').textContent = `${bullPct}% Bullish Breadth`;
+
+      if (bulls[0]) {
+        document.getElementById('topBullSym').textContent = bulls[0].symbol;
+        document.getElementById('topBullSub').textContent = `₹${bulls[0].ltp.toFixed(2)} (+${bulls[0].pChange.toFixed(2)}%) • Conv ${bulls[0].conviction}`;
+      } else {
+        document.getElementById('topBullSym').textContent = '--';
+        document.getElementById('topBullSub').textContent = 'No bullish stocks';
+      }
+
+      if (bears[0]) {
+        document.getElementById('topBearSym').textContent = bears[0].symbol;
+        document.getElementById('topBearSub').textContent = `₹${bears[0].ltp.toFixed(2)} (${bears[0].pChange.toFixed(2)}%) • Conv ${bears[0].conviction}`;
+      } else {
+        document.getElementById('topBearSym').textContent = '--';
+        document.getElementById('topBearSub').textContent = 'No bearish stocks';
+      }
+
+      // Sector leaders
+      const secStats = computeSectorStats();
+      if (secStats.length > 0) {
+        const best = secStats[0];
+        document.getElementById('topSectorSym').textContent = best.name;
+        document.getElementById('topSectorSub').textContent = `Avg ${best.avg >= 0 ? '+' : ''}${best.avg.toFixed(2)}% (${best.count} stocks)`;
+      }
+    }
+
+    function computeSectorStats() {
+      const map = {};
+      enrichedStocks.forEach(s => {
+        if (!map[s.sector]) map[s.sector] = { name: s.sector, sum: 0, count: 0, bulls: 0 };
+        map[s.sector].sum += s.pChange;
+        map[s.sector].count += 1;
+        if (s.pChange >= 0) map[s.sector].bulls += 1;
+      });
+      return Object.values(map)
+        .map(x => ({ ...x, avg: x.sum / x.count }))
+        .sort((a, b) => b.avg - a.avg);
+    }
+
+    function renderSectors() {
+      const stats = computeSectorStats();
+      const grid = document.getElementById('sectorGrid');
+      grid.innerHTML = stats.map(sec => `
+        <div class="sector-pill ${selectedSector === sec.name ? 'active' : ''}" onclick="selectSector('${sec.name}')">
+          <span class="sector-name">${sec.name}</span>
+          <span class="sector-pct ${sec.avg >= 0 ? 'up' : 'dn'}">${sec.avg >= 0 ? '+' : ''}${sec.avg.toFixed(2)}%</span>
+          <span class="sector-count">${sec.bulls}/${sec.count} ▲</span>
+        </div>
+      `).join('');
+    }
+
+    function selectSector(sec) {
+      selectedSector = (selectedSector === sec) ? 'ALL' : sec;
+      renderSectors();
+      renderAll();
+    }
+
+    function setFilter(f, el) {
+      activeFilter = f;
+      document.querySelectorAll('.filter-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+      if (el) el.classList.add('active');
+      renderAll();
+    }
+
+    function sortList(list) {
+      const mode = document.getElementById('sortSelect').value;
+      return [...list].sort((a, b) => {
+        if (mode === 'pchange') return Math.abs(b.pChange) - Math.abs(a.pChange);
+        if (mode === 'range') return b.rangePct - a.rangePct;
+        if (mode === 'strength') return b.directionalStrength - a.directionalStrength;
+        return b.conviction - a.conviction;
+      });
+    }
+
+    function renderAll() {
+      const q = document.getElementById('searchInput').value.trim().toUpperCase();
+      let filtered = enrichedStocks.filter(s => {
+        if (selectedSector !== 'ALL' && s.sector !== selectedSector) return false;
+        if (q && !s.symbol.includes(q) && !s.sector.includes(q)) return false;
+        if (activeFilter === 'BULL' && s.pChange < 0) return false;
+        if (activeFilter === 'BEAR' && s.pChange >= 0) return false;
+        if (activeFilter === 'HIGH' && s.conviction < 75) return false;
+        return true;
+      });
+
+      const bulls = sortList(filtered.filter(s => s.pChange >= 0));
+      const bears = sortList(filtered.filter(s => s.pChange < 0));
+
+      document.getElementById('bullCountBadge').textContent = bulls.length;
+      document.getElementById('bearCountBadge').textContent = bears.length;
+
+      document.getElementById('bullList').innerHTML = bulls.length
+        ? bulls.map(s => buildStockCard(s, true)).join('')
+        : '<div class="empty-state">No bullish F&amp;O stocks match current filter.</div>';
+
+      document.getElementById('bearList').innerHTML = bears.length
+        ? bears.map(s => buildStockCard(s, false)).join('')
+        : '<div class="empty-state">No bearish F&amp;O stocks match current filter.</div>';
+    }
+
+    function buildStockCard(s, isBull) {
+      const convClass = s.conviction >= 75 ? (isBull ? 'pill-conv-high' : 'pill-conv-bear') : 'pill-conv-mid';
+      const fillClass = isBull ? 'range-fill-bull' : 'range-fill-bear';
+      return `
+        <div class="stock-card ${isBull ? 'bull' : 'bear'}" onclick="openDetail('${s.symbol}')">
+          <div class="card-top">
+            <div class="sym-wrap">
+              <span class="sym">${s.symbol}</span>
+              <span class="sec-tag">${s.sector}</span>
             </div>
-            <div class="pick-levels">
-              <div><div class="lvl-lbl">S1</div><div class="lvl-val">${fmtPrice(s.support1)}</div></div>
-              <div><div class="lvl-lbl">OB Zone</div><div class="lvl-val amber-txt">${s.ob2.low.toFixed(1)}-${s.ob2.high.toFixed(1)}</div></div>
-              <div><div class="lvl-lbl">R1</div><div class="lvl-val">${fmtPrice(s.resistance1)}</div></div>
-              <div><div class="lvl-lbl">R2</div><div class="lvl-val">${fmtPrice(s.resistance2)}</div></div>
-              <div style="text-align:right;"><div class="lvl-lbl">R:R</div><div class="lvl-val cyan-txt">${s.rr}</div></div>
+            <div class="price-wrap">
+              <div class="ltp">₹${s.ltp.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</div>
+              <div class="chg ${isBull ? 'up' : 'dn'}">${s.pChange >= 0 ? '+' : ''}${s.pChange.toFixed(2)}%</div>
             </div>
           </div>
-        `;
-      }).join('');
-
-      // Draw each mini OB canvas
-      picks.forEach((s, idx) => {
-        const cvs = document.getElementById(`miniPickCanvas_${idx}`);
-        drawMiniPickCanvas(cvs, s);
-      });
+          <div class="card-meta">
+            <span class="pill-mini ${convClass}">CONV ${s.conviction}/100</span>
+            <span>CLS STR: <strong>${s.directionalStrength}%</strong></span>
+            <span>RNG: <strong>${s.rangePct}%</strong></span>
+          </div>
+          <div class="range-track">
+            <div class="${fillClass}" style="width:${Math.max(4, Math.min(100, s.closePos))}%"></div>
+          </div>
+          <div class="range-labels">
+            <span>L: ₹${s.low.toFixed(2)}</span>
+            <span>H: ₹${s.high.toFixed(2)}</span>
+          </div>
+        </div>
+      `;
     }
 
-    /* -------------------------------------------------------------------------
-       H. LEFT PANEL: INTRADAY LIQUIDITY FLOW SPIDER CANVAS
-       ------------------------------------------------------------------------- */
-    let spiderHitList = [];
-
+    // Crisp HiDPI Intraday Spider Chart
     function drawSpiderChart() {
-      const wrap = document.getElementById('spiderWrap');
       const canvas = document.getElementById('spiderCanvas');
-      if (!wrap || !canvas) return;
-
-      const rect = wrap.getBoundingClientRect();
-      const dpr = window.devicePixelRatio || 1;
-      const W = Math.max(300, rect.width);
-      const H = Math.max(420, rect.height);
-
-      if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) {
-        canvas.width = Math.round(W * dpr);
-        canvas.height = Math.round(H * dpr);
-      }
-
-      const ctx = canvas.getContext('2d');
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-
-      // Clear background
-      ctx.fillStyle = '#06090f';
-      ctx.fillRect(0, 0, W, H);
-
-      const stocks = state.stocks.slice(0, 40);
-      const topOscH = 38;
-      const leftPad = 10;
-      const rightLabelsW = 86;   // Ranked ticker labels on right edge
-      const depthBarW = 22;      // Stacked vertical Liquidity Depth Bar
-      const bezierW = 36;        // Glowing Bezier curves
-      const chartLeft = leftPad;
-      const chartRight = Math.max(120, W - rightLabelsW - depthBarW - bezierW - 8);
-      const chartW = chartRight - chartLeft;
-      const chartTop = topOscH + 12;
-      const chartBottom = H - 22;
-      const chartH = chartBottom - chartTop;
-
-      const allVals = stocks.flatMap(s => s.trajectory);
-      const maxPos = Math.max(5.5, ...allVals) * 1.08;
-      const minNeg = Math.min(-3.0, ...allVals) * 1.12;
-      const span = Math.max(0.5, maxPos - minNeg);
-      const zeroY = chartTop + (maxPos / span) * chartH;
-
-      const mapY = v => chartTop + ((maxPos - v) / span) * chartH;
-
-      // 1. Subtle horizontal gridlines
-      ctx.strokeStyle = 'rgba(28, 38, 56, 0.55)';
-      ctx.lineWidth = 1;
-      [6, 4, 2, -1, -2, -3].forEach(lvl => {
-        if (lvl < maxPos && lvl > minNeg) {
-          const y = mapY(lvl);
-          ctx.beginPath();
-          ctx.moveTo(chartLeft, y);
-          ctx.lineTo(chartRight, y);
-          ctx.stroke();
-        }
-      });
-
-      // Vertical time ticks (09:15 -> current)
-      const timeMarks = ['09:15', '10:45', '12:15', '13:45', state.mode === 'MCP' ? state.lastMcpUpdate.slice(0, 5) : '15:15'];
-      timeMarks.forEach((lbl, idx) => {
-        const x = chartLeft + (idx / (timeMarks.length - 1)) * chartW;
-        ctx.strokeStyle = 'rgba(28, 38, 56, 0.45)';
-        ctx.beginPath();
-        ctx.moveTo(x, chartTop);
-        ctx.lineTo(x, chartBottom);
-        ctx.stroke();
-        ctx.fillStyle = '#64748b';
-        ctx.font = '9px "JetBrains Mono", monospace';
-        ctx.textAlign = idx === 0 ? 'left' : (idx === timeMarks.length - 1 ? 'right' : 'center');
-        ctx.fillText(lbl, x, H - 7);
-      });
-
-      // 2. Top Mini Net-Flow Breadth Oscillator Bar
-      ctx.fillStyle = '#090f1b';
-      ctx.fillRect(0, 0, W, topOscH);
-      ctx.strokeStyle = '#1c2638';
-      ctx.beginPath();
-      ctx.moveTo(0, topOscH);
-      ctx.lineTo(W, topOscH);
-      ctx.stroke();
-
-      const oscMid = topOscH / 2;
-      const refLen = Math.max(2, stocks[0]?.trajectory.length || 2);
-      ctx.beginPath();
-      for (let i = 0; i < refLen; i++) {
-        const x = chartLeft + (i / (refLen - 1)) * chartW;
-        let bSum = 0, sSum = 0;
-        for (const s of stocks) {
-          const val = s.trajectory[Math.min(i, s.trajectory.length - 1)] || 0;
-          if (val >= 0) bSum += val; else sSum += Math.abs(val);
-        }
-        const net = (bSum - sSum) / Math.max(1, bSum + sSum);
-        const y = oscMid - net * (topOscH * 0.36);
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      }
-      ctx.strokeStyle = '#00e676';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-
-      const bullTotal = stocks.filter(s => s.isBull).length;
-      const bearTotal = stocks.length - bullTotal;
-      const bullRatio = bullTotal / Math.max(1, stocks.length);
-
-      ctx.font = 'bold 9px "JetBrains Mono", monospace';
-      ctx.textAlign = 'right';
-      ctx.fillStyle = '#00e676';
-      ctx.fillText(`NET BULL ${(bullRatio * 100).toFixed(0)}%`, W - 10, 15);
-      ctx.fillStyle = '#64748b';
-      ctx.fillText('BREADTH OSC', W - 10, 29);
-
-      // 3. Zero Baseline
-      ctx.save();
-      ctx.strokeStyle = 'rgba(148, 163, 184, 0.5)';
-      ctx.setLineDash([4, 3]);
-      ctx.beginPath();
-      ctx.moveTo(chartLeft, zeroY);
-      ctx.lineTo(W - 6, zeroY);
-      ctx.stroke();
-      ctx.restore();
-
-      // 4. Up to 40 Glowing Trajectories
-      const q = state.searchQuery.trim().toUpperCase();
-      spiderHitList = [];
-      const sortedDraw = [...stocks].sort((a, b) => Math.abs(a.pChange) - Math.abs(b.pChange));
-
-      sortedDraw.forEach(stock => {
-        const masterIdx = state.stocks.indexOf(stock);
-        const isHov = state.hoveredSpiderIdx === masterIdx;
-        const secMatch = state.activeSector === 'ALL' || stock.sector === state.activeSector;
-        const qMatch = !q || stock.symbol.includes(q) || stock.sector.includes(q);
-        const highlight = isHov || (q && qMatch);
-        const dim = !secMatch || (q && !qMatch) || (state.hoveredSpiderIdx >= 0 && !isHov);
-
-        const rgb = stock.isBull ? '0, 230, 118' : '255, 59, 92';
-        const alpha = highlight ? 1.0 : (dim ? 0.12 : 0.62);
-
-        ctx.save();
-        if (highlight) {
-          ctx.shadowColor = stock.isBull ? '#00e676' : '#ff3b5c';
-          ctx.shadowBlur = 10;
-        }
-        ctx.strokeStyle = `rgba(${rgb}, ${alpha})`;
-        ctx.lineWidth = highlight ? 2.3 : 1.15;
-
-        const pts = stock.trajectory;
-        ctx.beginPath();
-        for (let i = 0; i < pts.length; i++) {
-          const x = chartLeft + (i / Math.max(1, pts.length - 1)) * chartW;
-          const y = mapY(pts[i]);
-          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-        }
-        ctx.stroke();
-        ctx.restore();
-
-        spiderHitList.push({ masterIdx, stock, pts });
-      });
-
-      // 5. Stacked Vertical Liquidity Depth Bar
-      const barX = chartRight + 8;
-      const bullBarH = (zeroY - chartTop) * Math.min(0.96, 0.48 + bullRatio * 0.62);
-      const bearBarH = (chartBottom - zeroY) * Math.min(0.96, 0.48 + (1 - bullRatio) * 0.62);
-
-      const bGrad = ctx.createLinearGradient(barX, zeroY - bullBarH, barX, zeroY);
-      bGrad.addColorStop(0, 'rgba(0, 230, 118, 0.92)');
-      bGrad.addColorStop(1, 'rgba(0, 230, 118, 0.16)');
-      ctx.fillStyle = bGrad;
-      ctx.fillRect(barX, zeroY - bullBarH, depthBarW, bullBarH - 1);
-      ctx.strokeStyle = 'rgba(0, 230, 118, 0.7)';
-      ctx.strokeRect(barX, zeroY - bullBarH, depthBarW, bullBarH - 1);
-
-      const sGrad = ctx.createLinearGradient(barX, zeroY, barX, zeroY + bearBarH);
-      sGrad.addColorStop(0, 'rgba(255, 59, 92, 0.16)');
-      sGrad.addColorStop(1, 'rgba(255, 59, 92, 0.92)');
-      ctx.fillStyle = sGrad;
-      ctx.fillRect(barX, zeroY + 1, depthBarW, bearBarH);
-      ctx.strokeStyle = 'rgba(255, 59, 92, 0.7)';
-      ctx.strokeRect(barX, zeroY + 1, depthBarW, bearBarH);
-
-      // 6. Glowing Bezier Flow Curves from Depth Bar to Right-Edge Ranked Labels
-      const flowX0 = barX + depthBarW;
-      const labelX = W - rightLabelsW + 4;
-      const cpX1 = flowX0 + bezierW * 0.45;
-      const cpX2 = flowX0 + bezierW * 0.65;
-
-      const rankedBulls = stocks.filter(s => s.isBull).sort((a, b) => b.pChange - a.pChange).slice(0, 10);
-      const rankedBears = stocks.filter(s => !s.isBull).sort((a, b) => a.pChange - b.pChange).slice(0, 8);
-
-      const bullStep = Math.max(13, (zeroY - chartTop - 10) / Math.max(1, rankedBulls.length));
-      rankedBulls.forEach((s, i) => {
-        const yTarget = chartTop + 9 + i * bullStep;
-        if (yTarget >= zeroY - 6) return;
-        const ySrc = (zeroY - bullBarH + 6) + (i / Math.max(1, rankedBulls.length - 1)) * Math.max(8, bullBarH - 14);
-        const isHov = state.stocks[state.hoveredSpiderIdx]?.symbol === s.symbol;
-
-        ctx.beginPath();
-        ctx.moveTo(flowX0, ySrc);
-        ctx.bezierCurveTo(cpX1, ySrc, cpX2, yTarget, labelX - 3, yTarget);
-        ctx.strokeStyle = isHov ? '#00e676' : `rgba(0, 230, 118, ${0.22 + (1 - i / 10) * 0.45})`;
-        ctx.lineWidth = isHov ? 2 : 1.1;
-        ctx.stroke();
-
-        ctx.font = `${isHov ? 'bold ' : ''}8.5px "JetBrains Mono", monospace`;
-        ctx.textAlign = 'left';
-        ctx.fillStyle = isHov ? '#ffffff' : '#cbd5e1';
-        ctx.fillText(s.symbol.slice(0, 8), labelX, yTarget + 3);
-        ctx.textAlign = 'right';
-        ctx.fillStyle = '#00e676';
-        ctx.fillText(`+${s.pChange.toFixed(1)}%`, W - 4, yTarget + 3);
-      });
-
-      const bearStep = Math.max(13, (chartBottom - zeroY - 10) / Math.max(1, rankedBears.length));
-      rankedBears.forEach((s, i) => {
-        const yTarget = zeroY + 13 + i * bearStep;
-        if (yTarget > chartBottom) return;
-        const ySrc = (zeroY + 8) + (i / Math.max(1, rankedBears.length - 1)) * Math.max(8, bearBarH - 14);
-        const isHov = state.stocks[state.hoveredSpiderIdx]?.symbol === s.symbol;
-
-        ctx.beginPath();
-        ctx.moveTo(flowX0, ySrc);
-        ctx.bezierCurveTo(cpX1, ySrc, cpX2, yTarget, labelX - 3, yTarget);
-        ctx.strokeStyle = isHov ? '#ff3b5c' : `rgba(255, 59, 92, ${0.22 + (1 - i / 8) * 0.45})`;
-        ctx.lineWidth = isHov ? 2 : 1.1;
-        ctx.stroke();
-
-        ctx.font = `${isHov ? 'bold ' : ''}8.5px "JetBrains Mono", monospace`;
-        ctx.textAlign = 'left';
-        ctx.fillStyle = isHov ? '#ffffff' : '#cbd5e1';
-        ctx.fillText(s.symbol.slice(0, 8), labelX, yTarget + 3);
-        ctx.textAlign = 'right';
-        ctx.fillStyle = '#ff3b5c';
-        ctx.fillText(`${s.pChange.toFixed(1)}%`, W - 4, yTarget + 3);
-      });
-
-      document.getElementById('spiderBullPct').textContent = `${(bullRatio * 100).toFixed(1)}% BULL`;
-      document.getElementById('spiderBearPct').textContent = `${((1 - bullRatio) * 100).toFixed(1)}% BEAR`;
-    }
-
-    function bindSpiderEvents() {
-      const canvas = document.getElementById('spiderCanvas');
-      const tooltip = document.getElementById('spiderTooltip');
-
-      canvas.addEventListener('mousemove', e => {
-        const rect = canvas.getBoundingClientRect();
-        const mx = e.clientX - rect.left;
-        const my = e.clientY - rect.top;
-
-        const leftPad = 10;
-        const chartRight = Math.max(120, rect.width - 86 - 22 - 36 - 8);
-        const chartW = chartRight - leftPad;
-        const chartTop = 50;
-        const chartBottom = rect.height - 22;
-        const chartH = chartBottom - chartTop;
-
-        const allVals = state.stocks.slice(0, 40).flatMap(s => s.trajectory);
-        const maxPos = Math.max(5.5, ...allVals) * 1.08;
-        const minNeg = Math.min(-3.0, ...allVals) * 1.12;
-        const span = Math.max(0.5, maxPos - minNeg);
-
-        const normX = Math.max(0, Math.min(1, (mx - leftPad) / Math.max(1, chartW)));
-
-        let bestDist = 18;
-        let bestIdx = -1;
-        for (const item of spiderHitList) {
-          const bi = Math.round(normX * Math.max(0, item.pts.length - 1));
-          const py = chartTop + ((maxPos - item.pts[bi]) / span) * chartH;
-          const d = Math.abs(my - py);
-          if (d < bestDist) {
-            bestDist = d;
-            bestIdx = item.masterIdx;
-          }
-        }
-
-        if (bestIdx !== state.hoveredSpiderIdx) {
-          state.hoveredSpiderIdx = bestIdx;
-          drawSpiderChart();
-        }
-
-        if (bestIdx >= 0) {
-          const s = state.stocks[bestIdx];
-          document.getElementById('ttSym').textContent = s.symbol;
-          const pctEl = document.getElementById('ttPct');
-          pctEl.textContent = fmtPct(s.pChange);
-          pctEl.className = s.isBull ? 'bull-txt' : 'bear-txt';
-          document.getElementById('ttSec').textContent = s.sector;
-          document.getElementById('ttLtp').textContent = `₹${fmtPrice(s.ltp)}`;
-          document.getElementById('ttVol').textContent = s.strengthLabel;
-
-          tooltip.classList.add('visible');
-          tooltip.style.left = `${Math.min(rect.width - 170, Math.max(8, mx + 14))}px`;
-          tooltip.style.top = `${Math.min(rect.height - 76, Math.max(44, my - 20))}px`;
-        } else {
-          tooltip.classList.remove('visible');
-        }
-      });
-
-      canvas.addEventListener('mouseleave', () => {
-        state.hoveredSpiderIdx = -1;
-        tooltip.classList.remove('visible');
-        drawSpiderChart();
-      });
-
-      canvas.addEventListener('click', () => {
-        if (state.hoveredSpiderIdx >= 0) {
-          openOrderBlockModal(state.stocks[state.hoveredSpiderIdx].symbol);
-        }
-      });
-    }
-
-    /* -------------------------------------------------------------------------
-       I. INTERACTIVE ORDER BLOCK 5m CANDLESTICK MODAL
-       ------------------------------------------------------------------------- */
-    function openOrderBlockModal(symbol) {
-      const stock = state.stocks.find(s => s.symbol === symbol);
-      if (!stock) return;
-      state.activeModalSymbol = symbol;
-
-      const modal = document.getElementById('obModal');
-      const card = document.getElementById('obModalCard');
-      card.classList.toggle('bear-mode', !stock.isBull);
-
-      updateModalMeta(stock);
-      modal.classList.add('open');
-      requestAnimationFrame(() => drawModalChart(stock));
-    }
-
-    function updateModalMeta(s) {
-      document.getElementById('mSymbol').textContent = s.symbol;
-      document.getElementById('mSector').textContent = s.sector;
-
-      const dirBadge = document.getElementById('mDirBadge');
-      dirBadge.textContent = s.isBull ? 'BULLISH ORDER BLOCK' : 'BEARISH ORDER BLOCK';
-      dirBadge.className = `badge ${s.isBull ? 'badge-bull' : 'badge-bear'}`;
-
-      document.getElementById('mConvBadge').textContent = `CONV ${s.conviction}`;
-      document.getElementById('mLtp').textContent = `₹${fmtPrice(s.ltp)}`;
-
-      const chg = document.getElementById('mChg');
-      chg.textContent = `${fmtPct(s.pChange)} (${s.pointChange >= 0 ? '+' : ''}${s.pointChange.toFixed(2)})`;
-      chg.className = s.isBull ? 'bull-txt' : 'bear-txt';
-
-      document.getElementById('mVolSurge').textContent = s.strengthLabel;
-      document.getElementById('mVwapStat').textContent = `₹${fmtPrice(s.vwap)} (${s.vwapDiffPct >= 0 ? 'ABOVE' : 'BELOW'})`;
-      document.getElementById('mOb1Stat').textContent = `${s.ob1.low.toFixed(2)} - ${s.ob1.high.toFixed(2)}`;
-      document.getElementById('mOb2Stat').textContent = `${s.ob2.low.toFixed(2)} - ${s.ob2.high.toFixed(2)}`;
-      document.getElementById('mS1Stat').textContent = `₹${fmtPrice(s.support1)}`;
-      document.getElementById('mR1R2Stat').textContent = `${s.resistance1.toFixed(1)} / ${s.resistance2.toFixed(1)}`;
-      document.getElementById('mRrStat').textContent = '1 : 2.0';
-
-      updateHud(s.candles[s.candles.length - 1]);
-    }
-
-    function updateHud(c) {
-      if (!c) return;
-      document.getElementById('hudTime').textContent = c.time;
-      document.getElementById('hudO').textContent = fmtPrice(c.o);
-      document.getElementById('hudH').textContent = fmtPrice(c.h);
-      document.getElementById('hudL').textContent = fmtPrice(c.l);
-      document.getElementById('hudC').textContent = fmtPrice(c.c);
-      document.getElementById('hudV').textContent = fmtVol(c.v);
-      document.getElementById('hudVwap').textContent = fmtPrice(c.vwap);
-    }
-
-    function closeOrderBlockModal() {
-      state.activeModalSymbol = null;
-      document.getElementById('obModal').classList.remove('open');
-    }
-
-    function drawModalChart(stock) {
-      const canvas = document.getElementById('modalCanvas');
-      if (!canvas) return;
       const rect = canvas.parentElement.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-      const W = Math.max(320, rect.width - 16);
-      const H = Math.max(344, rect.height - 16);
-
-      if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) {
-        canvas.width = Math.round(W * dpr);
-        canvas.height = Math.round(H * dpr);
-      }
-
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
       const ctx = canvas.getContext('2d');
-      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.scale(dpr, dpr);
 
-      ctx.fillStyle = '#06090f';
-      ctx.fillRect(0, 0, W, H);
+      const W = rect.width;
+      const H = rect.height;
+      const pad = { top: 22, right: 64, bottom: 28, left: 46 };
+      const plotW = W - pad.left - pad.right;
+      const plotH = H - pad.top - pad.bottom;
 
-      const padL = 12, padR = 78, padT = 38, padB = 26, volH = 56;
-      const priceB = H - padB - volH;
-      const priceH = priceB - padT;
-      const plotW = W - padL - padR;
+      ctx.clearRect(0, 0, W, H);
 
-      const candles = stock.candles;
-      const allP = candles.flatMap(c => [c.h, c.l, c.vwap]).concat([stock.support1, stock.resistance1, stock.resistance2]);
-      const minP = Math.min(...allP);
-      const maxP = Math.max(...allP);
-      const padP = (maxP - minP) * 0.08;
-      const yMin = minP - padP;
-      const yMax = maxP + padP;
-      const ySpan = Math.max(yMax - yMin, 0.01);
-      const maxV = Math.max(...candles.map(c => c.v), 1);
+      // Pick top 5 bullish + top 3 bearish
+      const topBulls = enrichedStocks.filter(s => s.pChange >= 0).sort((a, b) => b.pChange - a.pChange).slice(0, 5);
+      const topBears = enrichedStocks.filter(s => s.pChange < 0).sort((a, b) => a.pChange - b.pChange).slice(0, 3);
+      const featured = [...topBulls, ...topBears];
 
-      const stepX = plotW / candles.length;
-      const mapX = i => padL + i * stepX + stepX / 2;
-      const mapY = p => padT + ((yMax - p) / ySpan) * priceH;
+      const bullColors = ['#00e676', '#00d2ff', '#34d399', '#38bdf8', '#a3e635'];
+      const bearColors = ['#ff3b5c', '#fb7185', '#f59e0b'];
 
-      // Gridlines & Y-axis
-      ctx.strokeStyle = 'rgba(28, 38, 56, 0.65)';
-      ctx.lineWidth = 1;
-      for (let i = 0; i <= 6; i++) {
-        const p = yMin + (i / 6) * ySpan;
-        const y = mapY(p);
-        ctx.beginPath();
-        ctx.moveTo(padL, y);
-        ctx.lineTo(W - padR, y);
-        ctx.stroke();
-
-        ctx.fillStyle = '#64748b';
-        ctx.font = '10px "JetBrains Mono", monospace';
-        ctx.textAlign = 'left';
-        ctx.fillText(p.toFixed(2), W - padR + 6, y + 3);
-      }
-
-      // Time ticks
-      for (let i = 0; i < candles.length; i += 9) {
-        const x = mapX(i);
-        ctx.strokeStyle = 'rgba(28, 38, 56, 0.45)';
-        ctx.beginPath();
-        ctx.moveTo(x, padT);
-        ctx.lineTo(x, H - padB);
-        ctx.stroke();
-        ctx.fillStyle = '#64748b';
-        ctx.font = '9.5px "JetBrains Mono", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText(candles[i].time, x, H - 8);
-      }
-
-      // Shaded Morning OB & Midday OB zones
-      [stock.ob1, stock.ob2].forEach(ob => {
-        const x0 = mapX(ob.startIdx) - stepX * 0.4;
-        const yTop = mapY(ob.high);
-        const yBot = mapY(ob.low);
-        const bh = Math.max(10, yBot - yTop);
-        ctx.fillStyle = stock.isBull ? 'rgba(0, 230, 118, 0.14)' : 'rgba(255, 59, 92, 0.15)';
-        ctx.fillRect(x0, yTop, (W - padR) - x0, bh);
-        ctx.strokeStyle = stock.isBull ? 'rgba(0, 230, 118, 0.62)' : 'rgba(255, 59, 92, 0.62)';
-        ctx.strokeRect(x0, yTop, (W - padR) - x0, bh);
-
-        ctx.fillStyle = stock.isBull ? '#00e676' : '#ff3b5c';
-        ctx.font = 'bold 9.5px "JetBrains Mono", monospace';
-        ctx.textAlign = 'left';
-        ctx.fillText(`${ob.label}: ${ob.low.toFixed(2)} - ${ob.high.toFixed(2)}`, x0 + 6, yTop - 4);
-      });
-
-      // Dotted R2, R1, S1 with right-axis badges
-      const drawLvl = (p, lbl, col) => {
-        const y = mapY(p);
-        ctx.save();
-        ctx.strokeStyle = col;
-        ctx.lineWidth = 1.1;
-        ctx.setLineDash([3, 3]);
-        ctx.beginPath();
-        ctx.moveTo(padL, y);
-        ctx.lineTo(W - padR, y);
-        ctx.stroke();
-        ctx.restore();
-
-        ctx.fillStyle = col;
-        ctx.fillRect(W - padR + 2, y - 8, padR - 4, 15);
-        ctx.fillStyle = '#06090f';
-        ctx.font = 'bold 9px "JetBrains Mono", monospace';
-        ctx.textAlign = 'left';
-        ctx.fillText(`${lbl} ${p.toFixed(1)}`, W - padR + 5, y + 3);
-      };
-      drawLvl(stock.resistance2, 'R2', '#ffb300');
-      drawLvl(stock.resistance1, 'R1', '#f59e0b');
-      drawLvl(stock.support1, 'S1', '#00d2ff');
-
-      // Volume histogram
-      candles.forEach((c, i) => {
-        const x = mapX(i);
-        const bw = Math.max(2, stepX * 0.62);
-        const h = (c.v / maxV) * (volH - 8);
-        ctx.fillStyle = c.c >= c.o ? 'rgba(0, 230, 118, 0.28)' : 'rgba(255, 59, 92, 0.28)';
-        ctx.fillRect(x - bw / 2, H - padB - h, bw, h);
-      });
-
-      // Candlesticks
-      candles.forEach((c, i) => {
-        const x = mapX(i);
-        const bw = Math.max(2.5, stepX * 0.62);
-        const col = c.c >= c.o ? '#00e676' : '#ff3b5c';
-        ctx.strokeStyle = col;
-        ctx.lineWidth = 1.1;
-        ctx.beginPath();
-        ctx.moveTo(x, mapY(c.h));
-        ctx.lineTo(x, mapY(c.l));
-        ctx.stroke();
-
-        const yO = mapY(c.o), yC = mapY(c.c);
-        ctx.fillStyle = col;
-        ctx.fillRect(x - bw / 2, Math.min(yO, yC), bw, Math.max(1.5, Math.abs(yC - yO)));
-      });
-
-      // Dashed cyan VWAP
-      ctx.save();
-      ctx.strokeStyle = '#00d2ff';
-      ctx.lineWidth = 1.6;
-      ctx.setLineDash([5, 3]);
-      ctx.beginPath();
-      candles.forEach((c, i) => {
-        const x = mapX(i), y = mapY(c.vwap);
-        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
-      });
-      ctx.stroke();
-      ctx.restore();
-
-      // Interactive Crosshair
-      if (state.modalMouse.inside) {
-        const mx = Math.max(padL, Math.min(W - padR, state.modalMouse.x));
-        const my = Math.max(padT, Math.min(H - padB, state.modalMouse.y));
-        const idx = Math.max(0, Math.min(candles.length - 1, Math.floor((mx - padL) / stepX)));
-        const hc = candles[idx];
-        const snapX = mapX(idx);
-
-        ctx.save();
-        ctx.strokeStyle = 'rgba(226, 232, 240, 0.45)';
-        ctx.setLineDash([3, 3]);
-        ctx.beginPath();
-        ctx.moveTo(snapX, padT);
-        ctx.lineTo(snapX, H - padB);
-        ctx.moveTo(padL, my);
-        ctx.lineTo(W - padR, my);
-        ctx.stroke();
-        ctx.restore();
-
-        if (my <= priceB) {
-          const hp = yMax - ((my - padT) / priceH) * ySpan;
-          ctx.fillStyle = '#111a2a';
-          ctx.fillRect(W - padR + 2, my - 8, padR - 4, 16);
-          ctx.strokeStyle = '#00d2ff';
-          ctx.strokeRect(W - padR + 2, my - 8, padR - 4, 16);
-          ctx.fillStyle = '#fff';
-          ctx.font = 'bold 9.5px "JetBrains Mono", monospace';
-          ctx.textAlign = 'left';
-          ctx.fillText(hp.toFixed(2), W - padR + 6, my + 3);
-        }
-
-        ctx.fillStyle = '#111a2a';
-        ctx.fillRect(snapX - 20, H - padB + 2, 40, 16);
-        ctx.fillStyle = '#00d2ff';
-        ctx.font = 'bold 9.5px "JetBrains Mono", monospace';
-        ctx.textAlign = 'center';
-        ctx.fillText(hc.time, snapX, H - padB + 13);
-
-        updateHud(hc);
-      }
-    }
-
-    function bindModalEvents() {
-      const canvas = document.getElementById('modalCanvas');
-      const onMove = (cx, cy) => {
-        if (!state.activeModalSymbol) return;
-        const rect = canvas.getBoundingClientRect();
-        state.modalMouse = { x: cx - rect.left, y: cy - rect.top, inside: true };
-        const s = state.stocks.find(st => st.symbol === state.activeModalSymbol);
-        if (s) drawModalChart(s);
-      };
-      canvas.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
-      canvas.addEventListener('touchmove', e => {
-        if (e.touches[0]) onMove(e.touches[0].clientX, e.touches[0].clientY);
-      }, { passive: true });
-      canvas.addEventListener('mouseleave', () => {
-        state.modalMouse.inside = false;
-        const s = state.stocks.find(st => st.symbol === state.activeModalSymbol);
-        if (s) {
-          updateHud(s.candles[s.candles.length - 1]);
-          drawModalChart(s);
-        }
-      });
-
-      document.getElementById('closeModalBtn').addEventListener('click', closeOrderBlockModal);
-      document.getElementById('obModal').addEventListener('click', e => {
-        if (e.target.id === 'obModal') closeOrderBlockModal();
-      });
-      document.addEventListener('keydown', e => {
-        if (e.key === 'Escape' && state.activeModalSymbol) closeOrderBlockModal();
-      });
-    }
-
-    /* -------------------------------------------------------------------------
-       J. LIVE NSE MCP BRIDGE INTEGRATION & SIMULATION ENGINE
-       ------------------------------------------------------------------------- */
-    function updateModeUI() {
-      const btnMcp = document.getElementById('btnLiveMcp');
-      const btnSim = document.getElementById('btnSimMode');
-      const pill = document.getElementById('statusPill');
-      const txt = document.getElementById('statusText');
-      const banner = document.getElementById('offlineBanner');
-      const footerBadge = document.getElementById('footerSourceBadge');
-    function seedInitialLiveCurve(symbol, targetPct, stampHM) {
-      const rand = seededRand(symbol + '_LIVE_SEED');
-      const steps = 16;
-      const pts = [];
-      for (let i = 0; i < steps; i++) {
-        const t = i / (steps - 1);
-        const eased = t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
-        const wiggle = (i === 0 || i === steps - 1) ? 0 : (rand() - 0.5) * Math.max(0.25, Math.abs(targetPct) * 0.14);
-        const val = i === 0 ? 0 : (i === steps - 1 ? targetPct : Number((targetPct * eased + wiggle).toFixed(2)));
-        pts.push({ time: i === 0 ? '09:15' : stampHM, pct: val });
-      }
-      return pts;
-    }
-
-    async function pollMcpBridge(isManualTest = false) {
-      try {
-        const controller = new AbortController();
-        const timeout = setTimeout(() => controller.abort(), 5500);
-        const res = await fetch(state.bridgeUrl, { signal: controller.signal, cache: 'no-store' });
-        clearTimeout(timeout);
-
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        const payload = await res.json();
-        if (!payload || !Array.isArray(payload.stocks) || payload.stocks.length === 0) {
-          throw new Error('Bridge responded with empty stocks array');
-        }
-
-        const stamp = payload.updated_at || getIstTimeStr();
-        const stampHM = stamp.slice(0, 5);
-        state.mcpConnected = true;
-        state.lastMcpUpdate = stamp;
-
-        // Seed smooth 09:15 -> current curve on first load, then append live polls
-        const built = payload.stocks.map(raw => {
-          const sym = String(raw.symbol || '').trim().toUpperCase();
-          const pct = Number(raw.pChange || 0);
-          if (!state.liveHistory[sym]) {
-            state.liveHistory[sym] = seedInitialLiveCurve(sym, pct, stampHM);
-          } else {
-            const hist = state.liveHistory[sym];
-            const last = hist[hist.length - 1];
-            if (!last || last.time !== stampHM || last.pct !== pct) {
-              hist.push({ time: stampHM, pct });
-              if (hist.length > 140) hist.shift();
-            }
-          }
-          return buildStockObject(raw, state.liveHistory[sym]);
+      let minV = -2, maxV = 2;
+      featured.forEach(s => {
+        const arr = historySeries[s.symbol] || [0, s.pChange];
+        arr.forEach(v => {
+          if (v < minV) minV = v;
+          if (v > maxV) maxV = v;
         });
+      });
+      minV = Math.floor(minV - 0.5);
+      maxV = Math.ceil(maxV + 0.5);
+      const spanV = Math.max(maxV - minV, 1);
 
-        state.stocks = built;
-        updateModeUI();
-        renderAll();
+      const yOf = v => pad.top + ((maxV - v) / spanV) * plotH;
+      const xOf = idx => pad.left + (idx / Math.max(timeLabels.length - 1, 1)) * plotW;
 
-        if (isManualTest) {
-          showToast(`Connected to NSE MCP Bridge (${built.length} stocks @ ${stamp})`, 'success');
-        }
-        return { ok: true, count: built.length, stamp };
-      } catch (err) {
-        state.mcpConnected = false;
-        updateModeUI();
-        if (isManualTest) {
-          showToast(`Bridge unreachable: run uvicorn nse_mcp_bridge:app --port 8000`, 'warn');
-        }
-        return { ok: false, error: err.message };
+      // Grid lines
+      ctx.strokeStyle = '#162033';
+      ctx.lineWidth = 1;
+      ctx.font = '10px ui-monospace, monospace';
+      ctx.fillStyle = '#64748b';
+      const steps = 5;
+      for (let i = 0; i <= steps; i++) {
+        const val = maxV - (spanV * i) / steps;
+        const y = yOf(val);
+        ctx.beginPath();
+        ctx.moveTo(pad.left, y);
+        ctx.lineTo(W - pad.right, y);
+        ctx.stroke();
+        ctx.fillText(`${val >= 0 ? '+' : ''}${val.toFixed(1)}%`, 6, y + 3);
+      }
+
+      // Zero line
+      if (minV < 0 && maxV > 0) {
+        const zy = yOf(0);
+        ctx.strokeStyle = '#334155';
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath();
+        ctx.moveTo(pad.left, zy);
+        ctx.lineTo(W - pad.right, zy);
+        ctx.stroke();
+        ctx.setLineDash([]);
+      }
+
+      // X-axis time labels
+      ctx.fillStyle = '#64748b';
+      timeLabels.forEach((lbl, idx) => {
+        if (timeLabels.length > 8 && idx % 2 !== 0 && idx !== timeLabels.length - 1) return;
+        const x = xOf(idx);
+        ctx.fillText(lbl, x - 14, H - 8);
+      });
+
+      // Plot Lines & Build Legend
+      const legendEl = document.getElementById('chartLegend');
+      let legendHtml = '';
+      let bIdx = 0, rIdx = 0;
+
+      featured.forEach(s => {
+        const isBull = s.pChange >= 0;
+        const color = isBull ? bullColors[bIdx++ % bullColors.length] : bearColors[rIdx++ % bearColors.length];
+        const pts = historySeries[s.symbol] || [0, s.pChange];
+
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2.2;
+        ctx.beginPath();
+        pts.forEach((val, idx) => {
+          const x = xOf(idx);
+          const y = yOf(val);
+          if (idx === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+
+        // End dot + label
+        const lastX = xOf(pts.length - 1);
+        const lastY = yOf(pts[pts.length - 1]);
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(lastX, lastY, 3.5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.font = 'bold 10px ui-monospace, monospace';
+        ctx.fillText(s.symbol.slice(0, 9), lastX + 6, lastY + 3);
+
+        legendHtml += `
+          <div class="legend-item" onclick="openDetail('${s.symbol}')">
+            <span class="legend-swatch" style="background:${color}"></span>
+            <span>${s.symbol}</span>
+            <strong style="color:${color}">${s.pChange >= 0 ? '+' : ''}${s.pChange.toFixed(2)}%</strong>
+          </div>
+        `;
+      });
+      legendEl.innerHTML = legendHtml;
+    }
+
+    function openDetail(sym) {
+      const s = enrichedStocks.find(x => x.symbol === sym);
+      if (!s) return;
+      const isBull = s.pChange >= 0;
+      document.getElementById('modalSymTitle').textContent = `${s.symbol} • ${s.sector}`;
+      document.getElementById('modalDetailGrid').innerHTML = `
+        <div class="detail-box"><div class="lbl">LTP</div><div class="val">₹${s.ltp.toFixed(2)}</div></div>
+        <div class="detail-box"><div class="lbl">% CHANGE</div><div class="val" style="color:${isBull ? 'var(--bull)' : 'var(--bear)'}">${s.pChange >= 0 ? '+' : ''}${s.pChange.toFixed(2)}%</div></div>
+        <div class="detail-box"><div class="lbl">DAY HIGH</div><div class="val">₹${s.high.toFixed(2)}</div></div>
+        <div class="detail-box"><div class="lbl">DAY LOW</div><div class="val">₹${s.low.toFixed(2)}</div></div>
+        <div class="detail-box"><div class="lbl">CONVICTION SCORE</div><div class="val">${s.conviction} / 100</div></div>
+        <div class="detail-box"><div class="lbl">CLOSE STRENGTH</div><div class="val">${s.directionalStrength}% (RNG ${s.rangePct}%)</div></div>
+      `;
+
+      let bias = 'NEUTRAL / CHOPPY';
+      if (isBull && s.directionalStrength >= 85) bias = 'STRONG INSTITUTIONAL DEMAND — Price holding near Day High (₹' + s.high.toFixed(2) + '). Watch for breakout continuation above high.';
+      else if (isBull) bias = 'MODERATE BULLISH FLOW — Some upper-wick profit booking present. Confirm hold above mid-range ₹' + ((s.high + s.low) / 2).toFixed(2) + '.';
+      else if (!isBull && s.directionalStrength >= 85) bias = 'STRONG INSTITUTIONAL SUPPLY — Price pinned near Day Low (₹' + s.low.toFixed(2) + '). Watch for breakdown below low.';
+      else bias = 'MODERATE BEARISH FLOW — Mild bounce off lows; watch resistance near mid-range ₹' + ((s.high + s.low) / 2).toFixed(2) + '.';
+
+      document.getElementById('modalAnalysisText').textContent = bias;
+      document.getElementById('detailModal').classList.add('open');
+    }
+
+    function closeDetail() { document.getElementById('detailModal').classList.remove('open'); }
+    function openSettings() {
+      document.getElementById('bridgeUrlInput').value = bridgeUrl;
+      document.getElementById('pollSecInput').value = pollSeconds;
+      document.getElementById('settingsModal').classList.add('open');
+    }
+    function closeSettings() { document.getElementById('settingsModal').classList.remove('open'); }
+    function saveSettings() {
+      bridgeUrl = document.getElementById('bridgeUrlInput').value.trim() || 'http://127.0.0.1:8000/api/nse-mcp-live';
+      pollSeconds = Math.max(5, Number(document.getElementById('pollSecInput').value) || 15);
+      localStorage.setItem('ob_bridge_url', bridgeUrl);
+      localStorage.setItem('ob_poll_sec', String(pollSeconds));
+      closeSettings();
+      if (isLiveMode) {
+        clearInterval(pollTimer);
+        fetchLiveFromBridge();
+        pollTimer = setInterval(fetchLiveFromBridge, pollSeconds * 1000);
       }
     }
 
-    function tickSimulation() {
-      // Only run simulation ticks when in SIM mode or when MCP is offline (seamless fallback)
-      if (state.mode === 'MCP' && state.mcpConnected) return;
+    function showAlert(msg) {
+      document.getElementById('alertText').textContent = msg;
+      document.getElementById('alertBanner').classList.add('show');
+    }
+    function hideAlert() { document.getElementById('alertBanner').classList.remove('show'); }
 
-      state.stocks.forEach(s => {
-        const drift = (Math.random() - 0.485) * 0.15;
-        s.pChange = Number((s.pChange + drift).toFixed(2));
-        s.ltp = Number((s.prevClose * (1 + s.pChange / 100)).toFixed(2));
-        s.high = Math.max(s.high, s.ltp);
-        s.low = Math.min(s.low, s.ltp);
-        s.pointChange = s.ltp - s.prevClose;
-        s.isBull = s.pChange >= 0;
-        s.buildUp = s.isBull ? 'LONG BUILD-UP' : 'SHORT BUILD-UP';
-        if (s.hasRealVol) {
-          s.volRatio = Math.max(0.8, Number((s.volRatio + (Math.random() - 0.48) * 0.05).toFixed(2)));
-          s.compactStrength = `${s.volRatio.toFixed(2)}x VOL`;
-          s.strengthLabel = s.compactStrength;
-        }
-        s.vwapDiffPct = ((s.ltp - s.vwap) / Math.max(0.01, s.vwap)) * 100;
-        s.conviction = computeConviction(s.pChange, s.volRatio, s.ltp, s.vwap, s.high, s.low, s.volume);
-
-        const last = s.candles[s.candles.length - 1];
-        last.c = s.ltp;
-        last.h = Math.max(last.h, s.ltp);
-        last.l = Math.min(last.l, s.ltp);
-        last.v += Math.round(Math.random() * 14000);
-        s.trajectory[s.trajectory.length - 1] = s.pChange;
-      });
-
-      renderAll();
+    function formatTimeNow() {
+      const d = new Date();
+      return d.toTimeString().slice(0, 8);
     }
 
-    function setMode(newMode) {
-      state.mode = newMode;
-      clearInterval(state.mcpTimer);
+    window.addEventListener('resize', () => { if (enrichedStocks.length) drawSpiderChart(); });
 
-      if (newMode === 'MCP') {
-        updateModeUI();
-        pollMcpBridge(true);
-        state.mcpTimer = setInterval(() => pollMcpBridge(false), state.pollIntervalSec * 1000);
-      } else {
-        state.mcpConnected = false;
-        updateModeUI();
-        showToast('Switched to SIM MODE (2s intraday simulation)', 'info');
-      }
-    }
-
-    /* -------------------------------------------------------------------------
-       K. NSE CSV UPLOAD & SAMPLE CSV DOWNLOAD
-       ------------------------------------------------------------------------- */
-    function handleCsvUpload(e) {
-      const file = e.target.files?.[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = ev => {
-        try {
-          const text = String(ev.target.result || '').trim();
-          const lines = text.split(/\r?\n/).filter(Boolean);
-          if (lines.length < 2) throw new Error('CSV needs a header row and at least one stock row.');
-
-          const hdrs = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/[^a-z0-9%]/g, ''));
-          const iSym = hdrs.findIndex(h => h.includes('symbol') || h.includes('ticker'));
-          const iLtp = hdrs.findIndex(h => h.includes('ltp') || h.includes('close') || h.includes('last'));
-          const iPct = hdrs.findIndex(h => h.includes('chg') || h.includes('change') || h.includes('%') || h.includes('pct'));
-          const iVol = hdrs.findIndex(h => h.includes('vol') || h.includes('tottrdqty'));
-          const iSec = hdrs.findIndex(h => h.includes('sector'));
-          const iVwap = hdrs.findIndex(h => h.includes('vwap'));
-
-          if (iSym === -1 || iLtp === -1) {
-            throw new Error('Required columns: Symbol and Close/LTP.');
-          }
-
-          const imported = [];
-          for (let i = 1; i < lines.length; i++) {
-            const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
-            const symbol = (cols[iSym] || '').toUpperCase();
-            const ltp = parseFloat(cols[iLtp]);
-            if (!symbol || isNaN(ltp) || ltp <= 0) continue;
-
-            const pChange = iPct >= 0 ? (parseFloat((cols[iPct] || '0').replace('%', '')) || 0) : 0;
-            const volume = iVol >= 0 ? (parseInt((cols[iVol] || '2000000').replace(/[^0-9]/g, ''), 10) || 2000000) : 2000000;
-            const sector = iSec >= 0 ? cols[iSec] : 'BANKING';
-            const vwap = iVwap >= 0 ? parseFloat(cols[iVwap]) : undefined;
-
-            imported.push(buildStockObject({ symbol, sector, ltp, pChange, volume, vwap }));
-          }
-
-          if (!imported.length) throw new Error('No valid rows parsed.');
-          state.stocks = imported;
-          state.activeSector = 'ALL';
-          renderAll();
-          showToast(`Imported ${imported.length} NSE stocks from ${file.name}`, 'success');
-        } catch (err) {
-          showToast(`CSV Error: ${err.message}`, 'error');
-        } finally {
-          e.target.value = '';
-        }
-      };
-      reader.readAsText(file);
-    }
-
-    function downloadSampleCsv() {
-      const csv = [
-        'Symbol,Sector,Close,%Change,Volume',
-        'INDUSINDBK,BANKING,1003.00,8.60,19100000',
-        'ANGELONE,CAP MKTS,312.90,7.90,8420000',
-        'LODHA,REALTY,1067.40,6.44,5190000',
-        'CDSL,CAP MKTS,1322.70,5.65,6340000',
-        'APOLLOHOSP,PHARMA,9200.00,5.30,1420000',
-        'AXISBANK,BANKING,1446.00,4.70,21500000',
-        'PERSISTENT,IT,6124.00,4.20,1810000',
-        'MARUTI,AUTO,14011.00,3.10,1620000',
-        'DIXON,AUTO,14820.00,-2.42,1120000',
-        'LAURUSLABS,PHARMA,482.60,-2.34,7250000',
-        'BANDHANBNK,BANKING,174.30,-2.10,14800000',
-        'MPHASIS,IT,2914.50,-1.51,1680000'
-      ].join('\n');
-      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'nse_liquidity_sample.csv';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      showToast('Downloaded nse_liquidity_sample.csv', 'info');
-    }
-
-    /* -------------------------------------------------------------------------
-       L. MASTER RENDER & INITIALIZATION
-       ------------------------------------------------------------------------- */
-    function renderAll() {
-      renderSectorPills();
-      updateBreadthReadout();
-      renderMiddleGrids();
-      renderHighConvictionPicks();
-      drawSpiderChart();
-
-      if (state.activeModalSymbol) {
-        const s = state.stocks.find(st => st.symbol === state.activeModalSymbol);
-        if (s) {
-          updateModalMeta(s);
-          drawModalChart(s);
-        }
-      }
-    }
-
-    window.addEventListener('DOMContentLoaded', () => {
-      // Seed 40 NSE stocks
-      state.stocks = INITIAL_SEED_STOCKS.map(r => buildStockObject(r));
-
-      // Populate saved bridge settings
-      document.getElementById('bridgeUrlInput').value = state.bridgeUrl;
-      document.getElementById('pollIntervalInput').value = state.pollIntervalSec;
-
-      // Live IST clock
-      const tickClock = () => {
-        document.getElementById('istClock').textContent = `IST ${getIstTimeStr()}`;
-      };
-      tickClock();
-      setInterval(tickClock, 1000);
-
-      // Initial render
-      updateModeUI();
-      renderAll();
-      bindSpiderEvents();
-      bindModalEvents();
-
-      // Start 2s SIM engine
-      state.simTimer = setInterval(tickSimulation, 2000);
-
-      // Mode buttons
-      document.getElementById('btnLiveMcp').addEventListener('click', () => setMode('MCP'));
-      document.getElementById('btnSimMode').addEventListener('click', () => setMode('SIM'));
-      document.getElementById('bannerRetryBtn').addEventListener('click', () => pollMcpBridge(true));
-      document.getElementById('bannerSimBtn').addEventListener('click', () => setMode('SIM'));
-
-      // Search input
-      const searchEl = document.getElementById('stockSearch');
-      const clearEl = document.getElementById('clearSearchBtn');
-      searchEl.addEventListener('input', e => {
-        state.searchQuery = e.target.value;
-        clearEl.classList.toggle('visible', state.searchQuery.length > 0);
-        renderAll();
-      });
-      clearEl.addEventListener('click', () => {
-        searchEl.value = '';
-        state.searchQuery = '';
-        clearEl.classList.remove('visible');
-        renderAll();
-      });
-
-      // Settings Popover
-      const pop = document.getElementById('settingsPopover');
-      const testBox = document.getElementById('testResultBox');
-      document.getElementById('settingsBtn').addEventListener('click', e => {
-        e.stopPropagation();
-        pop.classList.toggle('open');
-      });
-      document.getElementById('closeSettingsBtn').addEventListener('click', () => pop.classList.remove('open'));
-      document.addEventListener('click', e => {
-        if (!pop.contains(e.target) && e.target.id !== 'settingsBtn') pop.classList.remove('open');
-      });
-
-      document.getElementById('saveBridgeBtn').addEventListener('click', () => {
-        const url = document.getElementById('bridgeUrlInput').value.trim();
-        const sec = Math.max(3, Math.min(120, Number(document.getElementById('pollIntervalInput').value) || 15));
-        if (url) {
-          state.bridgeUrl = url;
-          state.pollIntervalSec = sec;
-          localStorage.setItem('ob_bridge_url', url);
-          localStorage.setItem('ob_poll_sec', String(sec));
-          showToast(`Saved Bridge Config (${sec}s poll)`, 'success');
-          if (state.mode === 'MCP') setMode('MCP');
-          pop.classList.remove('open');
-        }
-      });
-
-      document.getElementById('testBridgeBtn').addEventListener('click', async () => {
-        const url = document.getElementById('bridgeUrlInput').value.trim();
-        state.bridgeUrl = url;
-        testBox.style.display = 'block';
-        testBox.style.background = 'rgba(0, 210, 255, 0.12)';
-        testBox.style.color = '#8be9ff';
-        testBox.textContent = 'Testing connection...';
-        const res = await pollMcpBridge(false);
-        if (res.ok) {
-          testBox.style.background = 'rgba(0, 230, 118, 0.14)';
-          testBox.style.color = '#00e676';
-          testBox.textContent = `CONNECTED: ${res.count} stocks received @ ${res.stamp}`;
-        } else {
-          testBox.style.background = 'rgba(255, 59, 92, 0.14)';
-          testBox.style.color = '#ff8096';
-          testBox.textContent = `OFFLINE (${res.error}). Run: uvicorn nse_mcp_bridge:app --port 8000`;
-        }
-      });
-
-      // CSV controls
-      document.getElementById('csvUploadInput').addEventListener('change', handleCsvUpload);
-      document.getElementById('sampleCsvBtn').addEventListener('click', downloadSampleCsv);
-
-      // Responsive Canvas Redraws
-      const ro = new ResizeObserver(() => {
-        drawSpiderChart();
-        renderHighConvictionPicks();
-        if (state.activeModalSymbol) {
-          const s = state.stocks.find(st => st.symbol === state.activeModalSymbol);
-          if (s) drawModalChart(s);
-        }
-      });
-      ro.observe(document.getElementById('spiderWrap'));
-    });
+    // Initial Boot
+    loadData(SIM_STOCKS, formatTimeNow(), false);
   </script>
 </body>
 </html>
