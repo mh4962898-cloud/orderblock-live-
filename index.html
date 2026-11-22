@@ -1,916 +1,2682 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-  <meta name="google-site-verification" content="xpJqSORWjFdsnF-DrYerc44g_aUp4mvcCQP_hzKR-oc" />
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ganesh Kabadi F&amp;O Desk — Live NSE F&amp;O Order Block, Sector Flow &amp; Liquidity Scanner</title>
-  <meta name="description" content="Ganesh Kabadi F&amp;O Desk — Live NSE F&amp;O Sector Flow, Sankey Stock Matrix, Live Candlestick Chart with Entry, SL &amp; TP." />
-  <meta name="author" content="Ganesh Kabadi" />
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          fontFamily: {
-            sans: ['Inter', 'sans-serif'],
-            mono: ['JetBrains Mono', 'monospace'],
-          }
-        }
-      }
-    }
-  </script>
+  <title>ORDER BLOCK • NSE LIQUIDITY TERMINAL</title>
+
+  <!-- Optional Google Fonts with clean system fallbacks for 100% offline reliability -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+
   <style>
+    /* =========================================================================
+       1. DESIGN TOKENS & BASE RESET (Zero external CSS framework required)
+       ========================================================================= */
     :root {
-      --bg-main: #080c10;
-      --bg-card: #0e141c;
-      --border-main: #1c2634;
-      --text-main: #d1d4dc;
-      --text-strong: #ffffff;
-      --text-muted: #788292;
+      --bg-base: #06090f;
+      --bg-panel: #0d131f;
+      --bg-card: #0a101b;
+      --bg-elevated: #111a2a;
+      --border-subtle: #1c2638;
+      --border-strong: #283852;
+      --text-primary: #e6edf7;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --bull: #00e676;
+      --bull-soft: rgba(0, 230, 118, 0.14);
+      --bull-border: rgba(0, 230, 118, 0.34);
+      --cyan: #00d2ff;
+      --cyan-soft: rgba(0, 210, 255, 0.14);
+      --bear: #ff3b5c;
+      --bear-soft: rgba(255, 59, 92, 0.14);
+      --bear-border: rgba(255, 59, 92, 0.34);
+      --amber: #ffb300;
+      --amber-soft: rgba(255, 179, 0, 0.14);
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      --radius-sm: 6px;
+      --radius-md: 8px;
+      --radius-lg: 12px;
+      color-scheme: dark;
     }
 
-    body {
-      background-color: var(--bg-main);
-      color: var(--text-main);
-      font-family: 'Inter', sans-serif;
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      min-height: 100%;
+      background-color: var(--bg-base);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      font-size: 13px;
+      line-height: 1.35;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .t-bg { background-color: var(--bg-main); }
-    .t-card { background-color: var(--bg-card); }
-    .t-border { border-color: var(--border-main); }
-    .t-text { color: var(--text-main); }
-    .t-strong { color: var(--text-strong); }
-    .t-muted { color: var(--text-muted); }
-
-    .font-num {
-      font-family: 'JetBrains Mono', monospace;
+    .mono {
+      font-family: var(--font-mono);
       font-variant-numeric: tabular-nums;
     }
 
+    /* Crisp thin dark scrollbars */
     ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: var(--bg-main); }
-    ::-webkit-scrollbar-thumb { background: var(--border-main); border-radius: 9999px; }
+    ::-webkit-scrollbar-track { background: var(--bg-base); }
+    ::-webkit-scrollbar-thumb { background: #1e2c42; border-radius: 999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #2e4466; }
 
-    @keyframes pulseLive {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.28); }
+    button, input, label { font-family: inherit; }
+
+    /* =========================================================================
+       2. TOP TERMINAL BAR
+       ========================================================================= */
+    .app-shell {
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
     }
-    .live-dot { animation: pulseLive 1.5s infinite ease-in-out; }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      background: rgba(8, 12, 20, 0.96);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border-subtle);
+      padding: 8px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .topbar-left, .topbar-center, .topbar-right {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, rgba(0, 230, 118, 0.22), rgba(0, 210, 255, 0.16));
+      border: 1px solid rgba(0, 230, 118, 0.48);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--bull);
+      box-shadow: 0 0 12px rgba(0, 230, 118, 0.18);
+      flex-shrink: 0;
+    }
+
+    .brand-title {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      color: #f8fafc;
+      line-height: 1.1;
+    }
+    .brand-title .dot { color: var(--bull); }
+    .brand-title .accent { color: var(--cyan); }
+
+    .brand-sub {
+      font-size: 10px;
+      color: var(--text-secondary);
+      margin-top: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Search Input */
+    .search-wrap {
+      position: relative;
+      width: 195px;
+    }
+    .search-wrap svg {
+      position: absolute;
+      left: 9px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      pointer-events: none;
+    }
+    .search-input {
+      width: 100%;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 5px 24px 5px 28px;
+      color: var(--text-primary);
+      font-size: 11.5px;
+      font-family: var(--font-mono);
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .search-input:focus {
+      border-color: var(--cyan);
+      box-shadow: 0 0 0 2px rgba(0, 210, 255, 0.14);
+    }
+    .search-clear {
+      position: absolute;
+      right: 6px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-size: 14px;
+      display: none;
+      padding: 0 3px;
+    }
+    .search-clear.visible { display: block; }
+    .search-clear:hover { color: #fff; }
+
+    /* Sector Filter Pills */
+    .sector-bar {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 4px;
+    }
+    .sector-pill {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-secondary);
+      border-radius: 5px;
+      padding: 3px 7px;
+      font-size: 10px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      cursor: pointer;
+      transition: all 0.14s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .sector-pill:hover {
+      border-color: var(--border-strong);
+      color: var(--text-primary);
+    }
+    .sector-pill.active {
+      background: rgba(0, 210, 255, 0.16);
+      border-color: var(--cyan);
+      color: #ffffff;
+      box-shadow: 0 0 10px rgba(0, 210, 255, 0.18);
+    }
+    .sector-pill .sec-chg { font-size: 9px; font-weight: 600; }
+    .sec-up { color: var(--bull); }
+    .sec-dn { color: var(--bear); }
+
+    /* Breadth Readout */
+    .breadth-box {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 4px 10px;
+    }
+    .breadth-item {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .breadth-lbl {
+      font-size: 9.5px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+    }
+    .breadth-num {
+      font-size: 13.5px;
+      font-weight: 800;
+    }
+    .bull-txt { color: var(--bull); }
+    .bear-txt { color: var(--bear); }
+    .cyan-txt { color: var(--cyan); }
+    .amber-txt { color: var(--amber); }
+
+    /* Mode Switcher & Controls */
+    .mode-switch {
+      display: inline-flex;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      padding: 2px;
+      gap: 2px;
+    }
+    .mode-btn {
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 4px 8px;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .mode-btn:hover { color: #fff; }
+    .mode-btn.active-mcp {
+      background: rgba(0, 230, 118, 0.18);
+      color: var(--bull);
+      box-shadow: inset 0 0 0 1px rgba(0, 230, 118, 0.45);
+    }
+    .mode-btn.active-sim {
+      background: rgba(0, 210, 255, 0.18);
+      color: var(--cyan);
+      box-shadow: inset 0 0 0 1px rgba(0, 210, 255, 0.45);
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      border: 1px solid var(--border-subtle);
+      white-space: nowrap;
+    }
+    .status-pill.connected {
+      background: rgba(0, 230, 118, 0.12);
+      border-color: rgba(0, 230, 118, 0.45);
+      color: var(--bull);
+    }
+    .status-pill.offline {
+      background: rgba(255, 179, 0, 0.12);
+      border-color: rgba(255, 179, 0, 0.45);
+      color: var(--amber);
+    }
+    .status-pill.sim {
+      background: rgba(0, 210, 255, 0.12);
+      border-color: rgba(0, 210, 255, 0.4);
+      color: var(--cyan);
+    }
+    .pulse-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: currentColor;
+      animation: pulseAnim 1.5s infinite;
+    }
+    @keyframes pulseAnim {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.45; transform: scale(0.85); }
+    }
+
+    .icon-btn, .upload-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-primary);
+      border-radius: var(--radius-sm);
+      padding: 5px 8px;
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.14s ease;
+    }
+    .icon-btn:hover, .upload-btn:hover {
+      border-color: var(--cyan);
+      color: #fff;
+      background: #121c2e;
+    }
+    .upload-btn {
+      border-color: rgba(0, 210, 255, 0.35);
+      color: var(--cyan);
+    }
+
+    /* Settings Popover */
+    .settings-anchor { position: relative; }
+    .settings-popover {
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      width: 320px;
+      max-width: 92vw;
+      background: #0c1320;
+      border: 1px solid var(--border-strong);
+      border-radius: var(--radius-md);
+      box-shadow: 0 18px 45px rgba(0, 0, 0, 0.72);
+      padding: 12px;
+      z-index: 60;
+      display: none;
+    }
+    .settings-popover.open { display: block; }
+    .pop-title {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      color: #fff;
+      margin-bottom: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .field-group { margin-bottom: 9px; }
+    .field-label {
+      display: block;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+      margin-bottom: 4px;
+    }
+    .field-input {
+      width: 100%;
+      background: var(--bg-base);
+      border: 1px solid var(--border-subtle);
+      border-radius: 5px;
+      padding: 6px 8px;
+      color: #fff;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      outline: none;
+    }
+    .field-input:focus { border-color: var(--cyan); }
+    .pop-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .btn-primary {
+      flex: 1;
+      background: rgba(0, 210, 255, 0.16);
+      border: 1px solid var(--cyan);
+      color: var(--cyan);
+      border-radius: 5px;
+      padding: 6px 8px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      cursor: pointer;
+    }
+    .btn-primary:hover { background: rgba(0, 210, 255, 0.26); color: #fff; }
+    .btn-save {
+      background: rgba(0, 230, 118, 0.16);
+      border: 1px solid var(--bull);
+      color: var(--bull);
+      border-radius: 5px;
+      padding: 6px 10px;
+      font-size: 11px;
+      font-weight: 700;
+      font-family: var(--font-mono);
+      cursor: pointer;
+    }
+    .btn-save:hover { background: rgba(0, 230, 118, 0.26); color: #fff; }
+    .test-result {
+      margin-top: 8px;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      padding: 6px 8px;
+      border-radius: 5px;
+      display: none;
+      word-break: break-word;
+    }
+
+    /* Non-intrusive Bridge Offline Banner */
+    .offline-banner {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      background: rgba(255, 179, 0, 0.1);
+      border-bottom: 1px solid rgba(255, 179, 0, 0.35);
+      padding: 6px 12px;
+      font-size: 11px;
+      font-family: var(--font-mono);
+      color: #ffd573;
+    }
+    .offline-banner.visible { display: flex; }
+    .offline-banner code {
+      background: rgba(0, 0, 0, 0.45);
+      padding: 2px 6px;
+      border-radius: 4px;
+      color: #fff;
+      border: 1px solid rgba(255, 179, 0, 0.3);
+    }
+    .banner-actions { display: flex; gap: 6px; }
+    .banner-btn {
+      background: rgba(255, 179, 0, 0.18);
+      border: 1px solid rgba(255, 179, 0, 0.5);
+      color: #ffe08a;
+      border-radius: 4px;
+      padding: 3px 8px;
+      font-size: 10px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .banner-btn:hover { background: rgba(255, 179, 0, 0.3); color: #fff; }
+
+    /* =========================================================================
+       3. THREE-PANEL HIGH-DENSITY GRID LAYOUT
+       ========================================================================= */
+    .main-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 8px;
+      padding: 8px;
+    }
+
+    @media (min-width: 1120px) {
+      .main-grid {
+        grid-template-columns: 4fr 4.2fr 3.8fr;
+        height: calc(100vh - 96px);
+        overflow: hidden;
+      }
+    }
+
+    .panel {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 0;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 10px;
+      border-bottom: 1px solid var(--border-subtle);
+      background: #0a101c;
+      flex-shrink: 0;
+    }
+    .panel-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--text-primary);
+    }
+    .panel-meta {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+
+    /* Left Panel: Spider Chart */
+    .spider-panel { min-height: 460px; }
+    .spider-canvas-wrap {
+      position: relative;
+      flex: 1;
+      width: 100%;
+      min-height: 420px;
+      background: var(--bg-base);
+      cursor: crosshair;
+      overflow: hidden;
+    }
+    #spiderCanvas { display: block; width: 100%; height: 100%; }
+
+    .spider-tooltip {
+      position: absolute;
+      z-index: 20;
+      pointer-events: none;
+      display: none;
+      background: rgba(10, 16, 28, 0.96);
+      border: 1px solid rgba(0, 210, 255, 0.55);
+      border-radius: 6px;
+      padding: 6px 9px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.65);
+      min-width: 150px;
+    }
+    .spider-tooltip.visible { display: block; }
+
+    /* Middle Panel: Split Bullish & Bearish Grids */
+    .middle-col {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 0;
+    }
+    .half-panel {
+      flex: 1;
+      min-height: 250px;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg-panel);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+    .half-panel.bull-border { border: 1px solid rgba(0, 230, 118, 0.25); }
+    .half-panel.bear-border { border: 1px solid rgba(255, 59, 92, 0.25); }
+
+    .bull-hdr { background: rgba(0, 230, 118, 0.06); border-bottom: 1px solid rgba(0, 230, 118, 0.18); }
+    .bear-hdr { background: rgba(255, 59, 92, 0.06); border-bottom: 1px solid rgba(255, 59, 92, 0.18); }
+
+    .stock-grid {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 6px;
+      align-content: start;
+    }
+    @media (min-width: 640px) {
+      .stock-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    }
+
+    .stock-card {
+      border-radius: var(--radius-sm);
+      padding: 7px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 4px;
+      transition: transform 0.12s ease, border-color 0.12s ease, box-shadow 0.12s ease;
+      user-select: none;
+    }
+    .stock-card.bull {
+      background: linear-gradient(155deg, rgba(0, 230, 118, 0.10) 0%, #09101a 68%);
+      border: 1px solid rgba(0, 230, 118, 0.26);
+    }
+    .stock-card.bull:hover {
+      border-color: var(--bull);
+      box-shadow: 0 0 14px rgba(0, 230, 118, 0.18);
+      transform: translateY(-1px);
+    }
+    .stock-card.bear {
+      background: linear-gradient(155deg, rgba(255, 59, 92, 0.11) 0%, #120a12 68%);
+      border: 1px solid rgba(255, 59, 92, 0.26);
+    }
+    .stock-card.bear:hover {
+      border-color: var(--bear);
+      box-shadow: 0 0 14px rgba(255, 59, 92, 0.18);
+      transform: translateY(-1px);
+    }
+    .stock-card.match-ring, .pick-card.match-ring {
+      box-shadow: 0 0 0 1.5px var(--cyan), 0 0 16px rgba(0, 210, 255, 0.35) !important;
+    }
+
+    .sc-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    .sc-sym {
+      font-size: 11px;
+      font-weight: 800;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sc-ltp { font-size: 9.5px; color: var(--text-secondary); }
+    .sc-pct { font-size: 11px; font-weight: 800; text-align: right; }
+    .sc-vol { font-size: 9px; color: var(--amber); text-align: right; font-weight: 600; }
+    .sc-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+    }
+    .sc-tag {
+      font-size: 8px;
+      font-weight: 700;
+      padding: 1px 4px;
+      border-radius: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sc-tag.bull { background: rgba(0, 230, 118, 0.14); color: #69f0ae; border: 1px solid rgba(0, 230, 118, 0.3); }
+    .sc-tag.bear { background: rgba(255, 59, 92, 0.14); color: #ff8096; border: 1px solid rgba(255, 59, 92, 0.3); }
+    .sc-conv { font-size: 9px; font-weight: 700; color: var(--text-secondary); }
+
+    /* Right Panel: High-Conviction Institutional Picks */
+    .picks-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 7px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .pick-card {
+      border-radius: var(--radius-md);
+      padding: 9px 10px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      transition: transform 0.13s ease, border-color 0.13s ease, box-shadow 0.13s ease;
+    }
+    .pick-card.bull {
+      background: linear-gradient(135deg, rgba(0, 230, 118, 0.14) 0%, #09131c 48%, #0a101b 100%);
+      border: 1px solid rgba(0, 230, 118, 0.38);
+    }
+    .pick-card.bull:hover {
+      border-color: var(--bull);
+      box-shadow: 0 0 20px rgba(0, 230, 118, 0.18);
+      transform: translateY(-1px);
+    }
+    .pick-card.bear {
+      background: linear-gradient(135deg, rgba(255, 59, 92, 0.14) 0%, #190b15 48%, #0e0a12 100%);
+      border: 1px solid rgba(255, 59, 92, 0.38);
+    }
+    .pick-card.bear:hover {
+      border-color: var(--bear);
+      box-shadow: 0 0 20px rgba(255, 59, 92, 0.18);
+      transform: translateY(-1px);
+    }
+
+    .pick-main {
+      display: grid;
+      grid-template-columns: 1fr 1.1fr;
+      gap: 8px;
+      align-items: center;
+    }
+    .pick-badges {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-bottom: 3px;
+    }
+    .pick-sym { font-size: 13.5px; font-weight: 800; color: #fff; }
+    .badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      font-weight: 800;
+      padding: 1.5px 5px;
+      border-radius: 4px;
+    }
+    .badge-bull { background: rgba(0, 230, 118, 0.18); color: var(--bull); border: 1px solid rgba(0, 230, 118, 0.45); }
+    .badge-bear { background: rgba(255, 59, 92, 0.18); color: var(--bear); border: 1px solid rgba(255, 59, 92, 0.45); }
+    .badge-conv { background: rgba(255, 179, 0, 0.16); color: var(--amber); border: 1px solid rgba(255, 179, 0, 0.45); }
+
+    .pick-pct { font-size: 18px; font-weight: 800; line-height: 1.05; }
+    .pick-ltp { font-size: 11px; color: #e2e8f0; margin-top: 2px; }
+    .pick-vwap { font-size: 9.5px; font-weight: 700; margin-top: 3px; }
+
+    .pick-mini-canvas {
+      width: 100%;
+      height: 64px;
+      display: block;
+      border-radius: 5px;
+      background: #06090f;
+      border: 1px solid rgba(28, 38, 56, 0.9);
+    }
+
+    .pick-levels {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 4px;
+      padding-top: 6px;
+      border-top: 1px solid rgba(148, 163, 184, 0.16);
+      font-family: var(--font-mono);
+    }
+    .lvl-lbl { font-size: 8px; color: var(--text-muted); text-transform: uppercase; }
+    .lvl-val { font-size: 9.5px; font-weight: 700; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    /* =========================================================================
+       4. FOOTER BAR
+       ========================================================================= */
+    .footer {
+      background: #05080d;
+      border-top: 1px solid var(--border-subtle);
+      padding: 6px 12px;
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      color: var(--text-muted);
+    }
+    .footer-tag {
+      background: rgba(0, 210, 255, 0.12);
+      border: 1px solid rgba(0, 210, 255, 0.35);
+      color: var(--cyan);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+    .link-btn {
+      background: none;
+      border: none;
+      color: var(--cyan);
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      font-weight: 700;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    .link-btn:hover { color: #fff; }
+
+    /* =========================================================================
+       5. INTERACTIVE ORDER BLOCK CANDLESTICK MODAL
+       ========================================================================= */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 80;
+      background: rgba(3, 6, 12, 0.86);
+      backdrop-filter: blur(6px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 12px;
+    }
+    .modal-backdrop.open { display: flex; }
+
+    .modal-card {
+      width: 100%;
+      max-width: 1020px;
+      max-height: 94vh;
+      background: var(--bg-panel);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--bull-border);
+      box-shadow: 0 0 50px rgba(0, 230, 118, 0.16);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .modal-card.bear-mode {
+      border-color: var(--bear-border);
+      box-shadow: 0 0 50px rgba(255, 59, 92, 0.18);
+    }
+
+    .modal-hdr {
+      padding: 11px 16px;
+      background: #0a101c;
+      border-bottom: 1px solid var(--border-subtle);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .modal-close {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
+      background: var(--bg-elevated);
+      border: 1px solid var(--border-strong);
+      color: var(--text-primary);
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-close:hover { background: #1a2942; color: #fff; }
+
+    .modal-stats {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      padding: 10px 16px;
+      background: #080d17;
+      border-bottom: 1px solid var(--border-subtle);
+      font-family: var(--font-mono);
+    }
+    @media (min-width: 768px) {
+      .modal-stats { grid-template-columns: repeat(6, minmax(0, 1fr)); }
+    }
+    .stat-box {
+      background: var(--bg-panel);
+      border: 1px solid var(--border-subtle);
+      border-radius: 6px;
+      padding: 6px 9px;
+    }
+    .stat-k { font-size: 9px; color: var(--text-muted); text-transform: uppercase; }
+    .stat-v { font-size: 11.5px; font-weight: 700; margin-top: 2px; color: #fff; }
+
+    .modal-chart-wrap {
+      position: relative;
+      flex: 1;
+      min-height: 360px;
+      background: var(--bg-base);
+      padding: 8px;
+    }
+    #modalCanvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      min-height: 344px;
+      cursor: crosshair;
+    }
+
+    .chart-hud {
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      z-index: 10;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      background: rgba(6, 9, 15, 0.88);
+      border: 1px solid var(--border-subtle);
+      border-radius: 5px;
+      padding: 4px 10px;
+      font-family: var(--font-mono);
+      font-size: 10.5px;
+      pointer-events: none;
+    }
+
+    .modal-foot {
+      padding: 8px 16px;
+      background: #0a101c;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      color: var(--text-secondary);
+    }
+    .legend-row { display: flex; flex-wrap: wrap; gap: 14px; align-items: center; }
+    .legend-item { display: inline-flex; align-items: center; gap: 5px; }
+
+    /* Toast Notifications */
+    .toast-stack {
+      position: fixed;
+      top: 62px;
+      right: 14px;
+      z-index: 95;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+      max-width: 380px;
+    }
+    .toast {
+      pointer-events: auto;
+      padding: 8px 12px;
+      border-radius: 7px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.65);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border-strong);
+      background: rgba(13, 19, 31, 0.96);
+      color: var(--text-primary);
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    .toast.success { border-color: rgba(0, 230, 118, 0.55); color: #8affc1; }
+    .toast.warn { border-color: rgba(255, 179, 0, 0.55); color: #ffd97d; }
+    .toast.error { border-color: rgba(255, 59, 92, 0.55); color: #ff8fa3; }
+    .toast.info { border-color: rgba(0, 210, 255, 0.55); color: #8be9ff; }
   </style>
 </head>
-<body class="min-h-screen flex flex-col t-bg t-text">
+<body>
+  <div class="app-shell">
 
-  <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 pointer-events-none"></div>
+    <!-- ==================== 1. TOP TERMINAL BAR ==================== -->
+    <header class="topbar">
+      <!-- Brand + Search -->
+      <div class="topbar-left">
+        <div class="brand">
+          <div class="brand-icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"></polyline>
+              <polyline points="16 7 22 7 22 13"></polyline>
+            </svg>
+          </div>
+          <div>
+            <div class="brand-title">ORDER BLOCK <span class="dot">•</span> <span class="accent">NSE LIQUIDITY TERMINAL</span></div>
+            <div class="brand-sub mono">
+              <span id="istClock">IST 09:15:00</span>
+              <span>|</span>
+              <span id="universeMeta">40 TRACKED NSE F&amp;O</span>
+            </div>
+          </div>
+        </div>
 
-  <!-- TOP HEADER -->
-  <header class="sticky top-0 z-40 t-bg/95 backdrop-blur-md border-b t-border">
-    <div class="max-w-[1720px] mx-auto px-3 sm:px-5 h-14 flex items-center justify-between gap-2">
-      <div class="flex items-center gap-2.5 min-w-0">
-        <div class="w-8 h-8 rounded-lg bg-[#10b981] flex items-center justify-center text-black font-extrabold shrink-0 shadow-lg">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6">
-            <rect x="3" y="4" width="6" height="16" rx="1"></rect>
-            <rect x="15" y="7" width="6" height="13" rx="1"></rect>
-            <path d="M9 10h6M9 14h6"></path>
+        <div class="search-wrap">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
+          <input id="stockSearch" class="search-input" type="text" placeholder="Search NSE stocks..." autocomplete="off" />
+          <button id="clearSearchBtn" class="search-clear" title="Clear search">&times;</button>
         </div>
-        <div class="truncate">
-          <div class="flex items-center gap-2">
-            <span id="nav-brand-name" class="font-extrabold t-strong text-sm sm:text-base tracking-tight truncate">Ganesh Kabadi F&amp;O Desk</span>
-            <span class="hidden sm:inline-flex items-center px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wider bg-[#10b981]/15 border border-[#10b981]/30 text-[#10b981]">
-              OB + LIQUIDITY
-            </span>
+      </div>
+
+      <!-- Sector Filter Pills + Breadth Readout -->
+      <div class="topbar-center">
+        <div id="sectorBar" class="sector-bar" role="group" aria-label="Sector filter"></div>
+
+        <div class="breadth-box mono">
+          <div class="breadth-item">
+            <span class="breadth-lbl bull-txt">BULLISH</span>
+            <span id="breadthBull" class="breadth-num bull-txt">24</span>
+          </div>
+          <span style="color:#475569;font-size:11px;">vs</span>
+          <div class="breadth-item">
+            <span class="breadth-lbl bear-txt">BEARISH</span>
+            <span id="breadthBear" class="breadth-num bear-txt">16</span>
           </div>
         </div>
       </div>
 
-      <nav class="hidden lg:flex items-center t-card p-1 rounded-xl border t-border gap-1">
-        <button type="button" onclick="switchMainTab('sectorflow')" id="tab-btn-sectorflow" class="px-3 py-1.5 rounded-lg text-xs font-bold transition-all bg-[#10b981] text-black shadow">
-          ⚡ Sector &amp; Stock Flow Matrix
-        </button>
-        <button type="button" onclick="switchMainTab('livechart')" id="tab-btn-livechart" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all t-muted hover:t-strong flex items-center gap-1.5">
-          <span>📈 Live Chart + OB / SL / TP</span>
-        </button>
-        <button type="button" onclick="switchMainTab('finder')" id="tab-btn-finder" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all t-muted hover:t-strong">
-          OB + Liquidity Calc
-        </button>
-        <button type="button" onclick="switchMainTab('journal')" id="tab-btn-journal" class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all t-muted hover:t-strong">
-          Journal (<span id="journal-badge">3</span>)
-        </button>
-      </nav>
+      <!-- Data Source Controls -->
+      <div class="topbar-right">
+        <div class="mode-switch" role="group" aria-label="Data source mode">
+          <button id="btnLiveMcp" class="mode-btn" type="button">LIVE NSE MCP</button>
+          <button id="btnSimMode" class="mode-btn active-sim" type="button">SIM MODE</button>
+        </div>
 
-      <div class="flex items-center gap-1.5 sm:gap-2 shrink-0">
-        <button type="button" onclick="toggleLive915Sim()" id="btn-sim-915" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-[#10b981]/15 border border-[#10b981]/40 text-[#10b981] flex items-center gap-1.5">
-          <span id="sim-dot" class="w-2 h-2 rounded-full bg-[#10b981] live-dot"></span>
-          <span id="sim-btn-label" class="hidden sm:inline">LIVE ON</span>
-        </button>
+        <div id="statusPill" class="status-pill sim">
+          <span class="pulse-dot"></span>
+          <span id="statusText">SIMULATION 2s</span>
+        </div>
 
-        <button type="button" onclick="openModal('brand-modal')" class="px-2.5 py-1.5 rounded-lg text-[11px] font-semibold t-card border t-border t-strong hover:border-[#10b981]">
-          Brand
-        </button>
+        <!-- Settings Gear Popover -->
+        <div class="settings-anchor">
+          <button id="settingsBtn" class="icon-btn" type="button" title="Configure Local NSE MCP Bridge">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="3"></circle>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9c.26.6.85 1 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
+            </svg>
+          </button>
 
-        <button type="button" onclick="downloadStandaloneHTML()" class="px-2.5 py-1.5 rounded-lg text-[11px] font-bold bg-[#2962ff] text-white hover:opacity-90 shadow">
-          ↓ HTML
-        </button>
+          <div id="settingsPopover" class="settings-popover">
+            <div class="pop-title">
+              <span>NSE MCP BRIDGE CONFIG</span>
+              <button id="closeSettingsBtn" style="background:none;border:none;color:#94a3b8;cursor:pointer;font-size:15px;">&times;</button>
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="bridgeUrlInput">Local Python MCP Bridge URL</label>
+              <input id="bridgeUrlInput" class="field-input" type="text" value="http://127.0.0.1:8000/api/nse-mcp-live" />
+            </div>
+            <div class="field-group">
+              <label class="field-label" for="pollIntervalInput">Poll Interval (seconds)</label>
+              <input id="pollIntervalInput" class="field-input" type="number" min="3" max="120" value="15" />
+            </div>
+            <div class="pop-actions">
+              <button id="testBridgeBtn" class="btn-primary" type="button">Test Connection</button>
+              <button id="saveBridgeBtn" class="btn-save" type="button">Save</button>
+            </div>
+            <div id="testResultBox" class="test-result"></div>
+          </div>
+        </div>
+
+        <!-- Upload NSE CSV -->
+        <label class="upload-btn" for="csvUploadInput" title="Upload NSE Bhavcopy / Market Watch CSV">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="17 8 12 3 7 8"></polyline>
+            <line x1="12" y1="3" x2="12" y2="15"></line>
+          </svg>
+          <span>Upload NSE CSV</span>
+          <input id="csvUploadInput" type="file" accept=".csv,text/csv" style="display:none;" />
+        </label>
+      </div>
+    </header>
+
+    <!-- Non-intrusive Offline Bridge Banner -->
+    <div id="offlineBanner" class="offline-banner">
+      <div>
+        <strong>MCP Bridge Offline:</strong> Start your local bridge with
+        <code>uvicorn nse_mcp_bridge:app --port 8000</code>
+        to stream live NSE MCP quotes from 09:15 IST.
+      </div>
+      <div class="banner-actions">
+        <button id="bannerRetryBtn" class="banner-btn" type="button">Retry MCP</button>
+        <button id="bannerSimBtn" class="banner-btn" type="button">Fallback to SIM MODE</button>
       </div>
     </div>
 
-    <div class="flex lg:hidden items-center justify-around border-t t-border t-card px-2 py-1.5 text-[11px] gap-1">
-      <button type="button" onclick="switchMainTab('sectorflow')" id="mob-tab-sectorflow" class="flex-1 py-1.5 rounded-lg font-bold bg-[#10b981] text-black">⚡ Flow Matrix</button>
-      <button type="button" onclick="switchMainTab('livechart')" id="mob-tab-livechart" class="flex-1 py-1.5 rounded-lg font-semibold t-muted">📈 Chart &amp; SL/TP</button>
-      <button type="button" onclick="switchMainTab('finder')" id="mob-tab-finder" class="flex-1 py-1.5 rounded-lg font-semibold t-muted">OB Calc</button>
-      <button type="button" onclick="switchMainTab('journal')" id="mob-tab-journal" class="flex-1 py-1.5 rounded-lg font-semibold t-muted">Journal</button>
-    </div>
-  </header>
+    <!-- Toast Container -->
+    <div id="toastStack" class="toast-stack"></div>
 
-  <!-- STATUS & QUICK STOCK SELECTOR STRIP -->
-  <div class="border-b t-border bg-[#0b1017]">
-    <div class="max-w-[1720px] mx-auto px-3 sm:px-5 py-1.5 flex flex-wrap items-center justify-between gap-2 text-[11px] font-num">
-      <div class="flex items-center gap-3">
-        <span class="text-[#10b981] font-bold">BULLISH OB: <span id="bull-count-lbl">12</span></span>
-        <span class="text-slate-600">|</span>
-        <span class="text-[#ef4444] font-bold">BEARISH OB: <span id="bear-count-lbl">8</span></span>
-        <span class="hidden md:inline text-slate-600">|</span>
-        <span class="hidden md:inline text-slate-300">OB + Liquidity Sweep Model Active</span>
+    <!-- ==================== 2. THREE-PANEL MAIN LAYOUT ==================== -->
+    <main class="main-grid">
+
+      <!-- LEFT PANEL: INTRADAY LIQUIDITY FLOW SPIDER CHART -->
+      <section class="panel spider-panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span style="width:7px;height:7px;border-radius:50%;background:var(--cyan);display:inline-block;"></span>
+            <span>Intraday Liquidity Flow</span>
+            <span class="mono" style="color:var(--text-muted);font-weight:500;">(09:15 → LIVE)</span>
+          </div>
+          <div class="panel-meta">
+            <span id="spiderBullPct" class="bull-txt">60.0% BULL</span>
+            <span style="color:#475569;"> / </span>
+            <span id="spiderBearPct" class="bear-txt">40.0% BEAR</span>
+          </div>
+        </div>
+        <div id="spiderWrap" class="spider-canvas-wrap">
+          <canvas id="spiderCanvas"></canvas>
+          <div id="spiderTooltip" class="spider-tooltip">
+            <div style="display:flex;justify-content:space-between;gap:12px;">
+              <strong id="ttSym" style="color:#fff;">INDUSINDBK</strong>
+              <strong id="ttPct" class="bull-txt">+8.60%</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;gap:12px;margin-top:3px;color:#94a3b8;font-size:10px;">
+              <span id="ttSec">BANKING</span>
+              <span id="ttLtp" style="color:#e2e8f0;">₹1,003.00</span>
+            </div>
+            <div style="display:flex;justify-content:space-between;gap:12px;margin-top:2px;font-size:9.5px;">
+              <span id="ttVol" class="amber-txt">3.15x VOL</span>
+              <span class="cyan-txt">Click for OB</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- MIDDLE PANEL: SPLIT BULLISH & BEARISH MOMENTUM GRIDS -->
+      <section class="middle-col">
+        <!-- Top Half: Bullish -->
+        <div class="half-panel bull-border">
+          <div class="panel-header bull-hdr">
+            <div class="panel-title bull-txt">▲ BULLISH MOMENTUM / LONG BUILD-UP</div>
+            <div id="bullGridMeta" class="panel-meta bull-txt">TOP 12</div>
+          </div>
+          <div id="bullishGrid" class="stock-grid"></div>
+        </div>
+
+        <!-- Bottom Half: Bearish -->
+        <div class="half-panel bear-border">
+          <div class="panel-header bear-hdr">
+            <div class="panel-title bear-txt">▼ BEARISH MOMENTUM / SHORT BUILD-UP</div>
+            <div id="bearGridMeta" class="panel-meta bear-txt">TOP 12</div>
+          </div>
+          <div id="bearishGrid" class="stock-grid"></div>
+        </div>
+      </section>
+
+      <!-- RIGHT PANEL: HIGH-CONVICTION INSTITUTIONAL PICKS -->
+      <section class="panel">
+        <div class="panel-header">
+          <div class="panel-title">
+            <span style="width:7px;height:7px;border-radius:50%;background:var(--amber);display:inline-block;"></span>
+            <span>High-Conviction Institutional Picks</span>
+          </div>
+          <div class="panel-meta amber-txt">TOP 3 BULL • TOP 3 BEAR</div>
+        </div>
+        <div id="picksList" class="picks-list"></div>
+      </section>
+
+    </main>
+
+    <!-- ==================== 3. FOOTER ==================== -->
+    <footer class="footer">
+      <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+        <span id="footerSourceBadge" class="footer-tag">SIMULATION FEED</span>
+        <span>Switch to <strong>LIVE NSE MCP</strong> after starting your local Python bridge (`nse_mcp_bridge.py`)</span>
       </div>
-      <div class="flex items-center gap-3">
-        <span class="text-slate-400">IST: <strong id="ist-clock-display" class="text-[#10b981]">LIVE STREAM</strong></span>
-        <button type="button" onclick="openLiveChartModal(selectedStock.symbol)" class="px-2.5 py-0.5 rounded bg-[#2962ff]/20 border border-[#2962ff]/50 text-[#60a5fa] font-bold hover:bg-[#2962ff] hover:text-white transition-all">
-          📈 Open <span id="quick-sym-lbl">COFORGE</span> Live Chart &amp; SL/TP
-        </button>
+      <div style="display:flex;align-items:center;gap:12px;">
+        <span>Click any card or trajectory for 5m Order Block &amp; VWAP inspection</span>
+        <button id="sampleCsvBtn" class="link-btn" type="button">Sample CSV</button>
+      </div>
+    </footer>
+  </div>
+
+  <!-- ==================== 4. INTERACTIVE ORDER BLOCK CANDLESTICK MODAL ==================== -->
+  <div id="obModal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="mSymbol">
+    <div id="obModalCard" class="modal-card">
+      <div class="modal-hdr">
+        <div>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <h2 id="mSymbol" style="font-size:18px;font-weight:800;color:#fff;letter-spacing:0.02em;">INDUSINDBK</h2>
+            <span id="mSector" class="mono cyan-txt" style="font-size:11px;font-weight:700;">BANKING</span>
+            <span id="mDirBadge" class="badge badge-bull">BULLISH PICK #1</span>
+            <span id="mConvBadge" class="badge badge-conv">CONV 98</span>
+          </div>
+          <div class="mono" style="display:flex;align-items:center;gap:10px;margin-top:4px;font-size:12px;">
+            <strong id="mLtp" style="font-size:15px;color:#fff;">₹1,003.00</strong>
+            <span id="mChg" class="bull-txt" style="font-weight:700;">+8.60% (+79.45)</span>
+            <span style="color:#475569;">|</span>
+            <span id="mVolSurge" class="amber-txt" style="font-weight:700;">3.15x VOL</span>
+          </div>
+        </div>
+        <button id="closeModalBtn" class="modal-close" type="button" title="Close (Esc)">&times;</button>
+      </div>
+
+      <div class="modal-stats">
+        <div class="stat-box">
+          <div class="stat-k">VWAP Alignment</div>
+          <div id="mVwapStat" class="stat-v cyan-txt">₹974.20 (ABOVE)</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-k">Morning OB Zone</div>
+          <div id="mOb1Stat" class="stat-v bull-txt">936.0 - 944.5</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-k">Midday OB Zone</div>
+          <div id="mOb2Stat" class="stat-v amber-txt">978.4 - 986.2</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-k">Support S1</div>
+          <div id="mS1Stat" class="stat-v">₹971.50</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-k">Targets R1 / R2</div>
+          <div id="mR1R2Stat" class="stat-v">1021.0 / 1042.0</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-k">Risk : Reward</div>
+          <div id="mRrStat" class="stat-v cyan-txt">1 : 2.0</div>
+        </div>
+      </div>
+
+      <div class="modal-chart-wrap">
+        <div class="chart-hud">
+          <span style="color:#64748b;">5m INTRADAY</span>
+          <span id="hudTime" style="color:#fff;font-weight:700;">15:15</span>
+          <span>O <strong id="hudO">-</strong></span>
+          <span>H <strong id="hudH" class="bull-txt">-</strong></span>
+          <span>L <strong id="hudL" class="bear-txt">-</strong></span>
+          <span>C <strong id="hudC" style="color:#fff;">-</strong></span>
+          <span>V <strong id="hudV" class="amber-txt">-</strong></span>
+          <span class="cyan-txt">VWAP <strong id="hudVwap">-</strong></span>
+        </div>
+        <canvas id="modalCanvas"></canvas>
+      </div>
+
+      <div class="modal-foot">
+        <div class="legend-row">
+          <span class="legend-item">
+            <span style="width:12px;height:8px;background:rgba(0,230,118,0.28);border:1px solid #00e676;display:inline-block;border-radius:2px;"></span>
+            Morning &amp; Midday OB Zones
+          </span>
+          <span class="legend-item">
+            <span style="width:14px;border-top:2px dashed #00d2ff;display:inline-block;"></span>
+            Intraday VWAP
+          </span>
+          <span class="legend-item">
+            <span style="width:14px;border-top:1.5px dotted #ffb300;display:inline-block;"></span>
+            R1 / R2 / S1 Levels
+          </span>
+        </div>
+        <span>Hover or drag across candles for live 5m OHLCV &amp; VWAP crosshair</span>
       </div>
     </div>
   </div>
 
-  <!-- MAIN CONTENT -->
-  <main class="flex-1 max-w-[1720px] w-full mx-auto px-2.5 sm:px-5 py-4">
-
-    <!-- TAB 1: SANKEY + MATRIX + TOP OB CARDS -->
-    <div id="view-sectorflow" class="space-y-4">
-      <div class="t-card border t-border rounded-xl p-2.5 flex flex-wrap items-center justify-between gap-2.5">
-        <div class="relative flex-1 min-w-[210px] max-w-md">
-          <svg class="w-3.5 h-3.5 t-muted absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-          <input id="sf-search-input" type="text" placeholder="Search F&O stocks (COFORGE, PERSISTENT, TCS, TATASTEEL...)" oninput="renderAllMatrix()" class="w-full t-bg border t-border focus:border-[#10b981] rounded-lg pl-8 pr-3 py-1.5 text-xs t-strong outline-none" />
-        </div>
-        <div class="flex flex-wrap items-center gap-1" id="sf-sector-pills"></div>
-      </div>
-
-      <div class="grid grid-cols-1 xl:grid-cols-12 gap-3 items-stretch">
-        <!-- PANEL 1: SANKEY -->
-        <div class="xl:col-span-4 t-card border t-border rounded-xl p-3 flex flex-col justify-between relative overflow-hidden">
-          <div class="flex items-center justify-between mb-2">
-            <div>
-              <h2 class="text-xs font-extrabold t-strong uppercase tracking-wider">Sector &amp; Liquidity Sankey Flow</h2>
-              <p class="text-[10px] t-muted">Emerald = Bullish OB / Demand • Crimson = Bearish OB / Supply</p>
-            </div>
-            <span class="px-2 py-0.5 rounded bg-[#10b981]/15 text-[#10b981] font-num text-[10px] font-bold">LIQ FLOW</span>
-          </div>
-          <div id="sankey-wrap" class="relative w-full h-[380px] sm:h-[460px] bg-[#06090d] rounded-lg border t-border overflow-hidden">
-            <canvas id="sankey-canvas" class="w-full h-full block"></canvas>
-          </div>
-        </div>
-
-        <!-- PANEL 2: MULTI-TIER OB MATRIX -->
-        <div class="xl:col-span-4 flex flex-col gap-3">
-          <div class="t-card border t-border rounded-xl p-2.5 flex-1">
-            <div class="flex items-center justify-between mb-2 px-1">
-              <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#10b981]">▲ Bullish Order Block Matrix (Demand + Liquidity)</span>
-              <span class="text-[10px] font-num text-slate-400">OB / LIQ</span>
-            </div>
-            <div id="bull-mini-matrix" class="grid grid-cols-2 sm:grid-cols-4 gap-1.5"></div>
-          </div>
-
-          <div class="t-card border t-border rounded-xl p-2.5 flex-1">
-            <div class="flex items-center justify-between mb-2 px-1">
-              <span class="text-[10px] font-extrabold uppercase tracking-wider text-[#ef4444]">▼ Bearish Order Block Matrix (Supply + Liquidity)</span>
-              <span class="text-[10px] font-num text-slate-400">OB / LIQ</span>
-            </div>
-            <div id="bear-mini-matrix" class="grid grid-cols-2 sm:grid-cols-4 gap-1.5"></div>
-          </div>
-        </div>
-
-        <!-- PANEL 3: TOP BULLISH & BEARISH OB CARDS -->
-        <div class="xl:col-span-4 flex flex-col gap-3">
-          <div id="top-bull-cards" class="space-y-2"></div>
-          <div id="top-bear-cards" class="space-y-2"></div>
-        </div>
-      </div>
-
-      <!-- SELECTED STOCK OB EXECUTION BAR -->
-      <div class="t-card border border-[#2962ff]/40 rounded-xl p-4 shadow-2xl">
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 pb-3 border-b t-border">
-          <div class="flex flex-wrap items-center gap-2.5">
-            <span id="bar-sym" class="text-lg font-extrabold text-white">COFORGE</span>
-            <span id="bar-bias" class="px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#10b981] text-black">BULLISH OB • LONG BUILD-UP</span>
-            <span id="bar-ltp" class="font-num text-sm font-bold text-[#10b981]">₹2,332.00 (+3.49%)</span>
-            <span id="bar-lot" class="text-xs font-num text-slate-400">Lot: 150</span>
-          </div>
-
-          <div class="grid grid-cols-2 sm:grid-cols-6 gap-2 font-num text-xs">
-            <div class="bg-[#0b1017] border t-border rounded-lg px-2.5 py-1.5">
-              <span class="text-[9px] text-amber-400 block">OB ZONE</span>
-              <strong id="bar-zone" class="text-white">2,083.9 – 2,112.3</strong>
-            </div>
-            <div class="bg-[#0b1017] border t-border rounded-lg px-2.5 py-1.5">
-              <span class="text-[9px] text-purple-400 block">LIQUIDITY (LIQ)</span>
-              <strong id="bar-liq" class="text-purple-300">₹2,072.00</strong>
-            </div>
-            <div class="bg-[#0b1017] border border-[#2962ff]/50 rounded-lg px-2.5 py-1.5">
-              <span class="text-[9px] text-[#60a5fa] block">ENTRY</span>
-              <strong id="bar-entry" class="text-white">₹2,112.30</strong>
-            </div>
-            <div class="bg-[#0b1017] border border-[#ef4444]/50 rounded-lg px-2.5 py-1.5">
-              <span class="text-[9px] text-[#ef4444] block">STOP LOSS (SL)</span>
-              <strong id="bar-sl" class="text-[#ef4444]">₹2,068.50</strong>
-            </div>
-            <div class="bg-[#0b1017] border border-[#10b981]/50 rounded-lg px-2.5 py-1.5">
-              <span class="text-[9px] text-[#10b981] block">TARGET 1 (TP1)</span>
-              <strong id="bar-tp1" class="text-[#10b981]">₹2,222.90</strong>
-            </div>
-            <div class="bg-[#0b1017] border border-[#10b981]/50 rounded-lg px-2.5 py-1.5">
-              <span class="text-[9px] text-[#10b981] block">TARGET 2 (TP2)</span>
-              <strong id="bar-tp2" class="text-[#10b981]">₹2,316.50</strong>
-            </div>
-          </div>
-
-          <div class="flex items-center gap-2 shrink-0">
-            <button type="button" onclick="switchMainTab('livechart')" class="px-3.5 py-2 rounded-lg text-xs font-extrabold bg-[#2962ff] text-white hover:opacity-90 shadow">
-              📈 Full Live Chart
-            </button>
-            <button type="button" onclick="copySelectedLevels()" class="px-3 py-2 rounded-lg text-xs font-bold bg-[#161f2c] border t-border text-white hover:border-[#10b981]">
-              Copy OB/SL/TP
-            </button>
-          </div>
-        </div>
-
-        <div id="inline-chart-wrap" class="relative w-full h-[230px] sm:h-[260px] bg-[#06090d] rounded-lg border t-border mt-3 overflow-hidden">
-          <canvas id="inline-live-canvas" class="w-full h-full block"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 2: FULL LIVE CHART -->
-    <div id="view-livechart" class="hidden space-y-4">
-      <div class="t-card border t-border rounded-xl p-4 shadow-2xl">
-        <div class="flex flex-wrap items-center justify-between gap-3 pb-3 border-b t-border">
-          <div class="flex items-center gap-2.5">
-            <select id="chart-stock-selector" onchange="selectStock(this.value)" class="bg-[#080c10] border t-border rounded-lg px-3 py-2 text-sm font-extrabold text-white outline-none"></select>
-            <span id="fc-bias-badge" class="px-2.5 py-1 rounded text-xs font-extrabold bg-[#10b981]/20 text-[#10b981]">BULLISH OB</span>
-            <span id="fc-ltp" class="font-num text-base font-bold text-white">₹2,332.00 (+3.49%)</span>
-          </div>
-
-          <div class="flex items-center gap-1.5">
-            <button type="button" id="tf-btn-1m" onclick="setTf('1m')" class="px-2.5 py-1 rounded text-xs font-num font-bold bg-[#161f2c] text-slate-300 hover:text-white">1m</button>
-            <button type="button" id="tf-btn-5m" onclick="setTf('5m')" class="px-2.5 py-1 rounded text-xs font-num font-bold bg-[#2962ff] text-white">5m</button>
-            <button type="button" id="tf-btn-15m" onclick="setTf('15m')" class="px-2.5 py-1 rounded text-xs font-num font-bold bg-[#161f2c] text-slate-300 hover:text-white">15m</button>
-            <button type="button" onclick="logCurrentToJournal()" class="ml-2 px-3 py-1.5 rounded-lg text-xs font-bold bg-[#10b981] text-black">+ Log Trade</button>
-          </div>
-        </div>
-
-        <div class="grid grid-cols-2 sm:grid-cols-6 gap-3 my-3 font-num">
-          <div class="bg-[#080c10] border t-border rounded-xl p-3">
-            <span class="text-[10px] text-amber-400 block">OB ZONE</span>
-            <strong id="fc-zone" class="text-xs sm:text-sm text-white mt-0.5 block">₹2,083.90 – ₹2,112.30</strong>
-          </div>
-          <div class="bg-[#080c10] border border-purple-500/50 rounded-xl p-3">
-            <span class="text-[10px] text-purple-400 block">LIQUIDITY (LIQ)</span>
-            <strong id="fc-liq" class="text-xs sm:text-sm text-purple-300 mt-0.5 block">₹2,072.00</strong>
-          </div>
-          <div class="bg-[#080c10] border border-[#2962ff] rounded-xl p-3">
-            <span class="text-[10px] text-[#60a5fa] block">ENTRY</span>
-            <strong id="fc-entry" class="text-sm sm:text-base text-white mt-0.5 block">₹2,112.30</strong>
-          </div>
-          <div class="bg-[#080c10] border border-[#ef4444] rounded-xl p-3">
-            <span class="text-[10px] text-[#ef4444] block">STOP LOSS (SL)</span>
-            <strong id="fc-sl" class="text-sm sm:text-base text-[#ef4444] mt-0.5 block">₹2,068.50</strong>
-          </div>
-          <div class="bg-[#080c10] border border-[#10b981] rounded-xl p-3">
-            <span class="text-[10px] text-[#10b981] block">TARGET 1 (TP1)</span>
-            <strong id="fc-tp1" class="text-sm sm:text-base text-[#10b981] mt-0.5 block">₹2,222.90</strong>
-          </div>
-          <div class="bg-[#080c10] border border-[#10b981] rounded-xl p-3">
-            <span class="text-[10px] text-[#10b981] block">TARGET 2 (TP2)</span>
-            <strong id="fc-tp2" class="text-sm sm:text-base text-[#10b981] mt-0.5 block">₹2,316.50</strong>
-          </div>
-        </div>
-
-        <div id="full-chart-wrap" class="relative w-full h-[380px] sm:h-[440px] bg-[#06090d] rounded-xl border t-border overflow-hidden">
-          <canvas id="full-live-canvas" class="w-full h-full block cursor-crosshair"></canvas>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 3: OB + LIQUIDITY CALCULATOR -->
-    <div id="view-finder" class="hidden space-y-4">
-      <div class="t-card border t-border rounded-xl p-5">
-        <h2 class="text-base font-extrabold t-strong mb-4">Order Block + Liquidity Entry / SL / TP Calculator</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="space-y-2.5">
-            <select id="calc-bias" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-bold t-strong">
-              <option value="BULLISH">Bullish OB (Demand + Below Liquidity)</option>
-              <option value="BEARISH">Bearish OB (Supply + Above Liquidity)</option>
-            </select>
-            <input id="calc-lot" type="number" value="150" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" placeholder="Lot Size" />
-            <input id="calc-obhigh" type="number" step="0.05" value="2112.30" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" placeholder="OB High" />
-            <input id="calc-oblow" type="number" step="0.05" value="2083.90" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" placeholder="OB Low" />
-            <input id="calc-liq" type="number" step="0.05" value="2072.00" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-xs font-num t-strong" placeholder="Liquidity Pool Level" />
-            <button type="button" onclick="calculateCustomOB()" class="w-full py-2.5 rounded-lg text-xs font-extrabold bg-[#10b981] text-black">Calculate OB Entry, SL &amp; TP</button>
-          </div>
-          <div class="md:col-span-2 grid grid-cols-2 sm:grid-cols-4 gap-3 items-center font-num">
-            <div class="t-bg border t-border rounded-xl p-3"><span class="text-[10px] t-muted block">ENTRY</span><strong id="c-entry" class="text-sm text-white">₹2,112.30</strong></div>
-            <div class="t-bg border t-border rounded-xl p-3"><span class="text-[10px] t-muted block">STOP LOSS</span><strong id="c-sl" class="text-sm text-[#ef4444]">₹2,068.50</strong></div>
-            <div class="t-bg border t-border rounded-xl p-3"><span class="text-[10px] t-muted block">TP1 / TP2</span><strong id="c-tp" class="text-sm text-[#10b981]">₹2,222.90 / ₹2,316.50</strong></div>
-            <div class="t-bg border t-border rounded-xl p-3"><span class="text-[10px] t-muted block">RISK / LOT</span><strong id="c-risk" class="text-sm text-amber-400">₹6,570</strong></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- TAB 4: TRADE JOURNAL -->
-    <div id="view-journal" class="hidden space-y-4">
-      <div class="t-card border t-border rounded-xl p-5">
-        <div class="flex items-center justify-between mb-3">
-          <h3 class="text-base font-extrabold t-strong">OB + Liquidity Trade Journal</h3>
-          <span class="font-num font-bold text-[#10b981]">+₹55,450</span>
-        </div>
-        <div class="overflow-x-auto">
-          <table class="w-full text-left border-collapse text-xs">
-            <thead>
-              <tr class="border-b t-border text-[10px] uppercase t-muted">
-                <th class="py-2 px-3">Date</th>
-                <th class="py-2 px-3">Symbol</th>
-                <th class="py-2 px-3">OB / Liquidity Setup</th>
-                <th class="py-2 px-3">R:R</th>
-                <th class="py-2 px-3 text-right">P&amp;L</th>
-              </tr>
-            </thead>
-            <tbody id="journal-tbody" class="divide-y t-border"></tbody>
-          </table>
-        </div>
-      </div>
-    </div>
-
-  </main>
-
-  <!-- BRAND MODAL -->
-  <div id="brand-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-    <div class="t-card border t-border rounded-2xl max-w-md w-full p-5">
-      <div class="flex items-center justify-between pb-3 border-b t-border">
-        <h3 class="text-sm font-extrabold t-strong">Brand Settings</h3>
-        <button type="button" onclick="closeModal('brand-modal')" class="t-muted font-bold">✕</button>
-      </div>
-      <div class="space-y-3 mt-4">
-        <input id="inp-brand-name" type="text" class="w-full t-bg border t-border rounded-lg px-3 py-2 text-sm font-bold t-strong" />
-        <button type="button" onclick="saveBrandConfig()" class="w-full py-2 rounded-lg text-xs font-extrabold bg-[#10b981] text-black">Save Brand Name</button>
-      </div>
-    </div>
-  </div>
-
+  <!-- ==================== 5. APPLICATION ENGINE ==================== -->
   <script>
-    const DEFAULT_BRAND = { name: 'Ganesh Kabadi F&O Desk' };
-    let brand = JSON.parse(localStorage.getItem('ob_pro_fo_brand')) || { ...DEFAULT_BRAND };
-    let currentTf = '5m';
+    'use strict';
 
-    function applyBrandConfig() {
-      document.title = `${brand.name} — Live NSE F&O Order Block, Sector Flow & Liquidity Scanner`;
-      document.getElementById('nav-brand-name').textContent = brand.name;
-      document.getElementById('inp-brand-name').value = brand.name;
-    }
+    /* -------------------------------------------------------------------------
+       A. CONSTANTS, SECTORS & INITIAL 40-STOCK NSE UNIVERSE
+       ------------------------------------------------------------------------- */
+    const SECTORS = ['ALL', 'BANKING', 'CAP MKTS', 'IT', 'REALTY', 'PHARMA', 'AUTO'];
 
-    function saveBrandConfig() {
-      brand.name = document.getElementById('inp-brand-name').value.trim() || DEFAULT_BRAND.name;
-      localStorage.setItem('ob_pro_fo_brand', JSON.stringify(brand));
-      applyBrandConfig();
-      closeModal('brand-modal');
-      showToast('Brand updated!');
-    }
+    const INITIAL_SEED_STOCKS = [
+      // Top 12 Bullish Momentum / Long Build-Up
+      { symbol: 'INDUSINDBK', sector: 'BANKING',  ltp: 1003.00,  pChange: 8.60,  volRatio: 3.15, volume: 19100000 },
+      { symbol: 'ANGELONE',   sector: 'CAP MKTS', ltp: 312.90,   pChange: 7.90,  volRatio: 3.40, volume: 8420000 },
+      { symbol: 'LODHA',      sector: 'REALTY',   ltp: 1067.40,  pChange: 6.44,  volRatio: 2.85, volume: 5190000 },
+      { symbol: 'CDSL',       sector: 'CAP MKTS', ltp: 1322.70,  pChange: 5.65,  volRatio: 2.92, volume: 6340000 },
+      { symbol: 'APOLLOHOSP', sector: 'PHARMA',   ltp: 9200.00,  pChange: 5.30,  volRatio: 2.12, volume: 1420000 },
+      { symbol: 'AXISBANK',   sector: 'BANKING',  ltp: 1446.00,  pChange: 4.70,  volRatio: 2.20, volume: 21500000 },
+      { symbol: 'CAMS',       sector: 'CAP MKTS', ltp: 4218.50,  pChange: 4.49,  volRatio: 2.48, volume: 1240000 },
+      { symbol: 'PERSISTENT', sector: 'IT',       ltp: 6124.00,  pChange: 4.20,  volRatio: 2.83, volume: 1810000 },
+      { symbol: 'COCHINSHIP', sector: 'AUTO',     ltp: 1584.20,  pChange: 3.55,  volRatio: 2.65, volume: 4320000 },
+      { symbol: 'MCX',        sector: 'CAP MKTS', ltp: 6412.00,  pChange: 3.44,  volRatio: 2.31, volume: 2180000 },
+      { symbol: 'MARUTI',     sector: 'AUTO',     ltp: 14011.00, pChange: 3.10,  volRatio: 1.75, volume: 1620000 },
+      { symbol: 'HDFCBANK',   sector: 'BANKING',  ltp: 1742.00,  pChange: 2.90,  volRatio: 1.97, volume: 70100000 },
 
-    // Order Block + Liquidity model helper
-    function recomputeOBLevels(s) {
-      const isBull = s.change >= 0;
-      const spread = Math.max(s.obHigh - s.obLow, s.ltp * 0.008);
-      if (isBull) {
-        s.buildup = 'BULLISH OB + LIQ';
-        s.entry = +s.obHigh.toFixed(2);
-        s.sl = +(Math.min(s.liq, s.obLow - spread * 0.25)).toFixed(2);
-        const risk = Math.max(s.entry - s.sl, s.ltp * 0.005);
-        s.tp1 = +(s.entry + risk * 2.0).toFixed(2);
-        s.tp2 = +(s.entry + risk * 3.0).toFixed(2);
-        s.s1 = s.obLow;
-      } else {
-        s.buildup = 'BEARISH OB + LIQ';
-        s.entry = +s.obLow.toFixed(2);
-        s.sl = +(Math.max(s.liq, s.obHigh + spread * 0.25)).toFixed(2);
-        const risk = Math.max(s.sl - s.entry, s.ltp * 0.005);
-        s.tp1 = +(s.entry - risk * 2.0).toFixed(2);
-        s.tp2 = +(s.entry - risk * 3.0).toFixed(2);
-        s.r1 = s.obHigh;
-      }
-    }
+      // Top 12 Bearish Momentum / Short Build-Up
+      { symbol: 'DIXON',      sector: 'AUTO',     ltp: 14820.00, pChange: -2.42, volRatio: 2.60, volume: 1120000 },
+      { symbol: 'LAURUSLABS', sector: 'PHARMA',   ltp: 482.60,   pChange: -2.34, volRatio: 2.95, volume: 7250000 },
+      { symbol: 'BANDHANBNK', sector: 'BANKING',  ltp: 174.30,   pChange: -2.10, volRatio: 2.40, volume: 14800000 },
+      { symbol: 'ATGL',       sector: 'REALTY',   ltp: 718.90,   pChange: -1.92, volRatio: 2.15, volume: 3420000 },
+      { symbol: 'BIOCON',     sector: 'PHARMA',   ltp: 336.45,   pChange: -1.84, volRatio: 2.05, volume: 6180000 },
+      { symbol: 'COFORGE',    sector: 'IT',       ltp: 7845.00,  pChange: -1.78, volRatio: 1.98, volume: 1490000 },
+      { symbol: 'WIPRO',      sector: 'IT',       ltp: 562.20,   pChange: -1.65, volRatio: 1.85, volume: 9820000 },
+      { symbol: 'LICHSGFIN',  sector: 'BANKING',  ltp: 618.75,   pChange: -1.58, volRatio: 1.78, volume: 4120000 },
+      { symbol: 'MPHASIS',    sector: 'IT',       ltp: 2914.50,  pChange: -1.51, volRatio: 2.34, volume: 1680000 },
+      { symbol: 'TATASTEEL',  sector: 'AUTO',     ltp: 148.90,   pChange: -1.44, volRatio: 1.65, volume: 32400000 },
+      { symbol: 'FEDERALBNK', sector: 'BANKING',  ltp: 198.20,   pChange: -1.35, volRatio: 1.54, volume: 11200000 },
+      { symbol: 'INFY',       sector: 'IT',       ltp: 1842.30,  pChange: -1.12, volRatio: 1.48, volume: 7840000 },
 
-    const fnoStocks = [
-      { symbol: 'COFORGE', sector: 'IT', ltp: 2332.00, change: 3.49, lotSize: 150, rr: '1:3.0', obLow: 2083.90, obHigh: 2112.30, liq: 2072.00, s1: 2083.90, r1: 2222.90, entry: 2112.30, sl: 2068.50, tp1: 2222.90, tp2: 2316.50, buildup: 'BULLISH OB + LIQ' },
-      { symbol: 'PERSISTENT', sector: 'IT', ltp: 6348.00, change: 2.86, lotSize: 100, rr: '1:3.0', obLow: 5977.50, obHigh: 6046.00, liq: 5940.00, s1: 5977.50, r1: 6231.25, entry: 6046.00, sl: 5912.65, tp1: 6231.25, tp2: 6371.90, buildup: 'BULLISH OB + LIQ' },
-      { symbol: 'LTF', sector: 'Finance', ltp: 279.65, change: 1.76, lotSize: 2250, rr: '1:3.0', obLow: 270.45, obHigh: 274.50, liq: 267.80, s1: 270.45, r1: 278.50, entry: 274.50, sl: 266.00, tp1: 278.50, tp2: 282.10, buildup: 'BULLISH OB + LIQ' },
-      { symbol: 'HDFCBANK', sector: 'Banking', ltp: 1764.50, change: 2.60, lotSize: 550, rr: '1:3.0', obLow: 1738.00, obHigh: 1745.00, liq: 1732.00, s1: 1738.00, r1: 1778.00, entry: 1745.00, sl: 1730.00, tp1: 1778.00, tp2: 1796.00, buildup: 'BULLISH OB + LIQ' },
-      { symbol: 'MAXHEALTH', sector: 'Pharma', ltp: 1096.00, change: 3.10, lotSize: 525, rr: '1:3.0', obLow: 1075.00, obHigh: 1081.00, liq: 1071.00, s1: 1075.00, r1: 1105.00, entry: 1081.00, sl: 1069.50, tp1: 1105.00, tp2: 1118.00, buildup: 'BULLISH OB + LIQ' },
-      { symbol: 'HCLTECH', sector: 'IT', ltp: 1842.00, change: 1.52, lotSize: 350, rr: '1:3.0', obLow: 1815.00, obHigh: 1824.00, liq: 1810.00, s1: 1815.00, r1: 1855.00, entry: 1824.00, sl: 1808.00, tp1: 1855.00, tp2: 1872.00, buildup: 'BULLISH OB + LIQ' },
-      { symbol: 'ULTRACEMCO', sector: 'Metals', ltp: 11420.00, change: 1.59, lotSize: 50, rr: '1:3.0', obLow: 11260.00, obHigh: 11310.00, liq: 11230.00, s1: 11260.00, r1: 11520.00, entry: 11310.00, sl: 11210.00, tp1: 11520.00, tp2: 11640.00, buildup: 'BULLISH OB + LIQ' },
-      { symbol: 'TECHM', sector: 'IT', ltp: 1698.00, change: 2.07, lotSize: 600, rr: '1:3.0', obLow: 1672.00, obHigh: 1680.00, liq: 1666.00, s1: 1672.00, r1: 1715.00, entry: 1680.00, sl: 1664.00, tp1: 1715.00, tp2: 1732.00, buildup: 'BULLISH OB + LIQ' },
-      { symbol: 'INFY', sector: 'IT', ltp: 1874.20, change: 1.85, lotSize: 400, rr: '1:3.0', obLow: 1856.00, obHigh: 1862.00, liq: 1850.00, s1: 1856.00, r1: 1888.00, entry: 1862.00, sl: 1848.00, tp1: 1888.00, tp2: 1904.00, buildup: 'BULLISH OB + LIQ' },
-      { symbol: 'APOLLOHOSP', sector: 'Pharma', ltp: 7240.00, change: 2.40, lotSize: 125, rr: '1:3.0', obLow: 7110.00, obHigh: 7145.00, liq: 7095.00, s1: 7110.00, r1: 7295.00, entry: 7145.00, sl: 7085.00, tp1: 7295.00, tp2: 7360.00, buildup: 'BULLISH OB + LIQ' },
-      { symbol: 'INDUSINDBK', sector: 'Banking', ltp: 1084.50, change: 4.15, lotSize: 500, rr: '1:3.0', obLow: 1056.00, obHigh: 1062.50, liq: 1051.00, s1: 1056.00, r1: 1095.00, entry: 1062.50, sl: 1049.50, tp1: 1095.00, tp2: 1115.00, buildup: 'BULLISH OB + LIQ' },
-      { symbol: 'AXISBANK', sector: 'Banking', ltp: 1192.40, change: 2.95, lotSize: 625, rr: '1:3.0', obLow: 1168.00, obHigh: 1174.50, liq: 1163.00, s1: 1168.00, r1: 1202.00, entry: 1174.50, sl: 1161.00, tp1: 1202.00, tp2: 1218.00, buildup: 'BULLISH OB + LIQ' },
-      { symbol: 'TCS', sector: 'IT', ltp: 2382.40, change: -1.69, lotSize: 175, rr: '1:3.0', obLow: 2385.00, obHigh: 2394.00, liq: 2402.00, s1: 2354.95, r1: 2394.00, entry: 2385.00, sl: 2399.55, tp1: 2354.95, tp2: 2317.85, buildup: 'BEARISH OB + LIQ' },
-      { symbol: 'TATASTEEL', sector: 'Metals', ltp: 154.74, change: -3.48, lotSize: 5500, rr: '1:3.0', obLow: 155.80, obHigh: 157.40, liq: 160.50, s1: 147.40, r1: 157.40, entry: 155.80, sl: 159.50, tp1: 147.40, tp2: 142.85, buildup: 'BEARISH OB + LIQ' },
-      { symbol: 'KPITTECH', sector: 'IT', ltp: 526.45, change: -2.79, lotSize: 800, rr: '1:3.0', obLow: 531.50, obHigh: 536.20, liq: 540.00, s1: 515.70, r1: 536.20, entry: 531.50, sl: 538.70, tp1: 522.25, tp2: 515.70, buildup: 'BEARISH OB + LIQ' },
-      { symbol: 'KOTAKBANK', sector: 'Banking', ltp: 1782.00, change: -1.42, lotSize: 400, rr: '1:3.0', obLow: 1792.00, obHigh: 1799.00, liq: 1806.00, s1: 1762.00, r1: 1799.00, entry: 1792.00, sl: 1804.00, tp1: 1762.00, tp2: 1748.00, buildup: 'BEARISH OB + LIQ' },
-      { symbol: 'BAJAJFINSV', sector: 'Finance', ltp: 1642.00, change: -1.84, lotSize: 500, rr: '1:3.0', obLow: 1654.00, obHigh: 1662.00, liq: 1670.00, s1: 1620.00, r1: 1662.00, entry: 1654.00, sl: 1668.00, tp1: 1620.00, tp2: 1602.00, buildup: 'BEARISH OB + LIQ' },
-      { symbol: 'CHOLAFIN', sector: 'Finance', ltp: 1284.00, change: -1.55, lotSize: 625, rr: '1:3.0', obLow: 1294.00, obHigh: 1301.00, liq: 1308.00, s1: 1265.00, r1: 1301.00, entry: 1294.00, sl: 1306.00, tp1: 1265.00, tp2: 1250.00, buildup: 'BEARISH OB + LIQ' },
-      { symbol: 'VEDL', sector: 'Metals', ltp: 446.80, change: -2.90, lotSize: 1150, rr: '1:3.0', obLow: 455.20, obHigh: 458.50, liq: 462.50, s1: 439.50, r1: 458.50, entry: 455.20, sl: 461.00, tp1: 439.50, tp2: 432.00, buildup: 'BEARISH OB + LIQ' },
-      { symbol: 'ICICIGI', sector: 'Finance', ltp: 1895.00, change: -1.32, lotSize: 325, rr: '1:3.0', obLow: 1908.00, obHigh: 1916.00, liq: 1924.00, s1: 1872.00, r1: 1916.00, entry: 1908.00, sl: 1922.00, tp1: 1872.00, tp2: 1858.00, buildup: 'BEARISH OB + LIQ' }
+      // Additional 16 Liquidity Spider Universe Stocks (total 40)
+      { symbol: 'BSE',        sector: 'CAP MKTS', ltp: 4680.00,  pChange: 3.15,  volRatio: 2.24, volume: 3100000 },
+      { symbol: 'DLF',        sector: 'REALTY',   ltp: 842.50,   pChange: 2.48,  volRatio: 1.92, volume: 5400000 },
+      { symbol: 'OBEROIRLTY', sector: 'REALTY',   ltp: 1985.00,  pChange: 2.15,  volRatio: 1.80, volume: 1450000 },
+      { symbol: 'MOTHERSON',  sector: 'AUTO',     ltp: 196.40,   pChange: 2.64,  volRatio: 2.10, volume: 15400000 },
+      { symbol: 'TATAMOTORS', sector: 'AUTO',     ltp: 912.60,   pChange: 1.92,  volRatio: 1.68, volume: 11200000 },
+      { symbol: 'SBIN',       sector: 'BANKING',  ltp: 846.40,   pChange: 2.25,  volRatio: 1.88, volume: 19400000 },
+      { symbol: 'ICICIBANK',  sector: 'BANKING',  ltp: 1328.00,  pChange: 1.84,  volRatio: 1.72, volume: 14200000 },
+      { symbol: 'SUNPHARMA',  sector: 'PHARMA',   ltp: 1864.00,  pChange: 1.70,  volRatio: 1.60, volume: 2800000 },
+      { symbol: 'CIPLA',      sector: 'PHARMA',   ltp: 1540.20,  pChange: 1.42,  volRatio: 1.44, volume: 2150000 },
+      { symbol: 'GODREJPROP', sector: 'REALTY',   ltp: 2890.00,  pChange: 1.88,  volRatio: 1.75, volume: 1120000 },
+      { symbol: 'TCS',        sector: 'IT',       ltp: 4148.00,  pChange: 1.15,  volRatio: 1.32, volume: 3200000 },
+      { symbol: 'HCLTECH',    sector: 'IT',       ltp: 1894.00,  pChange: 0.95,  volRatio: 1.28, volume: 2940000 },
+      { symbol: 'LTIM',       sector: 'IT',       ltp: 5890.00,  pChange: -0.96, volRatio: 1.42, volume: 980000 },
+      { symbol: 'TECHM',      sector: 'IT',       ltp: 1644.00,  pChange: -1.04, volRatio: 1.50, volume: 2350000 },
+      { symbol: 'AUROPHARMA', sector: 'PHARMA',   ltp: 1292.00,  pChange: -1.48, volRatio: 1.72, volume: 1900000 },
+      { symbol: 'RBLBANK',    sector: 'BANKING',  ltp: 186.90,   pChange: -2.02, volRatio: 2.25, volume: 12400000 }
     ];
 
-    fnoStocks.forEach(recomputeOBLevels);
+    /* -------------------------------------------------------------------------
+       B. APPLICATION STATE
+       ------------------------------------------------------------------------- */
+    const state = {
+      mode: 'SIM', // 'SIM' | 'MCP'
+      bridgeUrl: localStorage.getItem('ob_bridge_url') || 'http://127.0.0.1:8000/api/nse-mcp-live',
+      pollIntervalSec: Number(localStorage.getItem('ob_poll_sec') || 15),
+      mcpConnected: false,
+      lastMcpUpdate: '--:--:--',
+      activeSector: 'ALL',
+      searchQuery: '',
+      stocks: [],
+      // Live intraday trajectory history map: symbol -> [{ time, pct }]
+      liveHistory: {},
+      timeLabels: [],
+      simTimer: null,
+      mcpTimer: null,
+      hoveredSpiderIdx: -1,
+      activeModalSymbol: null,
+      modalMouse: { x: 0, y: 0, inside: false }
+    };
 
-    let selectedStock = fnoStocks[0];
-    let sfSector = 'All Sectors';
-    let isSimActive = true;
-
-    function renderAllMatrix() {
-      const sectors = ['All Sectors', 'IT', 'Banking', 'Finance', 'Metals', 'Pharma'];
-      document.getElementById('sf-sector-pills').innerHTML = sectors.map(sec => {
-        const act = sfSector === sec;
-        return `<button type="button" onclick="setSfSector('${sec}')" class="px-2 py-1 rounded text-[10px] font-bold border ${act ? 'bg-[#10b981] text-black border-[#10b981]' : 't-bg t-border t-muted hover:t-strong'}">${sec}</button>`;
-      }).join('');
-
-      const q = (document.getElementById('sf-search-input').value || '').trim().toUpperCase();
-      const match = s => (sfSector === 'All Sectors' || s.sector === sfSector) && (!q || s.symbol.includes(q));
-
-      const bulls = fnoStocks.filter(s => s.change >= 0 && match(s));
-      const bears = fnoStocks.filter(s => s.change < 0 && match(s));
-
-      document.getElementById('bull-count-lbl').textContent = bulls.length;
-      document.getElementById('bear-count-lbl').textContent = bears.length;
-
-      document.getElementById('bull-mini-matrix').innerHTML = bulls.map((s, idx) => {
-        const w1 = 45 + ((idx * 17) % 50);
-        const w2 = 35 + ((idx * 23) % 55);
-        const isSel = selectedStock.symbol === s.symbol;
-        return `
-          <div onclick="selectStock('${s.symbol}')" class="cursor-pointer p-2 rounded-lg bg-[#091513] border ${isSel ? 'border-[#10b981] ring-1 ring-[#10b981]' : 'border-[#10b981]/25 hover:border-[#10b981]/70'} transition-all">
-            <div class="flex items-center justify-between">
-              <span class="font-extrabold text-[10px] text-white truncate">${s.symbol}</span>
-              <span class="font-num text-[9px] font-bold text-[#10b981]">+${s.change.toFixed(2)}%</span>
-            </div>
-            <div class="text-[8px] text-amber-300 font-num mt-0.5 truncate">OB ${s.obLow.toFixed(0)}-${s.obHigh.toFixed(0)}</div>
-            <div class="space-y-1 mt-1.5">
-              <div class="h-1 bg-[#10b981]/20 rounded overflow-hidden"><div class="h-full bg-[#10b981]" style="width:${w1}%"></div></div>
-              <div class="h-1 bg-purple-500/20 rounded overflow-hidden"><div class="h-full bg-purple-400" style="width:${w2}%"></div></div>
-            </div>
-          </div>`;
-      }).join('');
-
-      document.getElementById('bear-mini-matrix').innerHTML = bears.map((s, idx) => {
-        const w1 = 45 + ((idx * 19) % 50);
-        const w2 = 35 + ((idx * 29) % 55);
-        const isSel = selectedStock.symbol === s.symbol;
-        return `
-          <div onclick="selectStock('${s.symbol}')" class="cursor-pointer p-2 rounded-lg bg-[#170b0e] border ${isSel ? 'border-[#ef4444] ring-1 ring-[#ef4444]' : 'border-[#ef4444]/25 hover:border-[#ef4444]/70'} transition-all">
-            <div class="flex items-center justify-between">
-              <span class="font-extrabold text-[10px] text-white truncate">${s.symbol}</span>
-              <span class="font-num text-[9px] font-bold text-[#ef4444]">${s.change.toFixed(2)}%</span>
-            </div>
-            <div class="text-[8px] text-amber-300 font-num mt-0.5 truncate">OB ${s.obLow.toFixed(0)}-${s.obHigh.toFixed(0)}</div>
-            <div class="space-y-1 mt-1.5">
-              <div class="h-1 bg-[#ef4444]/20 rounded overflow-hidden"><div class="h-full bg-[#ef4444]" style="width:${w1}%"></div></div>
-              <div class="h-1 bg-purple-500/20 rounded overflow-hidden"><div class="h-full bg-purple-400" style="width:${w2}%"></div></div>
-            </div>
-          </div>`;
-      }).join('');
-
-      document.getElementById('top-bull-cards').innerHTML = bulls.slice(0, 3).map(s => `
-        <div onclick="selectStock('${s.symbol}')" class="cursor-pointer rounded-xl p-3 bg-gradient-to-r from-[#0e2620] via-[#0d1c1a] to-[#0b1219] border ${selectedStock.symbol === s.symbol ? 'border-[#10b981]' : 'border-[#10b981]/35 hover:border-[#10b981]'} transition-all shadow-lg">
-          <div class="flex items-center justify-between">
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="font-extrabold text-white text-sm sm:text-base">${s.symbol}</span>
-                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#10b981]/20 text-[#10b981]">BULLISH OB</span>
-              </div>
-              <div class="flex items-center gap-2 mt-1">
-                <span class="font-num font-extrabold text-base text-[#10b981]">+${s.change.toFixed(2)}%</span>
-                <span class="font-num text-xs text-slate-300">₹${s.ltp.toFixed(2)}</span>
-              </div>
-            </div>
-            <div class="text-right font-num text-[10px]">
-              <span class="text-[#60a5fa] block">ENT ₹${s.entry.toFixed(1)}</span>
-              <strong class="text-[#ef4444] block">SL ₹${s.sl.toFixed(1)}</strong>
-            </div>
-          </div>
-          <div class="grid grid-cols-4 gap-1 mt-2 pt-2 border-t border-[#10b981]/20 font-num text-[9px]">
-            <div><span class="text-slate-400 block">OB ZONE</span><strong class="text-amber-400">${s.obLow.toFixed(0)}-${s.obHigh.toFixed(0)}</strong></div>
-            <div><span class="text-slate-400 block">LIQUIDITY</span><strong class="text-purple-300">${s.liq.toFixed(0)}</strong></div>
-            <div><span class="text-slate-400 block">TP1 / TP2</span><strong class="text-[#10b981]">${s.tp1.toFixed(0)}/${s.tp2.toFixed(0)}</strong></div>
-            <div class="text-right"><span class="text-slate-400 block">R : R</span><strong class="text-[#10b981]">${s.rr}</strong></div>
-          </div>
-        </div>
-      `).join('');
-
-      document.getElementById('top-bear-cards').innerHTML = bears.slice(0, 3).map(s => `
-        <div onclick="selectStock('${s.symbol}')" class="cursor-pointer rounded-xl p-3 bg-gradient-to-r from-[#291116] via-[#1c1015] to-[#0b1219] border ${selectedStock.symbol === s.symbol ? 'border-[#ef4444]' : 'border-[#ef4444]/35 hover:border-[#ef4444]'} transition-all shadow-lg">
-          <div class="flex items-center justify-between">
-            <div>
-              <div class="flex items-center gap-2">
-                <span class="font-extrabold text-white text-sm sm:text-base">${s.symbol}</span>
-                <span class="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#ef4444]/20 text-[#ef4444]">BEARISH OB</span>
-              </div>
-              <div class="flex items-center gap-2 mt-1">
-                <span class="font-num font-extrabold text-base text-[#ef4444]">${s.change.toFixed(2)}%</span>
-                <span class="font-num text-xs text-slate-300">₹${s.ltp.toFixed(2)}</span>
-              </div>
-            </div>
-            <div class="text-right font-num text-[10px]">
-              <span class="text-[#60a5fa] block">ENT ₹${s.entry.toFixed(1)}</span>
-              <strong class="text-[#ef4444] block">SL ₹${s.sl.toFixed(1)}</strong>
-            </div>
-          </div>
-          <div class="grid grid-cols-4 gap-1 mt-2 pt-2 border-t border-[#ef4444]/20 font-num text-[9px]">
-            <div><span class="text-slate-400 block">OB ZONE</span><strong class="text-amber-400">${s.obLow.toFixed(0)}-${s.obHigh.toFixed(0)}</strong></div>
-            <div><span class="text-slate-400 block">LIQUIDITY</span><strong class="text-purple-300">${s.liq.toFixed(0)}</strong></div>
-            <div><span class="text-slate-400 block">TP1 / TP2</span><strong class="text-[#10b981]">${s.tp1.toFixed(0)}/${s.tp2.toFixed(0)}</strong></div>
-            <div class="text-right"><span class="text-slate-400 block">R : R</span><strong class="text-[#ef4444]">${s.rr}</strong></div>
-          </div>
-        </div>
-      `).join('');
-
-      drawSankeyCanvas();
+    /* -------------------------------------------------------------------------
+       C. UTILITY & MATH HELPERS
+       ------------------------------------------------------------------------- */
+    function seededRand(seed) {
+      let h = 2166136261 >>> 0;
+      for (let i = 0; i < seed.length; i++) {
+        h ^= seed.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return function () {
+        h += 0x6D2B79F5;
+        let t = Math.imul(h ^ (h >>> 15), 1 | h);
+        t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
+        return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+      };
     }
 
-    function setSfSector(sec) { sfSector = sec; renderAllMatrix(); }
-
-    function drawSankeyCanvas() {
-      const canvas = document.getElementById('sankey-canvas');
-      const wrap = document.getElementById('sankey-wrap');
-      if (!canvas || !wrap) return;
-      const dpr = window.devicePixelRatio || 1;
-      const rect = wrap.getBoundingClientRect();
-      if (rect.width === 0) return;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      const ctx = canvas.getContext('2d');
-      ctx.scale(dpr, dpr);
-
-      const w = rect.width, h = rect.height;
-      ctx.fillStyle = '#06090d';
-      ctx.fillRect(0, 0, w, h);
-
-      const midY = h * 0.44;
-      const spineX = w * 0.72;
-
-      ctx.strokeStyle = '#334155';
-      ctx.beginPath(); ctx.moveTo(0, midY); ctx.lineTo(w, midY); ctx.stroke();
-
-      for (let i = 0; i < 16; i++) {
-        const y = 16 + i * ((midY - 24) / 16);
-        const bw = (0.25 + Math.abs(Math.sin(i * 0.9)) * 0.65) * (spineX * 0.55);
-        ctx.fillStyle = 'rgba(16, 185, 129, 0.16)';
-        ctx.fillRect(8, y, bw, 5);
-      }
-      for (let i = 0; i < 20; i++) {
-        const y = midY + 8 + i * ((h - midY - 16) / 20);
-        const bw = (0.25 + Math.abs(Math.cos(i * 0.8)) * 0.7) * (spineX * 0.65);
-        ctx.fillStyle = 'rgba(239, 68, 68, 0.16)';
-        ctx.fillRect(8, y, bw, 5);
-      }
-
-      for (let i = 0; i < 12; i++) {
-        const sy = 20 + i * ((midY - 28) / 12);
-        ctx.strokeStyle = 'rgba(16, 185, 129, 0.25)';
-        ctx.lineWidth = 1.4;
-        ctx.beginPath();
-        ctx.moveTo(14, sy);
-        ctx.bezierCurveTo(spineX * 0.45, sy, spineX * 0.55, midY * 0.45, spineX, midY * 0.35 + i * 3);
-        ctx.stroke();
-      }
-      for (let i = 0; i < 16; i++) {
-        const sy = midY + 12 + i * ((h - midY - 20) / 16);
-        ctx.strokeStyle = 'rgba(239, 68, 68, 0.25)';
-        ctx.lineWidth = 1.4;
-        ctx.beginPath();
-        ctx.moveTo(14, sy);
-        ctx.bezierCurveTo(spineX * 0.45, sy, spineX * 0.55, midY + (h - midY) * 0.55, spineX, midY + 25 + i * 6);
-        ctx.stroke();
-      }
-
-      ctx.fillStyle = 'rgba(16, 185, 129, 0.22)';
-      ctx.fillRect(spineX - 14, 18, 28, midY - 22);
-      ctx.strokeStyle = '#10b981';
-      ctx.strokeRect(spineX - 14, 18, 28, midY - 22);
-
-      ctx.fillStyle = 'rgba(239, 68, 68, 0.22)';
-      ctx.fillRect(spineX - 14, midY + 4, 28, h - midY - 22);
-      ctx.strokeStyle = '#ef4444';
-      ctx.strokeRect(spineX - 14, midY + 4, 28, h - midY - 22);
+    function fmtPrice(v) {
+      return Number(v || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+    function fmtPct(v) {
+      const n = Number(v || 0);
+      return `${n >= 0 ? '+' : ''}${n.toFixed(2)}%`;
+    }
+    function fmtVol(v) {
+      if (v >= 1e7) return (v / 1e7).toFixed(2) + 'Cr';
+      if (v >= 1e5) return (v / 1e5).toFixed(2) + 'L';
+      if (v >= 1e3) return (v / 1e3).toFixed(1) + 'K';
+      return String(v);
+    }
+    function getIstTimeStr() {
+      return new Date().toLocaleTimeString('en-IN', { timeZone: 'Asia/Kolkata', hour12: false });
+    }
+    function getIstShortHM() {
+      return getIstTimeStr().slice(0, 5);
     }
 
-    function selectStock(symbol) {
-      const s = fnoStocks.find(x => x.symbol === symbol);
-      if (!s) return;
-      recomputeOBLevels(s);
-      selectedStock = s;
-      const isBull = s.change >= 0;
+    function generate5mLabels(count = 72) {
+      const out = [];
+      let m = 9 * 60 + 15;
+      for (let i = 0; i < count; i++) {
+        out.push(`${String(Math.floor(m / 60)).padStart(2, '0')}:${String(m % 60).padStart(2, '0')}`);
+        m += 5;
+      }
+      return out;
+    }
+    const BASE_5M_LABELS = generate5mLabels(72);
 
-      document.getElementById('quick-sym-lbl').textContent = s.symbol;
-      document.getElementById('bar-sym').textContent = s.symbol;
-      const bBias = document.getElementById('bar-bias');
-      bBias.textContent = `${isBull ? 'BULLISH' : 'BEARISH'} • ${s.buildup}`;
-      bBias.className = isBull
-        ? 'px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#10b981] text-black'
-        : 'px-2 py-0.5 rounded text-[10px] font-extrabold bg-[#ef4444] text-white';
-
-      const bLtp = document.getElementById('bar-ltp');
-      bLtp.textContent = `₹${s.ltp.toFixed(2)} (${isBull ? '+' : ''}${s.change.toFixed(2)}%)`;
-      bLtp.className = `font-num text-sm font-bold ${isBull ? 'text-[#10b981]' : 'text-[#ef4444]'}`;
-      document.getElementById('bar-lot').textContent = `Lot: ${s.lotSize}`;
-      document.getElementById('bar-zone').textContent = `${s.obLow.toFixed(1)} – ${s.obHigh.toFixed(1)}`;
-      document.getElementById('bar-liq').textContent = `₹${s.liq.toFixed(1)}`;
-      document.getElementById('bar-entry').textContent = `₹${s.entry.toFixed(2)}`;
-      document.getElementById('bar-sl').textContent = `₹${s.sl.toFixed(2)}`;
-      document.getElementById('bar-tp1').textContent = `₹${s.tp1.toFixed(2)}`;
-      document.getElementById('bar-tp2').textContent = `₹${s.tp2.toFixed(2)}`;
-
-      const selEl = document.getElementById('chart-stock-selector');
-      if (selEl) selEl.value = s.symbol;
-      document.getElementById('fc-bias-badge').textContent = `${isBull ? 'BULLISH OB' : 'BEARISH OB'} • ${s.buildup}`;
-      document.getElementById('fc-ltp').textContent = `₹${s.ltp.toFixed(2)} (${isBull ? '+' : ''}${s.change.toFixed(2)}%)`;
-      document.getElementById('fc-zone').textContent = `₹${s.obLow.toFixed(2)} – ₹${s.obHigh.toFixed(2)}`;
-      document.getElementById('fc-liq').textContent = `₹${s.liq.toFixed(2)}`;
-      document.getElementById('fc-entry').textContent = `₹${s.entry.toFixed(2)}`;
-      document.getElementById('fc-sl').textContent = `₹${s.sl.toFixed(2)}`;
-      document.getElementById('fc-tp1').textContent = `₹${s.tp1.toFixed(2)}`;
-      document.getElementById('fc-tp2').textContent = `₹${s.tp2.toFixed(2)}`;
-
-      renderAllMatrix();
-      drawCandlestickChart('inline-live-canvas', s);
-      drawCandlestickChart('full-live-canvas', s);
+    function showToast(msg, type = 'info') {
+      const stack = document.getElementById('toastStack');
+      const el = document.createElement('div');
+      el.className = `toast ${type}`;
+      el.textContent = msg;
+      stack.appendChild(el);
+      setTimeout(() => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateX(14px)';
+        setTimeout(() => el.remove(), 260);
+      }, 3600);
     }
 
-    function openLiveChartModal(symbol) {
-      selectStock(symbol);
-      switchMainTab('livechart');
+    /* -------------------------------------------------------------------------
+       D. CONVICTION SCORE, ORDER BLOCK & 5m CANDLE MODEL BUILDER
+       ------------------------------------------------------------------------- */
+    function computeConviction(pChange, volRatio, ltp, vwap) {
+      const absChg = Math.abs(pChange);
+      const isBull = pChange >= 0;
+      const vwapAligned = isBull ? (ltp >= vwap) : (ltp <= vwap);
+      // Combine |pChange| (0-45), volRatio (0-35), VWAP alignment (0-20)
+      const chgScore = Math.min(45, absChg * 7.2);
+      const volScore = Math.min(35, Math.max(0, (volRatio - 0.8) * 14.5));
+      const vwapScore = vwapAligned ? 18 : 4;
+      return Math.min(99, Math.max(40, Math.round(chgScore + volScore + vwapScore)));
     }
 
-    function drawCandlestickChart(canvasId, s) {
-      const canvas = document.getElementById(canvasId);
-      if (!canvas) return;
-      const rect = canvas.parentElement.getBoundingClientRect();
-      if (rect.width === 0) return;
-      const dpr = window.devicePixelRatio || 1;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
-      const ctx = canvas.getContext('2d');
-      ctx.scale(dpr, dpr);
+    function buildStockObject(raw, livePoints = null) {
+      const rand = seededRand(raw.symbol + '_NSE_OB_V3');
+      const ltp = Number(raw.ltp || 100);
+      const pChange = Number(raw.pChange || 0);
+      const isBull = pChange >= 0;
+      const prevClose = Number(raw.prevClose || (ltp / (1 + pChange / 100)));
+      const open = Number(raw.open || (prevClose * (1 + (isBull ? 0.002 : -0.002))));
+      const volRatio = Number(raw.volRatio || (1.2 + Math.min(2.8, Math.abs(pChange) * 0.35)));
+      const volume = Number(raw.volume || 2500000);
+      const totalMove = ltp - open;
 
-      const w = rect.width, h = rect.height;
-      ctx.fillStyle = '#06090d';
-      ctx.fillRect(0, 0, w, h);
+      // Build 72 intraday 5m candles with Morning OB (4..11) and Midday OB (30..39)
+      const numBars = 72;
+      const ob1Start = 4, ob1End = 11;
+      const ob2Start = 30, ob2End = 39;
+      const candles = [];
+      const simTrajectory = [];
+      let prevC = open;
+      let cumPV = 0, cumV = 0;
 
-      const padL = 12, padR = 90, padT = 18, padB = 20;
-      const plotW = w - padL - padR, plotH = h - padT - padB;
-      const isBull = s.change >= 0;
+      for (let i = 0; i < numBars; i++) {
+        let prog;
+        if (i < ob1Start) prog = (i / ob1Start) * 0.14;
+        else if (i <= ob1End) prog = 0.14 + ((i - ob1Start) / (ob1End - ob1Start)) * 0.05;
+        else if (i < ob2Start) prog = 0.19 + ((i - ob1End) / (ob2Start - ob1End)) * 0.37;
+        else if (i <= ob2End) prog = 0.56 + ((i - ob2Start) / (ob2End - ob2Start)) * 0.05;
+        else prog = 0.61 + ((i - ob2End) / (numBars - 1 - ob2End)) * 0.39;
 
-      const minP = Math.min(s.sl, s.tp2, s.obLow, s.liq, s.ltp) * 0.996;
-      const maxP = Math.max(s.sl, s.tp2, s.obHigh, s.liq, s.ltp) * 1.004;
-      const pToY = p => padT + ((maxP - p) / (maxP - minP)) * plotH;
+        const inOb = (i >= ob1Start && i <= ob1End) || (i >= ob2Start && i <= ob2End);
+        const amp = Math.max(Math.abs(totalMove), ltp * 0.006);
+        const noise = (rand() - 0.5) * 2 * amp * (inOb ? 0.018 : 0.045);
+        const c = (i === numBars - 1) ? ltp : open + totalMove * prog + noise;
+        const o = prevC;
+        const h = Math.max(o, c) + amp * (0.01 + rand() * 0.022);
+        const l = Math.min(o, c) - amp * (0.01 + rand() * 0.022);
+        const isImpulse = (i >= 12 && i <= 17) || (i >= 40 && i <= 46);
+        const v = Math.round((volume / numBars) * (isImpulse ? (1.9 + rand() * 1.3) : (0.55 + rand() * 0.85)));
 
-      ctx.strokeStyle = '#111924';
-      for (let i = 0; i <= 5; i++) {
-        const y = padT + (plotH / 5) * i;
-        ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
+        cumPV += ((h + l + c) / 3) * v;
+        cumV += v;
+        const barVwap = cumPV / Math.max(1, cumV);
+
+        candles.push({ time: BASE_5M_LABELS[i], o, h, l, c, v, vwap: barVwap });
+        simTrajectory.push(((c - prevClose) / Math.max(0.01, prevClose)) * 100);
+        prevC = c;
       }
 
-      // Order Block Zone highlight
-      const zTop = pToY(s.obHigh), zBot = pToY(s.obLow);
-      ctx.fillStyle = isBull ? 'rgba(16, 185, 129, 0.16)' : 'rgba(239, 68, 68, 0.16)';
-      ctx.fillRect(padL, zTop, plotW, Math.max(zBot - zTop, 10));
-      ctx.strokeStyle = isBull ? '#10b981' : '#ef4444';
-      ctx.strokeRect(padL, zTop, plotW, Math.max(zBot - zTop, 10));
+      // Clamp day high/low if provided by live MCP feed
+      const dayHigh = Number(raw.high || Math.max(...candles.map(b => b.h)));
+      const dayLow = Number(raw.low || Math.min(...candles.map(b => b.l)));
+      const vwap = Number(raw.vwap || candles[candles.length - 1].vwap);
 
-      const drawTradeLine = (price, label, color, textColor = '#06090d') => {
-        const y = pToY(price);
-        ctx.save();
-        ctx.setLineDash([4, 3]);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1.2;
-        ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(w - padR, y); ctx.stroke();
-        ctx.restore();
-
-        ctx.fillStyle = color;
-        ctx.fillRect(w - padR + 2, y - 8, padR - 4, 16);
-        ctx.fillStyle = textColor;
-        ctx.font = 'bold 9px "JetBrains Mono", monospace';
-        ctx.textAlign = 'left';
-        ctx.fillText(`${label} ${price.toFixed(1)}`, w - padR + 5, y + 3);
+      // Compute Morning OB & Midday OB from OHLC/VWAP structure
+      const ob1Slice = candles.slice(ob1Start, ob1End + 1);
+      const ob2Slice = candles.slice(ob2Start, ob2End + 1);
+      const ob1 = {
+        startIdx: ob1Start,
+        endIdx: ob1End,
+        low: Math.min(...ob1Slice.map(b => b.l)),
+        high: Math.max(...ob1Slice.map(b => b.h)),
+        label: 'MORNING OB'
+      };
+      const ob2 = {
+        startIdx: ob2Start,
+        endIdx: ob2End,
+        low: Math.min(...ob2Slice.map(b => b.l)),
+        high: Math.max(...ob2Slice.map(b => b.h)),
+        label: 'MIDDAY OB'
       };
 
-      drawTradeLine(s.tp2, 'TP2', '#10b981');
-      drawTradeLine(s.tp1, 'TP1', '#34d399');
-      drawTradeLine(s.entry, 'ENT', '#60a5fa');
-      drawTradeLine(s.liq, 'LIQ', '#a855f7', '#ffffff');
-      drawTradeLine(s.sl, 'SL ', '#ef4444', '#ffffff');
+      // Key Institutional Levels with 1:2 R:R structure
+      const riskDist = Math.max(Math.abs(ltp - (isBull ? ob2.low : ob2.high)), ltp * 0.008);
+      const support1 = isBull ? Math.max(dayLow, ob2.low - riskDist * 0.15) : (ltp - riskDist * 1.2);
+      const resistance1 = isBull ? (ltp + riskDist * 1.0) : Math.min(dayHigh, ob2.high + riskDist * 0.15);
+      const resistance2 = isBull ? (ltp + riskDist * 2.0) : (ltp - riskDist * 2.0);
+      const vwapDiffPct = ((ltp - vwap) / Math.max(0.01, vwap)) * 100;
+      const conviction = computeConviction(pChange, volRatio, ltp, vwap);
 
-      const tfFactor = currentTf === '1m' ? 0.7 : currentTf === '15m' ? 1.3 : 1;
-      const count = 38;
-      const stepW = plotW / count;
-      let seed = s.symbol.charCodeAt(0) * 31 + currentTf.charCodeAt(0);
-      const rand = () => { seed = (seed * 9301 + 49297) % 233280; return seed / 233280; };
+      // Trajectory array used by Spider Chart (uses real appended livePoints in MCP mode if >= 2 points)
+      let trajectory = simTrajectory;
+      if (livePoints && livePoints.length >= 2) {
+        trajectory = livePoints.map(pt => pt.pct);
+      }
 
-      let p = isBull ? s.obLow : s.obHigh;
-      for (let i = 0; i < count; i++) {
-        const t = i / (count - 1);
-        const targetP = isBull ? s.obLow + (s.ltp - s.obLow) * t : s.obHigh - (s.obHigh - s.ltp) * t;
-        const open = p;
-        const close = i === count - 1 ? s.ltp : targetP + (rand() - 0.48) * (maxP - minP) * 0.06 * tfFactor;
-        const high = Math.max(open, close) + rand() * (maxP - minP) * 0.025 * tfFactor;
-        const low = Math.min(open, close) - rand() * (maxP - minP) * 0.025 * tfFactor;
-        const cx = padL + i * stepW + stepW / 2;
-        const green = close >= open;
+      return {
+        symbol: String(raw.symbol || '').toUpperCase(),
+        sector: normalizeSector(raw.sector),
+        ltp,
+        open,
+        high: dayHigh,
+        low: dayLow,
+        prevClose,
+        pChange,
+        pointChange: ltp - prevClose,
+        volume,
+        volRatio,
+        vwap,
+        vwapDiffPct,
+        isBull,
+        conviction,
+        buildUp: isBull ? 'LONG BUILD-UP' : 'SHORT BUILD-UP',
+        support1,
+        resistance1,
+        resistance2,
+        rr: '1:2',
+        ob1,
+        ob2,
+        candles,
+        trajectory
+      };
+    }
 
-        ctx.strokeStyle = green ? '#10b981' : '#ef4444';
-        ctx.beginPath(); ctx.moveTo(cx, pToY(high)); ctx.lineTo(cx, pToY(low)); ctx.stroke();
-        ctx.fillStyle = green ? '#10b981' : '#ef4444';
-        ctx.fillRect(cx - stepW * 0.28, pToY(Math.max(open, close)), stepW * 0.56, Math.max(Math.abs(pToY(close) - pToY(open)), 2.5));
-        p = close;
+    function normalizeSector(sec) {
+      if (!sec) return 'BANKING';
+      const u = String(sec).toUpperCase().trim();
+      if (u.includes('BANK') || u.includes('FIN')) return 'BANKING';
+      if (u.includes('CAP') || u.includes('BROK') || u.includes('EXCH')) return 'CAP MKTS';
+      if (u.includes('IT') || u.includes('TECH') || u.includes('SOFT')) return 'IT';
+      if (u.includes('REAL') || u.includes('INFRA')) return 'REALTY';
+      if (u.includes('PHARM') || u.includes('HEALTH')) return 'PHARMA';
+      if (u.includes('AUTO') || u.includes('DEF') || u.includes('METAL')) return 'AUTO';
+      return SECTORS.includes(u) ? u : 'BANKING';
+    }
+
+    /* -------------------------------------------------------------------------
+       E. FILTERING & SECTOR BREADTH
+       ------------------------------------------------------------------------- */
+    function getFilteredStocks() {
+      const q = state.searchQuery.trim().toUpperCase();
+      return state.stocks.filter(s => {
+        const secOk = state.activeSector === 'ALL' || s.sector === state.activeSector;
+        const qOk = !q || s.symbol.includes(q) || s.sector.includes(q);
+        return secOk && qOk;
+      });
+    }
+
+    function renderSectorPills() {
+      const bar = document.getElementById('sectorBar');
+      bar.innerHTML = SECTORS.map(sec => {
+        const subset = sec === 'ALL' ? state.stocks : state.stocks.filter(s => s.sector === sec);
+        const avg = subset.length ? subset.reduce((acc, s) => acc + s.pChange, 0) / subset.length : 0;
+        const activeCls = state.activeSector === sec ? 'active' : '';
+        const chgCls = avg >= 0 ? 'sec-up' : 'sec-dn';
+        const chgTxt = sec === 'ALL' ? '' : `<span class="sec-chg ${chgCls}">${avg >= 0 ? '+' : ''}${avg.toFixed(1)}%</span>`;
+        return `<button class="sector-pill ${activeCls}" data-sector="${sec}" type="button">${sec}${chgTxt}</button>`;
+      }).join('');
+
+      bar.querySelectorAll('.sector-pill').forEach(btn => {
+        btn.addEventListener('click', () => {
+          state.activeSector = btn.dataset.sector;
+          renderAll();
+        });
+      });
+    }
+
+    function updateBreadthReadout() {
+      const subset = state.activeSector === 'ALL'
+        ? state.stocks
+        : state.stocks.filter(s => s.sector === state.activeSector);
+      const bullCount = subset.filter(s => s.isBull).length;
+      const bearCount = subset.length - bullCount;
+      document.getElementById('breadthBull').textContent = bullCount;
+      document.getElementById('breadthBear').textContent = bearCount;
+      document.getElementById('universeMeta').textContent = `${state.stocks.length} TRACKED NSE STOCKS`;
+    }
+
+    /* -------------------------------------------------------------------------
+       F. INLINE SVG SPARKLINES & MINI ORDER BLOCK CANVAS
+       ------------------------------------------------------------------------- */
+    function buildSparklineSVG(stock) {
+      const pts = stock.trajectory;
+      const w = 100, h = 24;
+      const min = Math.min(...pts);
+      const max = Math.max(...pts);
+      const span = Math.max(max - min, 0.01);
+      const coords = pts.map((v, i) => {
+        const x = (i / Math.max(1, pts.length - 1)) * w;
+        const y = h - 2 - ((v - min) / span) * (h - 4);
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(' ');
+      const stroke = stock.isBull ? '#00e676' : '#ff3b5c';
+      const fill = stock.isBull ? 'rgba(0,230,118,0.16)' : 'rgba(255,59,92,0.16)';
+      return `<svg viewBox="0 0 ${w} ${h}" style="width:100%;height:24px;display:block;" preserveAspectRatio="none">
+        <polygon points="0,${h} ${coords} ${w},${h}" fill="${fill}" />
+        <polyline points="${coords}" fill="none" stroke="${stroke}" stroke-width="1.5" stroke-linejoin="round" />
+      </svg>`;
+    }
+
+    function drawMiniPickCanvas(canvas, stock) {
+      if (!canvas) return;
+      const dpr = window.devicePixelRatio || 1;
+      const W = canvas.clientWidth || 160;
+      const H = canvas.clientHeight || 64;
+      canvas.width = Math.round(W * dpr);
+      canvas.height = Math.round(H * dpr);
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      ctx.fillStyle = '#06090f';
+      ctx.fillRect(0, 0, W, H);
+
+      const candles = stock.candles;
+      const allP = candles.flatMap(c => [c.h, c.l]).concat([stock.support1, stock.resistance1]);
+      const minP = Math.min(...allP) * 0.999;
+      const maxP = Math.max(...allP) * 1.001;
+      const span = Math.max(maxP - minP, 0.01);
+
+      const mapX = i => 4 + (i / (candles.length - 1)) * (W - 8);
+      const mapY = p => H - 4 - ((p - minP) / span) * (H - 8);
+
+      // Shaded OB1 & OB2 Zones
+      const fillCol = stock.isBull ? 'rgba(0,230,118,0.18)' : 'rgba(255,59,92,0.20)';
+      const strokeCol = stock.isBull ? 'rgba(0,230,118,0.6)' : 'rgba(255,59,92,0.6)';
+      [stock.ob1, stock.ob2].forEach(ob => {
+        const x = mapX(ob.startIdx);
+        const y = mapY(ob.high);
+        const bh = Math.max(4, mapY(ob.low) - y);
+        ctx.fillStyle = fillCol;
+        ctx.fillRect(x, y, W - x - 2, bh);
+        ctx.strokeStyle = strokeCol;
+        ctx.lineWidth = 0.7;
+        ctx.strokeRect(x, y, W - x - 2, bh);
+      });
+
+      // R1 dotted line
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255,179,0,0.55)';
+      ctx.setLineDash([2, 2]);
+      ctx.beginPath();
+      const r1y = mapY(stock.resistance1);
+      ctx.moveTo(0, r1y);
+      ctx.lineTo(W, r1y);
+      ctx.stroke();
+      ctx.restore();
+
+      // Dashed Cyan VWAP
+      ctx.save();
+      ctx.strokeStyle = 'rgba(0,210,255,0.75)';
+      ctx.lineWidth = 1;
+      ctx.setLineDash([3, 2]);
+      ctx.beginPath();
+      candles.forEach((c, i) => {
+        const x = mapX(i), y = mapY(c.vwap);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      ctx.restore();
+
+      // Price close curve
+      ctx.strokeStyle = stock.isBull ? '#00e676' : '#ff3b5c';
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      candles.forEach((c, i) => {
+        const x = mapX(i), y = mapY(c.c);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+
+      // OB label
+      ctx.fillStyle = stock.isBull ? '#00e676' : '#ff3b5c';
+      ctx.font = 'bold 8px "JetBrains Mono", monospace';
+      ctx.fillText('OB ZONE', mapX(stock.ob2.startIdx) + 3, Math.max(10, mapY(stock.ob2.high) - 2));
+    }
+
+    /* -------------------------------------------------------------------------
+       G. RENDER MIDDLE GRIDS & RIGHT HIGH-CONVICTION PANEL
+       ------------------------------------------------------------------------- */
+    function renderMiddleGrids() {
+      const q = state.searchQuery.trim().toUpperCase();
+      const filtered = getFilteredStocks();
+
+      const bulls = filtered.filter(s => s.isBull).sort((a, b) => b.pChange - a.pChange).slice(0, 12);
+      const bears = filtered.filter(s => !s.isBull).sort((a, b) => a.pChange - b.pChange).slice(0, 12);
+
+      document.getElementById('bullGridMeta').textContent = `${bulls.length} LEADERS`;
+      document.getElementById('bearGridMeta').textContent = `${bears.length} LAGGARDS`;
+
+      const bullEl = document.getElementById('bullishGrid');
+      const bearEl = document.getElementById('bearishGrid');
+
+      const cardHTML = s => {
+        const dir = s.isBull ? 'bull' : 'bear';
+        const txtCls = s.isBull ? 'bull-txt' : 'bear-txt';
+        const matchCls = q && s.symbol.includes(q) ? 'match-ring' : '';
+        return `
+          <div class="stock-card ${dir} ${matchCls}" onclick="openOrderBlockModal('${s.symbol}')">
+            <div class="sc-top">
+              <div style="min-width:0;">
+                <div class="sc-sym">${s.symbol}</div>
+                <div class="sc-ltp mono">₹${fmtPrice(s.ltp)}</div>
+              </div>
+              <div>
+                <div class="sc-pct mono ${txtCls}">${fmtPct(s.pChange)}</div>
+                <div class="sc-vol mono">${s.volRatio.toFixed(2)}x VOL</div>
+              </div>
+            </div>
+            ${buildSparklineSVG(s)}
+            <div class="sc-foot mono">
+              <span class="sc-tag ${dir}">${s.buildUp}</span>
+              <span class="sc-conv">${s.conviction}</span>
+            </div>
+          </div>
+        `;
+      };
+
+      bullEl.innerHTML = bulls.length
+        ? bulls.map(cardHTML).join('')
+        : `<div class="mono" style="grid-column:1/-1;text-align:center;color:#64748b;padding:24px 0;font-size:11px;">No bullish stocks in current filter</div>`;
+
+      bearEl.innerHTML = bears.length
+        ? bears.map(cardHTML).join('')
+        : `<div class="mono" style="grid-column:1/-1;text-align:center;color:#64748b;padding:24px 0;font-size:11px;">No bearish stocks in current filter</div>`;
+    }
+
+    function renderHighConvictionPicks() {
+      const list = document.getElementById('picksList');
+      const q = state.searchQuery.trim().toUpperCase();
+      const filtered = getFilteredStocks();
+
+      const top3Bull = filtered.filter(s => s.isBull)
+        .sort((a, b) => (b.conviction - a.conviction) || (b.pChange - a.pChange))
+        .slice(0, 3);
+      const top3Bear = filtered.filter(s => !s.isBull)
+        .sort((a, b) => (b.conviction - a.conviction) || (a.pChange - b.pChange))
+        .slice(0, 3);
+
+      const picks = [...top3Bull, ...top3Bear];
+      if (!picks.length) {
+        list.innerHTML = `<div class="mono" style="text-align:center;color:#64748b;padding:30px 0;">No high-conviction picks match filter</div>`;
+        return;
+      }
+
+      list.innerHTML = picks.map((s, idx) => {
+        const dir = s.isBull ? 'bull' : 'bear';
+        const txtCls = s.isBull ? 'bull-txt' : 'bear-txt';
+        const matchCls = q && s.symbol.includes(q) ? 'match-ring' : '';
+        const vwapAligned = s.vwapDiffPct >= 0;
+        const vwapTxt = vwapAligned
+          ? `▲ ABOVE VWAP (+${s.vwapDiffPct.toFixed(1)}%)`
+          : `▼ BELOW VWAP (${s.vwapDiffPct.toFixed(1)}%)`;
+
+        return `
+          <div class="pick-card ${dir} ${matchCls}" onclick="openOrderBlockModal('${s.symbol}')">
+            <div class="pick-main">
+              <div>
+                <div class="pick-badges">
+                  <span class="pick-sym">${s.symbol}</span>
+                  <span class="badge ${s.isBull ? 'badge-bull' : 'badge-bear'}">${s.isBull ? 'BULLISH' : 'BEARISH'}</span>
+                  <span class="badge badge-conv">CONV ${s.conviction}</span>
+                </div>
+                <div class="pick-pct mono ${txtCls}">${fmtPct(s.pChange)}</div>
+                <div class="pick-ltp mono">₹${fmtPrice(s.ltp)} <span class="amber-txt">• ${s.volRatio.toFixed(2)}x VOL</span></div>
+                <div class="pick-vwap mono ${vwapAligned ? 'cyan-txt' : 'bear-txt'}">${vwapTxt}</div>
+              </div>
+              <canvas id="miniPickCanvas_${idx}" class="pick-mini-canvas"></canvas>
+            </div>
+            <div class="pick-levels">
+              <div><div class="lvl-lbl">S1</div><div class="lvl-val">${fmtPrice(s.support1)}</div></div>
+              <div><div class="lvl-lbl">OB Zone</div><div class="lvl-val amber-txt">${s.ob2.low.toFixed(1)}-${s.ob2.high.toFixed(1)}</div></div>
+              <div><div class="lvl-lbl">R1</div><div class="lvl-val">${fmtPrice(s.resistance1)}</div></div>
+              <div><div class="lvl-lbl">R2</div><div class="lvl-val">${fmtPrice(s.resistance2)}</div></div>
+              <div style="text-align:right;"><div class="lvl-lbl">R:R</div><div class="lvl-val cyan-txt">${s.rr}</div></div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Draw each mini OB canvas
+      picks.forEach((s, idx) => {
+        const cvs = document.getElementById(`miniPickCanvas_${idx}`);
+        drawMiniPickCanvas(cvs, s);
+      });
+    }
+
+    /* -------------------------------------------------------------------------
+       H. LEFT PANEL: INTRADAY LIQUIDITY FLOW SPIDER CANVAS
+       ------------------------------------------------------------------------- */
+    let spiderHitList = [];
+
+    function drawSpiderChart() {
+      const wrap = document.getElementById('spiderWrap');
+      const canvas = document.getElementById('spiderCanvas');
+      if (!wrap || !canvas) return;
+
+      const rect = wrap.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const W = Math.max(300, rect.width);
+      const H = Math.max(420, rect.height);
+
+      if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) {
+        canvas.width = Math.round(W * dpr);
+        canvas.height = Math.round(H * dpr);
+      }
+
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      // Clear background
+      ctx.fillStyle = '#06090f';
+      ctx.fillRect(0, 0, W, H);
+
+      const stocks = state.stocks.slice(0, 40);
+      const topOscH = 38;
+      const leftPad = 10;
+      const rightLabelsW = 86;   // Ranked ticker labels on right edge
+      const depthBarW = 22;      // Stacked vertical Liquidity Depth Bar
+      const bezierW = 36;        // Glowing Bezier curves
+      const chartLeft = leftPad;
+      const chartRight = Math.max(120, W - rightLabelsW - depthBarW - bezierW - 8);
+      const chartW = chartRight - chartLeft;
+      const chartTop = topOscH + 12;
+      const chartBottom = H - 22;
+      const chartH = chartBottom - chartTop;
+
+      const allVals = stocks.flatMap(s => s.trajectory);
+      const maxPos = Math.max(5.5, ...allVals) * 1.08;
+      const minNeg = Math.min(-3.0, ...allVals) * 1.12;
+      const span = Math.max(0.5, maxPos - minNeg);
+      const zeroY = chartTop + (maxPos / span) * chartH;
+
+      const mapY = v => chartTop + ((maxPos - v) / span) * chartH;
+
+      // 1. Subtle horizontal gridlines
+      ctx.strokeStyle = 'rgba(28, 38, 56, 0.55)';
+      ctx.lineWidth = 1;
+      [6, 4, 2, -1, -2, -3].forEach(lvl => {
+        if (lvl < maxPos && lvl > minNeg) {
+          const y = mapY(lvl);
+          ctx.beginPath();
+          ctx.moveTo(chartLeft, y);
+          ctx.lineTo(chartRight, y);
+          ctx.stroke();
+        }
+      });
+
+      // Vertical time ticks (09:15 -> current)
+      const timeMarks = ['09:15', '10:45', '12:15', '13:45', state.mode === 'MCP' ? state.lastMcpUpdate.slice(0, 5) : '15:15'];
+      timeMarks.forEach((lbl, idx) => {
+        const x = chartLeft + (idx / (timeMarks.length - 1)) * chartW;
+        ctx.strokeStyle = 'rgba(28, 38, 56, 0.45)';
+        ctx.beginPath();
+        ctx.moveTo(x, chartTop);
+        ctx.lineTo(x, chartBottom);
+        ctx.stroke();
+        ctx.fillStyle = '#64748b';
+        ctx.font = '9px "JetBrains Mono", monospace';
+        ctx.textAlign = idx === 0 ? 'left' : (idx === timeMarks.length - 1 ? 'right' : 'center');
+        ctx.fillText(lbl, x, H - 7);
+      });
+
+      // 2. Top Mini Net-Flow Breadth Oscillator Bar
+      ctx.fillStyle = '#090f1b';
+      ctx.fillRect(0, 0, W, topOscH);
+      ctx.strokeStyle = '#1c2638';
+      ctx.beginPath();
+      ctx.moveTo(0, topOscH);
+      ctx.lineTo(W, topOscH);
+      ctx.stroke();
+
+      const oscMid = topOscH / 2;
+      const refLen = Math.max(2, stocks[0]?.trajectory.length || 2);
+      ctx.beginPath();
+      for (let i = 0; i < refLen; i++) {
+        const x = chartLeft + (i / (refLen - 1)) * chartW;
+        let bSum = 0, sSum = 0;
+        for (const s of stocks) {
+          const val = s.trajectory[Math.min(i, s.trajectory.length - 1)] || 0;
+          if (val >= 0) bSum += val; else sSum += Math.abs(val);
+        }
+        const net = (bSum - sSum) / Math.max(1, bSum + sSum);
+        const y = oscMid - net * (topOscH * 0.36);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.strokeStyle = '#00e676';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      const bullTotal = stocks.filter(s => s.isBull).length;
+      const bearTotal = stocks.length - bullTotal;
+      const bullRatio = bullTotal / Math.max(1, stocks.length);
+
+      ctx.font = 'bold 9px "JetBrains Mono", monospace';
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#00e676';
+      ctx.fillText(`NET BULL ${(bullRatio * 100).toFixed(0)}%`, W - 10, 15);
+      ctx.fillStyle = '#64748b';
+      ctx.fillText('BREADTH OSC', W - 10, 29);
+
+      // 3. Zero Baseline
+      ctx.save();
+      ctx.strokeStyle = 'rgba(148, 163, 184, 0.5)';
+      ctx.setLineDash([4, 3]);
+      ctx.beginPath();
+      ctx.moveTo(chartLeft, zeroY);
+      ctx.lineTo(W - 6, zeroY);
+      ctx.stroke();
+      ctx.restore();
+
+      // 4. Up to 40 Glowing Trajectories
+      const q = state.searchQuery.trim().toUpperCase();
+      spiderHitList = [];
+      const sortedDraw = [...stocks].sort((a, b) => Math.abs(a.pChange) - Math.abs(b.pChange));
+
+      sortedDraw.forEach(stock => {
+        const masterIdx = state.stocks.indexOf(stock);
+        const isHov = state.hoveredSpiderIdx === masterIdx;
+        const secMatch = state.activeSector === 'ALL' || stock.sector === state.activeSector;
+        const qMatch = !q || stock.symbol.includes(q) || stock.sector.includes(q);
+        const highlight = isHov || (q && qMatch);
+        const dim = !secMatch || (q && !qMatch) || (state.hoveredSpiderIdx >= 0 && !isHov);
+
+        const rgb = stock.isBull ? '0, 230, 118' : '255, 59, 92';
+        const alpha = highlight ? 1.0 : (dim ? 0.12 : 0.62);
+
+        ctx.save();
+        if (highlight) {
+          ctx.shadowColor = stock.isBull ? '#00e676' : '#ff3b5c';
+          ctx.shadowBlur = 10;
+        }
+        ctx.strokeStyle = `rgba(${rgb}, ${alpha})`;
+        ctx.lineWidth = highlight ? 2.3 : 1.15;
+
+        const pts = stock.trajectory;
+        ctx.beginPath();
+        for (let i = 0; i < pts.length; i++) {
+          const x = chartLeft + (i / Math.max(1, pts.length - 1)) * chartW;
+          const y = mapY(pts[i]);
+          if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+        ctx.restore();
+
+        spiderHitList.push({ masterIdx, stock, pts });
+      });
+
+      // 5. Stacked Vertical Liquidity Depth Bar
+      const barX = chartRight + 8;
+      const bullBarH = (zeroY - chartTop) * Math.min(0.96, 0.48 + bullRatio * 0.62);
+      const bearBarH = (chartBottom - zeroY) * Math.min(0.96, 0.48 + (1 - bullRatio) * 0.62);
+
+      const bGrad = ctx.createLinearGradient(barX, zeroY - bullBarH, barX, zeroY);
+      bGrad.addColorStop(0, 'rgba(0, 230, 118, 0.92)');
+      bGrad.addColorStop(1, 'rgba(0, 230, 118, 0.16)');
+      ctx.fillStyle = bGrad;
+      ctx.fillRect(barX, zeroY - bullBarH, depthBarW, bullBarH - 1);
+      ctx.strokeStyle = 'rgba(0, 230, 118, 0.7)';
+      ctx.strokeRect(barX, zeroY - bullBarH, depthBarW, bullBarH - 1);
+
+      const sGrad = ctx.createLinearGradient(barX, zeroY, barX, zeroY + bearBarH);
+      sGrad.addColorStop(0, 'rgba(255, 59, 92, 0.16)');
+      sGrad.addColorStop(1, 'rgba(255, 59, 92, 0.92)');
+      ctx.fillStyle = sGrad;
+      ctx.fillRect(barX, zeroY + 1, depthBarW, bearBarH);
+      ctx.strokeStyle = 'rgba(255, 59, 92, 0.7)';
+      ctx.strokeRect(barX, zeroY + 1, depthBarW, bearBarH);
+
+      // 6. Glowing Bezier Flow Curves from Depth Bar to Right-Edge Ranked Labels
+      const flowX0 = barX + depthBarW;
+      const labelX = W - rightLabelsW + 4;
+      const cpX1 = flowX0 + bezierW * 0.45;
+      const cpX2 = flowX0 + bezierW * 0.65;
+
+      const rankedBulls = stocks.filter(s => s.isBull).sort((a, b) => b.pChange - a.pChange).slice(0, 10);
+      const rankedBears = stocks.filter(s => !s.isBull).sort((a, b) => a.pChange - b.pChange).slice(0, 8);
+
+      const bullStep = Math.max(13, (zeroY - chartTop - 10) / Math.max(1, rankedBulls.length));
+      rankedBulls.forEach((s, i) => {
+        const yTarget = chartTop + 9 + i * bullStep;
+        if (yTarget >= zeroY - 6) return;
+        const ySrc = (zeroY - bullBarH + 6) + (i / Math.max(1, rankedBulls.length - 1)) * Math.max(8, bullBarH - 14);
+        const isHov = state.stocks[state.hoveredSpiderIdx]?.symbol === s.symbol;
+
+        ctx.beginPath();
+        ctx.moveTo(flowX0, ySrc);
+        ctx.bezierCurveTo(cpX1, ySrc, cpX2, yTarget, labelX - 3, yTarget);
+        ctx.strokeStyle = isHov ? '#00e676' : `rgba(0, 230, 118, ${0.22 + (1 - i / 10) * 0.45})`;
+        ctx.lineWidth = isHov ? 2 : 1.1;
+        ctx.stroke();
+
+        ctx.font = `${isHov ? 'bold ' : ''}8.5px "JetBrains Mono", monospace`;
+        ctx.textAlign = 'left';
+        ctx.fillStyle = isHov ? '#ffffff' : '#cbd5e1';
+        ctx.fillText(s.symbol.slice(0, 8), labelX, yTarget + 3);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#00e676';
+        ctx.fillText(`+${s.pChange.toFixed(1)}%`, W - 4, yTarget + 3);
+      });
+
+      const bearStep = Math.max(13, (chartBottom - zeroY - 10) / Math.max(1, rankedBears.length));
+      rankedBears.forEach((s, i) => {
+        const yTarget = zeroY + 13 + i * bearStep;
+        if (yTarget > chartBottom) return;
+        const ySrc = (zeroY + 8) + (i / Math.max(1, rankedBears.length - 1)) * Math.max(8, bearBarH - 14);
+        const isHov = state.stocks[state.hoveredSpiderIdx]?.symbol === s.symbol;
+
+        ctx.beginPath();
+        ctx.moveTo(flowX0, ySrc);
+        ctx.bezierCurveTo(cpX1, ySrc, cpX2, yTarget, labelX - 3, yTarget);
+        ctx.strokeStyle = isHov ? '#ff3b5c' : `rgba(255, 59, 92, ${0.22 + (1 - i / 8) * 0.45})`;
+        ctx.lineWidth = isHov ? 2 : 1.1;
+        ctx.stroke();
+
+        ctx.font = `${isHov ? 'bold ' : ''}8.5px "JetBrains Mono", monospace`;
+        ctx.textAlign = 'left';
+        ctx.fillStyle = isHov ? '#ffffff' : '#cbd5e1';
+        ctx.fillText(s.symbol.slice(0, 8), labelX, yTarget + 3);
+        ctx.textAlign = 'right';
+        ctx.fillStyle = '#ff3b5c';
+        ctx.fillText(`${s.pChange.toFixed(1)}%`, W - 4, yTarget + 3);
+      });
+
+      document.getElementById('spiderBullPct').textContent = `${(bullRatio * 100).toFixed(1)}% BULL`;
+      document.getElementById('spiderBearPct').textContent = `${((1 - bullRatio) * 100).toFixed(1)}% BEAR`;
+    }
+
+    function bindSpiderEvents() {
+      const canvas = document.getElementById('spiderCanvas');
+      const tooltip = document.getElementById('spiderTooltip');
+
+      canvas.addEventListener('mousemove', e => {
+        const rect = canvas.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
+
+        const leftPad = 10;
+        const chartRight = Math.max(120, rect.width - 86 - 22 - 36 - 8);
+        const chartW = chartRight - leftPad;
+        const chartTop = 50;
+        const chartBottom = rect.height - 22;
+        const chartH = chartBottom - chartTop;
+
+        const allVals = state.stocks.slice(0, 40).flatMap(s => s.trajectory);
+        const maxPos = Math.max(5.5, ...allVals) * 1.08;
+        const minNeg = Math.min(-3.0, ...allVals) * 1.12;
+        const span = Math.max(0.5, maxPos - minNeg);
+
+        const normX = Math.max(0, Math.min(1, (mx - leftPad) / Math.max(1, chartW)));
+
+        let bestDist = 18;
+        let bestIdx = -1;
+        for (const item of spiderHitList) {
+          const bi = Math.round(normX * Math.max(0, item.pts.length - 1));
+          const py = chartTop + ((maxPos - item.pts[bi]) / span) * chartH;
+          const d = Math.abs(my - py);
+          if (d < bestDist) {
+            bestDist = d;
+            bestIdx = item.masterIdx;
+          }
+        }
+
+        if (bestIdx !== state.hoveredSpiderIdx) {
+          state.hoveredSpiderIdx = bestIdx;
+          drawSpiderChart();
+        }
+
+        if (bestIdx >= 0) {
+          const s = state.stocks[bestIdx];
+          document.getElementById('ttSym').textContent = s.symbol;
+          const pctEl = document.getElementById('ttPct');
+          pctEl.textContent = fmtPct(s.pChange);
+          pctEl.className = s.isBull ? 'bull-txt' : 'bear-txt';
+          document.getElementById('ttSec').textContent = s.sector;
+          document.getElementById('ttLtp').textContent = `₹${fmtPrice(s.ltp)}`;
+          document.getElementById('ttVol').textContent = `${s.volRatio.toFixed(2)}x VOL`;
+
+          tooltip.classList.add('visible');
+          tooltip.style.left = `${Math.min(rect.width - 170, Math.max(8, mx + 14))}px`;
+          tooltip.style.top = `${Math.min(rect.height - 76, Math.max(44, my - 20))}px`;
+        } else {
+          tooltip.classList.remove('visible');
+        }
+      });
+
+      canvas.addEventListener('mouseleave', () => {
+        state.hoveredSpiderIdx = -1;
+        tooltip.classList.remove('visible');
+        drawSpiderChart();
+      });
+
+      canvas.addEventListener('click', () => {
+        if (state.hoveredSpiderIdx >= 0) {
+          openOrderBlockModal(state.stocks[state.hoveredSpiderIdx].symbol);
+        }
+      });
+    }
+
+    /* -------------------------------------------------------------------------
+       I. INTERACTIVE ORDER BLOCK 5m CANDLESTICK MODAL
+       ------------------------------------------------------------------------- */
+    function openOrderBlockModal(symbol) {
+      const stock = state.stocks.find(s => s.symbol === symbol);
+      if (!stock) return;
+      state.activeModalSymbol = symbol;
+
+      const modal = document.getElementById('obModal');
+      const card = document.getElementById('obModalCard');
+      card.classList.toggle('bear-mode', !stock.isBull);
+
+      updateModalMeta(stock);
+      modal.classList.add('open');
+      requestAnimationFrame(() => drawModalChart(stock));
+    }
+
+    function updateModalMeta(s) {
+      document.getElementById('mSymbol').textContent = s.symbol;
+      document.getElementById('mSector').textContent = s.sector;
+
+      const dirBadge = document.getElementById('mDirBadge');
+      dirBadge.textContent = s.isBull ? 'BULLISH ORDER BLOCK' : 'BEARISH ORDER BLOCK';
+      dirBadge.className = `badge ${s.isBull ? 'badge-bull' : 'badge-bear'}`;
+
+      document.getElementById('mConvBadge').textContent = `CONV ${s.conviction}`;
+      document.getElementById('mLtp').textContent = `₹${fmtPrice(s.ltp)}`;
+
+      const chg = document.getElementById('mChg');
+      chg.textContent = `${fmtPct(s.pChange)} (${s.pointChange >= 0 ? '+' : ''}${s.pointChange.toFixed(2)})`;
+      chg.className = s.isBull ? 'bull-txt' : 'bear-txt';
+
+      document.getElementById('mVolSurge').textContent = `${s.volRatio.toFixed(2)}x VOL`;
+      document.getElementById('mVwapStat').textContent = `₹${fmtPrice(s.vwap)} (${s.vwapDiffPct >= 0 ? 'ABOVE' : 'BELOW'})`;
+      document.getElementById('mOb1Stat').textContent = `${s.ob1.low.toFixed(2)} - ${s.ob1.high.toFixed(2)}`;
+      document.getElementById('mOb2Stat').textContent = `${s.ob2.low.toFixed(2)} - ${s.ob2.high.toFixed(2)}`;
+      document.getElementById('mS1Stat').textContent = `₹${fmtPrice(s.support1)}`;
+      document.getElementById('mR1R2Stat').textContent = `${s.resistance1.toFixed(1)} / ${s.resistance2.toFixed(1)}`;
+      document.getElementById('mRrStat').textContent = '1 : 2.0';
+
+      updateHud(s.candles[s.candles.length - 1]);
+    }
+
+    function updateHud(c) {
+      if (!c) return;
+      document.getElementById('hudTime').textContent = c.time;
+      document.getElementById('hudO').textContent = fmtPrice(c.o);
+      document.getElementById('hudH').textContent = fmtPrice(c.h);
+      document.getElementById('hudL').textContent = fmtPrice(c.l);
+      document.getElementById('hudC').textContent = fmtPrice(c.c);
+      document.getElementById('hudV').textContent = fmtVol(c.v);
+      document.getElementById('hudVwap').textContent = fmtPrice(c.vwap);
+    }
+
+    function closeOrderBlockModal() {
+      state.activeModalSymbol = null;
+      document.getElementById('obModal').classList.remove('open');
+    }
+
+    function drawModalChart(stock) {
+      const canvas = document.getElementById('modalCanvas');
+      if (!canvas) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const W = Math.max(320, rect.width - 16);
+      const H = Math.max(344, rect.height - 16);
+
+      if (canvas.width !== Math.round(W * dpr) || canvas.height !== Math.round(H * dpr)) {
+        canvas.width = Math.round(W * dpr);
+        canvas.height = Math.round(H * dpr);
+      }
+
+      const ctx = canvas.getContext('2d');
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+      ctx.fillStyle = '#06090f';
+      ctx.fillRect(0, 0, W, H);
+
+      const padL = 12, padR = 78, padT = 38, padB = 26, volH = 56;
+      const priceB = H - padB - volH;
+      const priceH = priceB - padT;
+      const plotW = W - padL - padR;
+
+      const candles = stock.candles;
+      const allP = candles.flatMap(c => [c.h, c.l, c.vwap]).concat([stock.support1, stock.resistance1, stock.resistance2]);
+      const minP = Math.min(...allP);
+      const maxP = Math.max(...allP);
+      const padP = (maxP - minP) * 0.08;
+      const yMin = minP - padP;
+      const yMax = maxP + padP;
+      const ySpan = Math.max(yMax - yMin, 0.01);
+      const maxV = Math.max(...candles.map(c => c.v), 1);
+
+      const stepX = plotW / candles.length;
+      const mapX = i => padL + i * stepX + stepX / 2;
+      const mapY = p => padT + ((yMax - p) / ySpan) * priceH;
+
+      // Gridlines & Y-axis
+      ctx.strokeStyle = 'rgba(28, 38, 56, 0.65)';
+      ctx.lineWidth = 1;
+      for (let i = 0; i <= 6; i++) {
+        const p = yMin + (i / 6) * ySpan;
+        const y = mapY(p);
+        ctx.beginPath();
+        ctx.moveTo(padL, y);
+        ctx.lineTo(W - padR, y);
+        ctx.stroke();
+
+        ctx.fillStyle = '#64748b';
+        ctx.font = '10px "JetBrains Mono", monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(p.toFixed(2), W - padR + 6, y + 3);
+      }
+
+      // Time ticks
+      for (let i = 0; i < candles.length; i += 9) {
+        const x = mapX(i);
+        ctx.strokeStyle = 'rgba(28, 38, 56, 0.45)';
+        ctx.beginPath();
+        ctx.moveTo(x, padT);
+        ctx.lineTo(x, H - padB);
+        ctx.stroke();
+        ctx.fillStyle = '#64748b';
+        ctx.font = '9.5px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(candles[i].time, x, H - 8);
+      }
+
+      // Shaded Morning OB & Midday OB zones
+      [stock.ob1, stock.ob2].forEach(ob => {
+        const x0 = mapX(ob.startIdx) - stepX * 0.4;
+        const yTop = mapY(ob.high);
+        const yBot = mapY(ob.low);
+        const bh = Math.max(10, yBot - yTop);
+        ctx.fillStyle = stock.isBull ? 'rgba(0, 230, 118, 0.14)' : 'rgba(255, 59, 92, 0.15)';
+        ctx.fillRect(x0, yTop, (W - padR) - x0, bh);
+        ctx.strokeStyle = stock.isBull ? 'rgba(0, 230, 118, 0.62)' : 'rgba(255, 59, 92, 0.62)';
+        ctx.strokeRect(x0, yTop, (W - padR) - x0, bh);
+
+        ctx.fillStyle = stock.isBull ? '#00e676' : '#ff3b5c';
+        ctx.font = 'bold 9.5px "JetBrains Mono", monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(`${ob.label}: ${ob.low.toFixed(2)} - ${ob.high.toFixed(2)}`, x0 + 6, yTop - 4);
+      });
+
+      // Dotted R2, R1, S1 with right-axis badges
+      const drawLvl = (p, lbl, col) => {
+        const y = mapY(p);
+        ctx.save();
+        ctx.strokeStyle = col;
+        ctx.lineWidth = 1.1;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(padL, y);
+        ctx.lineTo(W - padR, y);
+        ctx.stroke();
+        ctx.restore();
+
+        ctx.fillStyle = col;
+        ctx.fillRect(W - padR + 2, y - 8, padR - 4, 15);
+        ctx.fillStyle = '#06090f';
+        ctx.font = 'bold 9px "JetBrains Mono", monospace';
+        ctx.textAlign = 'left';
+        ctx.fillText(`${lbl} ${p.toFixed(1)}`, W - padR + 5, y + 3);
+      };
+      drawLvl(stock.resistance2, 'R2', '#ffb300');
+      drawLvl(stock.resistance1, 'R1', '#f59e0b');
+      drawLvl(stock.support1, 'S1', '#00d2ff');
+
+      // Volume histogram
+      candles.forEach((c, i) => {
+        const x = mapX(i);
+        const bw = Math.max(2, stepX * 0.62);
+        const h = (c.v / maxV) * (volH - 8);
+        ctx.fillStyle = c.c >= c.o ? 'rgba(0, 230, 118, 0.28)' : 'rgba(255, 59, 92, 0.28)';
+        ctx.fillRect(x - bw / 2, H - padB - h, bw, h);
+      });
+
+      // Candlesticks
+      candles.forEach((c, i) => {
+        const x = mapX(i);
+        const bw = Math.max(2.5, stepX * 0.62);
+        const col = c.c >= c.o ? '#00e676' : '#ff3b5c';
+        ctx.strokeStyle = col;
+        ctx.lineWidth = 1.1;
+        ctx.beginPath();
+        ctx.moveTo(x, mapY(c.h));
+        ctx.lineTo(x, mapY(c.l));
+        ctx.stroke();
+
+        const yO = mapY(c.o), yC = mapY(c.c);
+        ctx.fillStyle = col;
+        ctx.fillRect(x - bw / 2, Math.min(yO, yC), bw, Math.max(1.5, Math.abs(yC - yO)));
+      });
+
+      // Dashed cyan VWAP
+      ctx.save();
+      ctx.strokeStyle = '#00d2ff';
+      ctx.lineWidth = 1.6;
+      ctx.setLineDash([5, 3]);
+      ctx.beginPath();
+      candles.forEach((c, i) => {
+        const x = mapX(i), y = mapY(c.vwap);
+        if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+      ctx.restore();
+
+      // Interactive Crosshair
+      if (state.modalMouse.inside) {
+        const mx = Math.max(padL, Math.min(W - padR, state.modalMouse.x));
+        const my = Math.max(padT, Math.min(H - padB, state.modalMouse.y));
+        const idx = Math.max(0, Math.min(candles.length - 1, Math.floor((mx - padL) / stepX)));
+        const hc = candles[idx];
+        const snapX = mapX(idx);
+
+        ctx.save();
+        ctx.strokeStyle = 'rgba(226, 232, 240, 0.45)';
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(snapX, padT);
+        ctx.lineTo(snapX, H - padB);
+        ctx.moveTo(padL, my);
+        ctx.lineTo(W - padR, my);
+        ctx.stroke();
+        ctx.restore();
+
+        if (my <= priceB) {
+          const hp = yMax - ((my - padT) / priceH) * ySpan;
+          ctx.fillStyle = '#111a2a';
+          ctx.fillRect(W - padR + 2, my - 8, padR - 4, 16);
+          ctx.strokeStyle = '#00d2ff';
+          ctx.strokeRect(W - padR + 2, my - 8, padR - 4, 16);
+          ctx.fillStyle = '#fff';
+          ctx.font = 'bold 9.5px "JetBrains Mono", monospace';
+          ctx.textAlign = 'left';
+          ctx.fillText(hp.toFixed(2), W - padR + 6, my + 3);
+        }
+
+        ctx.fillStyle = '#111a2a';
+        ctx.fillRect(snapX - 20, H - padB + 2, 40, 16);
+        ctx.fillStyle = '#00d2ff';
+        ctx.font = 'bold 9.5px "JetBrains Mono", monospace';
+        ctx.textAlign = 'center';
+        ctx.fillText(hc.time, snapX, H - padB + 13);
+
+        updateHud(hc);
       }
     }
 
-    function copySelectedLevels() {
-      const s = selectedStock;
-      const txt = `${brand.name} | ${s.symbol} (${s.buildup})\nOB: ₹${s.obLow} - ₹${s.obHigh} | LIQ: ₹${s.liq}\nEntry: ₹${s.entry} | SL: ₹${s.sl}\nTP1: ₹${s.tp1} | TP2: ₹${s.tp2}`;
-      navigator.clipboard?.writeText(txt);
-      showToast(`Copied ${s.symbol} OB / LIQ / SL / TP levels!`);
+    function bindModalEvents() {
+      const canvas = document.getElementById('modalCanvas');
+      const onMove = (cx, cy) => {
+        if (!state.activeModalSymbol) return;
+        const rect = canvas.getBoundingClientRect();
+        state.modalMouse = { x: cx - rect.left, y: cy - rect.top, inside: true };
+        const s = state.stocks.find(st => st.symbol === state.activeModalSymbol);
+        if (s) drawModalChart(s);
+      };
+      canvas.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
+      canvas.addEventListener('touchmove', e => {
+        if (e.touches[0]) onMove(e.touches[0].clientX, e.touches[0].clientY);
+      }, { passive: true });
+      canvas.addEventListener('mouseleave', () => {
+        state.modalMouse.inside = false;
+        const s = state.stocks.find(st => st.symbol === state.activeModalSymbol);
+        if (s) {
+          updateHud(s.candles[s.candles.length - 1]);
+          drawModalChart(s);
+        }
+      });
+
+      document.getElementById('closeModalBtn').addEventListener('click', closeOrderBlockModal);
+      document.getElementById('obModal').addEventListener('click', e => {
+        if (e.target.id === 'obModal') closeOrderBlockModal();
+      });
+      document.addEventListener('keydown', e => {
+        if (e.key === 'Escape' && state.activeModalSymbol) closeOrderBlockModal();
+      });
     }
 
-    function calculateCustomOB() {
-      const bias = document.getElementById('calc-bias').value;
-      const lot = parseInt(document.getElementById('calc-lot').value, 10) || 150;
-      const obH = parseFloat(document.getElementById('calc-obhigh').value) || 2112.3;
-      const obL = parseFloat(document.getElementById('calc-oblow').value) || 2083.9;
-      const liq = parseFloat(document.getElementById('calc-liq').value) || 2072.0;
+    /* -------------------------------------------------------------------------
+       J. LIVE NSE MCP BRIDGE INTEGRATION & SIMULATION ENGINE
+       ------------------------------------------------------------------------- */
+    function updateModeUI() {
+      const btnMcp = document.getElementById('btnLiveMcp');
+      const btnSim = document.getElementById('btnSimMode');
+      const pill = document.getElementById('statusPill');
+      const txt = document.getElementById('statusText');
+      const banner = document.getElementById('offlineBanner');
+      const footerBadge = document.getElementById('footerSourceBadge');
 
-      let entry, sl, tp1, tp2, riskPts;
-      if (bias === 'BULLISH') {
-        entry = obH;
-        sl = Math.min(liq, obL - (obH - obL) * 0.25);
-        riskPts = Math.max(entry - sl, 0.5);
-        tp1 = entry + riskPts * 2;
-        tp2 = entry + riskPts * 3;
+      if (state.mode === 'MCP') {
+        btnMcp.classList.add('active-mcp');
+        btnSim.classList.remove('active-sim');
+        if (state.mcpConnected) {
+          pill.className = 'status-pill connected';
+          txt.textContent = `MCP CONNECTED • ${state.lastMcpUpdate}`;
+          banner.classList.remove('visible');
+          footerBadge.textContent = 'LIVE NSE MCP FEED';
+        } else {
+          pill.className = 'status-pill offline';
+          txt.textContent = 'MCP OFFLINE (SIM)';
+          banner.classList.add('visible');
+          footerBadge.textContent = 'MCP OFFLINE • FALLBACK SIM';
+        }
       } else {
-        entry = obL;
-        sl = Math.max(liq, obH + (obH - obL) * 0.25);
-        riskPts = Math.max(sl - entry, 0.5);
-        tp1 = entry - riskPts * 2;
-        tp2 = entry - riskPts * 3;
+        btnSim.classList.add('active-sim');
+        btnMcp.classList.remove('active-mcp');
+        pill.className = 'status-pill sim';
+        txt.textContent = 'SIMULATION 2s';
+        banner.classList.remove('visible');
+        footerBadge.textContent = 'SIMULATION FEED';
       }
-
-      document.getElementById('c-entry').textContent = `₹${entry.toFixed(2)}`;
-      document.getElementById('c-sl').textContent = `₹${sl.toFixed(2)}`;
-      document.getElementById('c-tp').textContent = `₹${tp1.toFixed(2)} / ₹${tp2.toFixed(2)}`;
-      document.getElementById('c-risk').textContent = `₹${Math.round(riskPts * lot).toLocaleString('en-IN')}`;
     }
 
-    let journal = [
-      { date: '2026-11-19', sym: 'COFORGE', setup: 'BULLISH OB + LIQ SWEEP', rr: '1:3.0', pnl: '+₹22,500' },
-      { date: '2026-11-20', sym: 'TCS', setup: 'BEARISH OB + LIQ SWEEP', rr: '1:3.0', pnl: '+₹18,750' },
-      { date: '2026-11-20', sym: 'PERSISTENT', setup: 'BULLISH OB + LIQ SWEEP', rr: '1:3.0', pnl: '+₹14,200' }
-    ];
-
-    function renderJournal() {
-      document.getElementById('journal-badge').textContent = journal.length;
-      document.getElementById('journal-tbody').innerHTML = journal.map(j => `
-        <tr><td class="py-2 px-3 font-num t-muted">${j.date}</td><td class="py-2 px-3 font-bold t-strong">${j.sym}</td><td class="py-2 px-3">${j.setup}</td><td class="py-2 px-3 font-num">${j.rr}</td><td class="py-2 px-3 text-right font-num font-bold text-[#10b981]">${j.pnl}</td></tr>
-      `).join('');
-    }
-
-    function logCurrentToJournal() {
-      journal.unshift({ date: new Date().toISOString().split('T')[0], sym: selectedStock.symbol, setup: selectedStock.buildup, rr: selectedStock.rr, pnl: 'OPEN' });
-      renderJournal();
-      showToast(`Logged ${selectedStock.symbol} OB setup to Journal!`);
-    }
-
-    function setTf(tf) {
-      currentTf = tf;
-      ['1m', '5m', '15m'].forEach(item => {
-        const btn = document.getElementById(`tf-btn-${item}`);
-        if (btn) {
-          btn.className = item === tf
-            ? 'px-2.5 py-1 rounded text-xs font-num font-bold bg-[#2962ff] text-white'
-            : 'px-2.5 py-1 rounded text-xs font-num font-bold bg-[#161f2c] text-slate-300 hover:text-white';
-        }
-      });
-      drawCandlestickChart('full-live-canvas', selectedStock);
-      showToast(`Switched timeframe to ${tf}`);
-    }
-
-    function toggleLive915Sim() {
-      isSimActive = !isSimActive;
-      document.getElementById('sim-btn-label').textContent = isSimActive ? 'LIVE ON' : 'PAUSED';
-    }
-
-    const DHAN_API_URL = 'https://icy-math-a205.mh4962898.workers.dev';
-
-    async function fetchDhanLive() {
-      if (!isSimActive) return;
-      const nowIST = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' }));
-      const timeStr = nowIST.toTimeString().split(' ')[0] + ' IST';
-
+    async function pollMcpBridge(isManualTest = false) {
       try {
-        const res = await fetch(DHAN_API_URL);
-        const data = await res.json();
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 5500);
+        const res = await fetch(state.bridgeUrl, { signal: controller.signal, cache: 'no-store' });
+        clearTimeout(timeout);
 
-        if (data.status === 'LIVE_DHAN' && data.stocks && Object.keys(data.stocks).length > 0) {
-          document.getElementById('ist-clock-display').textContent = `${timeStr} • 🟢 DHAN LIVE`;
-          document.getElementById('sim-btn-label').textContent = 'DHAN LIVE';
-
-          fnoStocks.forEach(s => {
-            const live = data.stocks[s.symbol];
-            if (live && live.ltp) {
-              s.ltp = +live.ltp;
-              if (typeof live.change === 'number') s.change = +live.change;
-              recomputeOBLevels(s);
-            }
-          });
-          selectStock(selectedStock.symbol);
-          return;
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const payload = await res.json();
+        if (!payload || !Array.isArray(payload.stocks) || payload.stocks.length === 0) {
+          throw new Error('Bridge responded with empty stocks array');
         }
-      } catch (e) {}
 
-      document.getElementById('ist-clock-display').textContent = `${timeStr} • SIM MODE`;
-      fnoStocks.forEach(s => {
-        const d = (Math.random() - 0.49) * 0.09;
-        s.change = +(s.change + d).toFixed(2);
-        s.ltp = +(s.ltp * (1 + d / 100)).toFixed(2);
-        recomputeOBLevels(s);
+        const stamp = payload.updated_at || getIstTimeStr();
+        state.mcpConnected = true;
+        state.lastMcpUpdate = stamp;
+
+        // Append timestamped pChange point to intraday liveHistory starting from 09:15
+        const built = payload.stocks.map(raw => {
+          const sym = String(raw.symbol || '').toUpperCase();
+          if (!state.liveHistory[sym]) {
+            state.liveHistory[sym] = [{ time: '09:15', pct: 0 }];
+          }
+          const hist = state.liveHistory[sym];
+          const pct = Number(raw.pChange || 0);
+          hist.push({ time: stamp.slice(0, 5), pct });
+          if (hist.length > 120) hist.shift();
+          return buildStockObject(raw, hist);
+        });
+
+        state.stocks = built;
+        updateModeUI();
+        renderAll();
+
+        if (isManualTest) {
+          showToast(`Connected to NSE MCP Bridge (${built.length} stocks @ ${stamp})`, 'success');
+        }
+        return { ok: true, count: built.length, stamp };
+      } catch (err) {
+        state.mcpConnected = false;
+        updateModeUI();
+        if (isManualTest) {
+          showToast(`Bridge unreachable: run uvicorn nse_mcp_bridge:app --port 8000`, 'warn');
+        }
+        return { ok: false, error: err.message };
+      }
+    }
+
+    function tickSimulation() {
+      // Only run simulation ticks when in SIM mode or when MCP is offline (seamless fallback)
+      if (state.mode === 'MCP' && state.mcpConnected) return;
+
+      state.stocks.forEach(s => {
+        const drift = (Math.random() - 0.485) * 0.15;
+        s.pChange = Number((s.pChange + drift).toFixed(2));
+        s.ltp = Number((s.prevClose * (1 + s.pChange / 100)).toFixed(2));
+        s.pointChange = s.ltp - s.prevClose;
+        s.isBull = s.pChange >= 0;
+        s.buildUp = s.isBull ? 'LONG BUILD-UP' : 'SHORT BUILD-UP';
+        s.volRatio = Math.max(0.8, Number((s.volRatio + (Math.random() - 0.48) * 0.05).toFixed(2)));
+        s.vwapDiffPct = ((s.ltp - s.vwap) / Math.max(0.01, s.vwap)) * 100;
+        s.conviction = computeConviction(s.pChange, s.volRatio, s.ltp, s.vwap);
+
+        const last = s.candles[s.candles.length - 1];
+        last.c = s.ltp;
+        last.h = Math.max(last.h, s.ltp);
+        last.l = Math.min(last.l, s.ltp);
+        last.v += Math.round(Math.random() * 14000);
+        s.trajectory[s.trajectory.length - 1] = s.pChange;
       });
-      selectStock(selectedStock.symbol);
+
+      renderAll();
     }
 
-    function switchMainTab(tab) {
-      ['sectorflow', 'livechart', 'finder', 'journal'].forEach(t => {
-        document.getElementById(`view-${t}`).classList.toggle('hidden', t !== tab);
-        const dBtn = document.getElementById(`tab-btn-${t}`);
-        const mBtn = document.getElementById(`mob-tab-${t}`);
-        if (dBtn) dBtn.className = t === tab ? 'px-3 py-1.5 rounded-lg text-xs font-bold bg-[#10b981] text-black shadow' : 'px-3 py-1.5 rounded-lg text-xs font-semibold t-muted hover:t-strong';
-        if (mBtn) mBtn.className = t === tab ? 'flex-1 py-1.5 rounded-lg font-bold bg-[#10b981] text-black' : 'flex-1 py-1.5 rounded-lg font-semibold t-muted';
-      });
-      setTimeout(() => {
-        drawSankeyCanvas();
-        drawCandlestickChart('inline-live-canvas', selectedStock);
-        drawCandlestickChart('full-live-canvas', selectedStock);
-      }, 30);
+    function setMode(newMode) {
+      state.mode = newMode;
+      clearInterval(state.mcpTimer);
+
+      if (newMode === 'MCP') {
+        updateModeUI();
+        pollMcpBridge(true);
+        state.mcpTimer = setInterval(() => pollMcpBridge(false), state.pollIntervalSec * 1000);
+      } else {
+        state.mcpConnected = false;
+        updateModeUI();
+        showToast('Switched to SIM MODE (2s intraday simulation)', 'info');
+      }
     }
 
-    function openModal(id) { const el = document.getElementById(id); el.classList.remove('hidden'); el.classList.add('flex'); }
-    function closeModal(id) { const el = document.getElementById(id); el.classList.add('hidden'); el.classList.remove('flex'); }
-    function showToast(msg) {
-      const box = document.getElementById('toast-container');
-      const div = document.createElement('div');
-      div.className = 't-card border border-[#10b981] t-strong text-xs font-semibold px-4 py-2 rounded-xl shadow-2xl';
-      div.textContent = msg;
-      box.appendChild(div);
-      setTimeout(() => div.remove(), 2400);
+    /* -------------------------------------------------------------------------
+       K. NSE CSV UPLOAD & SAMPLE CSV DOWNLOAD
+       ------------------------------------------------------------------------- */
+    function handleCsvUpload(e) {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = ev => {
+        try {
+          const text = String(ev.target.result || '').trim();
+          const lines = text.split(/\r?\n/).filter(Boolean);
+          if (lines.length < 2) throw new Error('CSV needs a header row and at least one stock row.');
+
+          const hdrs = lines[0].split(',').map(h => h.trim().toLowerCase().replace(/[^a-z0-9%]/g, ''));
+          const iSym = hdrs.findIndex(h => h.includes('symbol') || h.includes('ticker'));
+          const iLtp = hdrs.findIndex(h => h.includes('ltp') || h.includes('close') || h.includes('last'));
+          const iPct = hdrs.findIndex(h => h.includes('chg') || h.includes('change') || h.includes('%') || h.includes('pct'));
+          const iVol = hdrs.findIndex(h => h.includes('vol') || h.includes('tottrdqty'));
+          const iSec = hdrs.findIndex(h => h.includes('sector'));
+          const iVwap = hdrs.findIndex(h => h.includes('vwap'));
+
+          if (iSym === -1 || iLtp === -1) {
+            throw new Error('Required columns: Symbol and Close/LTP.');
+          }
+
+          const imported = [];
+          for (let i = 1; i < lines.length; i++) {
+            const cols = lines[i].split(',').map(c => c.trim().replace(/^"|"$/g, ''));
+            const symbol = (cols[iSym] || '').toUpperCase();
+            const ltp = parseFloat(cols[iLtp]);
+            if (!symbol || isNaN(ltp) || ltp <= 0) continue;
+
+            const pChange = iPct >= 0 ? (parseFloat((cols[iPct] || '0').replace('%', '')) || 0) : 0;
+            const volume = iVol >= 0 ? (parseInt((cols[iVol] || '2000000').replace(/[^0-9]/g, ''), 10) || 2000000) : 2000000;
+            const sector = iSec >= 0 ? cols[iSec] : 'BANKING';
+            const vwap = iVwap >= 0 ? parseFloat(cols[iVwap]) : undefined;
+
+            imported.push(buildStockObject({ symbol, sector, ltp, pChange, volume, vwap }));
+          }
+
+          if (!imported.length) throw new Error('No valid rows parsed.');
+          state.stocks = imported;
+          state.activeSector = 'ALL';
+          renderAll();
+          showToast(`Imported ${imported.length} NSE stocks from ${file.name}`, 'success');
+        } catch (err) {
+          showToast(`CSV Error: ${err.message}`, 'error');
+        } finally {
+          e.target.value = '';
+        }
+      };
+      reader.readAsText(file);
     }
 
-    function downloadStandaloneHTML() {
-      const blob = new Blob(['<!DOCTYPE html>\n' + document.documentElement.outerHTML], { type: 'text/html' });
+    function downloadSampleCsv() {
+      const csv = [
+        'Symbol,Sector,Close,%Change,Volume',
+        'INDUSINDBK,BANKING,1003.00,8.60,19100000',
+        'ANGELONE,CAP MKTS,312.90,7.90,8420000',
+        'LODHA,REALTY,1067.40,6.44,5190000',
+        'CDSL,CAP MKTS,1322.70,5.65,6340000',
+        'APOLLOHOSP,PHARMA,9200.00,5.30,1420000',
+        'AXISBANK,BANKING,1446.00,4.70,21500000',
+        'PERSISTENT,IT,6124.00,4.20,1810000',
+        'MARUTI,AUTO,14011.00,3.10,1620000',
+        'DIXON,AUTO,14820.00,-2.42,1120000',
+        'LAURUSLABS,PHARMA,482.60,-2.34,7250000',
+        'BANDHANBNK,BANKING,174.30,-2.10,14800000',
+        'MPHASIS,IT,2914.50,-1.51,1680000'
+      ].join('\n');
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = 'index.html';
+      a.href = url;
+      a.download = 'nse_liquidity_sample.csv';
+      document.body.appendChild(a);
       a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Downloaded nse_liquidity_sample.csv', 'info');
     }
 
-    window.addEventListener('resize', () => {
-      drawSankeyCanvas();
-      drawCandlestickChart('inline-live-canvas', selectedStock);
-      drawCandlestickChart('full-live-canvas', selectedStock);
-    });
+    /* -------------------------------------------------------------------------
+       L. MASTER RENDER & INITIALIZATION
+       ------------------------------------------------------------------------- */
+    function renderAll() {
+      renderSectorPills();
+      updateBreadthReadout();
+      renderMiddleGrids();
+      renderHighConvictionPicks();
+      drawSpiderChart();
 
-    window.onload = function () {
-      applyBrandConfig();
-      const sel = document.getElementById('chart-stock-selector');
-      sel.innerHTML = fnoStocks.map(s => `<option value="${s.symbol}">${s.symbol} (${s.sector})</option>`).join('');
-      renderAllMatrix();
-      selectStock('COFORGE');
-      calculateCustomOB();
-      renderJournal();
-      fetchDhanLive();
-      setInterval(fetchDhanLive, 3000);
-    };
+      if (state.activeModalSymbol) {
+        const s = state.stocks.find(st => st.symbol === state.activeModalSymbol);
+        if (s) {
+          updateModalMeta(s);
+          drawModalChart(s);
+        }
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      // Seed 40 NSE stocks
+      state.stocks = INITIAL_SEED_STOCKS.map(r => buildStockObject(r));
+
+      // Populate saved bridge settings
+      document.getElementById('bridgeUrlInput').value = state.bridgeUrl;
+      document.getElementById('pollIntervalInput').value = state.pollIntervalSec;
+
+      // Live IST clock
+      const tickClock = () => {
+        document.getElementById('istClock').textContent = `IST ${getIstTimeStr()}`;
+      };
+      tickClock();
+      setInterval(tickClock, 1000);
+
+      // Initial render
+      updateModeUI();
+      renderAll();
+      bindSpiderEvents();
+      bindModalEvents();
+
+      // Start 2s SIM engine
+      state.simTimer = setInterval(tickSimulation, 2000);
+
+      // Mode buttons
+      document.getElementById('btnLiveMcp').addEventListener('click', () => setMode('MCP'));
+      document.getElementById('btnSimMode').addEventListener('click', () => setMode('SIM'));
+      document.getElementById('bannerRetryBtn').addEventListener('click', () => pollMcpBridge(true));
+      document.getElementById('bannerSimBtn').addEventListener('click', () => setMode('SIM'));
+
+      // Search input
+      const searchEl = document.getElementById('stockSearch');
+      const clearEl = document.getElementById('clearSearchBtn');
+      searchEl.addEventListener('input', e => {
+        state.searchQuery = e.target.value;
+        clearEl.classList.toggle('visible', state.searchQuery.length > 0);
+        renderAll();
+      });
+      clearEl.addEventListener('click', () => {
+        searchEl.value = '';
+        state.searchQuery = '';
+        clearEl.classList.remove('visible');
+        renderAll();
+      });
+
+      // Settings Popover
+      const pop = document.getElementById('settingsPopover');
+      const testBox = document.getElementById('testResultBox');
+      document.getElementById('settingsBtn').addEventListener('click', e => {
+        e.stopPropagation();
+        pop.classList.toggle('open');
+      });
+      document.getElementById('closeSettingsBtn').addEventListener('click', () => pop.classList.remove('open'));
+      document.addEventListener('click', e => {
+        if (!pop.contains(e.target) && e.target.id !== 'settingsBtn') pop.classList.remove('open');
+      });
+
+      document.getElementById('saveBridgeBtn').addEventListener('click', () => {
+        const url = document.getElementById('bridgeUrlInput').value.trim();
+        const sec = Math.max(3, Math.min(120, Number(document.getElementById('pollIntervalInput').value) || 15));
+        if (url) {
+          state.bridgeUrl = url;
+          state.pollIntervalSec = sec;
+          localStorage.setItem('ob_bridge_url', url);
+          localStorage.setItem('ob_poll_sec', String(sec));
+          showToast(`Saved Bridge Config (${sec}s poll)`, 'success');
+          if (state.mode === 'MCP') setMode('MCP');
+          pop.classList.remove('open');
+        }
+      });
+
+      document.getElementById('testBridgeBtn').addEventListener('click', async () => {
+        const url = document.getElementById('bridgeUrlInput').value.trim();
+        state.bridgeUrl = url;
+        testBox.style.display = 'block';
+        testBox.style.background = 'rgba(0, 210, 255, 0.12)';
+        testBox.style.color = '#8be9ff';
+        testBox.textContent = 'Testing connection...';
+        const res = await pollMcpBridge(false);
+        if (res.ok) {
+          testBox.style.background = 'rgba(0, 230, 118, 0.14)';
+          testBox.style.color = '#00e676';
+          testBox.textContent = `CONNECTED: ${res.count} stocks received @ ${res.stamp}`;
+        } else {
+          testBox.style.background = 'rgba(255, 59, 92, 0.14)';
+          testBox.style.color = '#ff8096';
+          testBox.textContent = `OFFLINE (${res.error}). Run: uvicorn nse_mcp_bridge:app --port 8000`;
+        }
+      });
+
+      // CSV controls
+      document.getElementById('csvUploadInput').addEventListener('change', handleCsvUpload);
+      document.getElementById('sampleCsvBtn').addEventListener('click', downloadSampleCsv);
+
+      // Responsive Canvas Redraws
+      const ro = new ResizeObserver(() => {
+        drawSpiderChart();
+        renderHighConvictionPicks();
+        if (state.activeModalSymbol) {
+          const s = state.stocks.find(st => st.symbol === state.activeModalSymbol);
+          if (s) drawModalChart(s);
+        }
+      });
+      ro.observe(document.getElementById('spiderWrap'));
+    });
   </script>
 </body>
 </html>
