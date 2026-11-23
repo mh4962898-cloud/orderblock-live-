@@ -8,12 +8,12 @@
     :root {
       --bg-canvas: #05080f;
       --glass-bg: rgba(14, 20, 33, 0.56);
-      --glass-bg-strong: rgba(18, 26, 43, 0.76);
+      --glass-bg-strong: rgba(18, 26, 43, 0.78);
       --glass-card: rgba(20, 29, 46, 0.52);
-      --glass-hover: rgba(30, 44, 68, 0.72);
+      --glass-hover: rgba(30, 44, 68, 0.74);
       --glass-border: rgba(255, 255, 255, 0.085);
       --glass-border-hi: rgba(255, 255, 255, 0.17);
-      --specular: inset 0 1px 0 rgba(255, 255, 255, 0.09);
+      --specular: inset 0 1px 0 rgba(255, 255, 255, 0.10);
 
       --text-1: #f3f7fc;
       --text-2: #9eb0c9;
@@ -65,6 +65,8 @@
     ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.22); border-radius: 99px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.38); }
 
+    .hidden { display: none !important; }
+
     /* Liquid Glass Surface */
     .glass {
       background: var(--glass-bg);
@@ -73,55 +75,6 @@
       border: 1px solid var(--glass-border);
       box-shadow: var(--specular), 0 12px 34px rgba(0, 0, 0, 0.42);
       border-radius: 16px;
-    }
-
-    /* Top Bar */
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      background: rgba(6, 10, 18, 0.72);
-      backdrop-filter: blur(20px) saturate(150%);
-      -webkit-backdrop-filter: blur(20px) saturate(150%);
-      border-bottom: 1px solid var(--glass-border);
-      padding: 9px 18px;
-      display: flex;
-      flex-wrap: wrap;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-    }
-
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 11px;
-    }
-    .brand-gem {
-      width: 34px;
-      height: 34px;
-      border-radius: 10px;
-      background: linear-gradient(135deg, rgba(0,245,155,0.92), rgba(56,217,255,0.92));
-      display: grid;
-      place-items: center;
-      color: #031217;
-      font-weight: 900;
-      font-family: var(--font-mono);
-      font-size: 13px;
-      box-shadow: 0 0 22px rgba(0, 245, 155, 0.28), inset 0 1px 1px rgba(255,255,255,0.6);
-    }
-    .brand-title {
-      font-size: 14px;
-      font-weight: 800;
-      letter-spacing: 0.7px;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-    .brand-sub {
-      font-size: 10.5px;
-      color: var(--text-3);
-      font-family: var(--font-mono);
     }
 
     .pill {
@@ -141,47 +94,6 @@
     .pill-bear { background: var(--bear-soft); color: var(--bear); border: 1px solid var(--bear-bd); }
     .pill-gold { background: var(--gold-soft); color: var(--gold); border: 1px solid var(--gold-bd); }
     .pill-muted { background: rgba(255,255,255,0.06); color: var(--text-2); border: 1px solid var(--glass-border); }
-
-    .controls {
-      display: flex;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .clock-chip {
-      padding: 6px 11px;
-      border-radius: 10px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--glass-border);
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-2);
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-    .clock-chip strong { color: var(--text-1); }
-
-    .status-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      padding: 6px 11px;
-      border-radius: 10px;
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 700;
-      background: var(--gold-soft);
-      border: 1px solid var(--gold-bd);
-      color: var(--gold);
-    }
-    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
-    .status-chip.live { background: var(--bull-soft); border-color: var(--bull-bd); color: var(--bull); }
-    .status-chip.live .status-dot { background: var(--bull); box-shadow: 0 0 10px var(--bull); animation: pulse 1.4s infinite; }
-    .status-chip.error { background: var(--bear-soft); border-color: var(--bear-bd); color: var(--bear); }
-    .status-chip.error .status-dot { background: var(--bear); }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.4;transform:scale(1.3);} }
 
     .btn {
       cursor: pointer;
@@ -209,27 +121,274 @@
       background: linear-gradient(135deg, #00f59b, #38d9ff);
       color: #031217;
       border-color: transparent;
-      box-shadow: 0 0 20px rgba(0, 245, 155, 0.32);
+      box-shadow: 0 0 20px rgba(0, 245, 155, 0.34);
     }
 
-    /* Alert Banner */
-    .alert-banner {
-      display: none;
-      margin: 10px 14px 0;
-      padding: 9px 14px;
-      border-radius: 12px;
-      background: var(--bear-soft);
-      border: 1px solid var(--bear-bd);
-      color: #ffd7e2;
+    /* =====================================================================
+       VIEW 1: OPTION 3 CENTERPIECE GLASS PORTAL (PANORAMIC LUXURY FINTECH)
+       ===================================================================== */
+    #portalView {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 20px 0;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .portal-halo {
+      position: absolute;
+      top: 12%;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 780px;
+      height: 340px;
+      background: radial-gradient(ellipse at center, rgba(0,245,155,0.16) 0%, rgba(56,217,255,0.12) 45%, transparent 72%);
+      filter: blur(42px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .portal-nav {
+      width: 100%;
+      max-width: 1240px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      z-index: 2;
+    }
+    .portal-nav-pill {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      padding: 9px 22px;
+      border-radius: 999px;
+      background: rgba(14, 21, 36, 0.62);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: var(--specular), 0 10px 30px rgba(0,0,0,0.4);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-2);
+    }
+    .portal-nav-pill a {
+      color: var(--text-2);
+      text-decoration: none;
+      cursor: pointer;
+      transition: color 0.15s;
+    }
+    .portal-nav-pill a:hover { color: var(--text-1); }
+
+    .portal-hero {
+      text-align: center;
+      max-width: 820px;
+      margin: 26px auto 18px;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+    .portal-title {
+      font-size: clamp(32px, 4.6vw, 56px);
+      font-weight: 900;
+      letter-spacing: -1px;
+      line-height: 1.08;
+      background: linear-gradient(180deg, #ffffff 35%, #a8c7e8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .portal-title span {
+      background: linear-gradient(135deg, #00f59b 0%, #38d9ff 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .portal-desc {
+      font-size: 14px;
+      color: var(--text-2);
+      max-width: 580px;
+      line-height: 1.55;
+    }
+
+    .portal-cta-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 6px;
+    }
+    .cta-primary {
+      cursor: pointer;
+      border: none;
+      padding: 13px 30px;
+      border-radius: 13px;
       font-family: var(--font-mono);
-      font-size: 11.5px;
+      font-size: 13px;
+      font-weight: 900;
+      letter-spacing: 0.7px;
+      color: #031317;
+      background: linear-gradient(135deg, #00f59b 0%, #38d9ff 100%);
+      box-shadow: 0 0 32px rgba(0, 245, 155, 0.38), inset 0 1px 1px rgba(255,255,255,0.75);
+      transition: transform 0.16s ease, box-shadow 0.16s ease;
+    }
+    .cta-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 42px rgba(0, 245, 155, 0.56), inset 0 1px 1px rgba(255,255,255,0.85);
+    }
+    .cta-glass {
+      cursor: pointer;
+      padding: 13px 26px;
+      border-radius: 13px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      color: var(--text-1);
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(18px);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow: var(--specular), 0 10px 26px rgba(0, 0, 0, 0.45);
+      transition: all 0.16s ease;
+    }
+    .cta-glass:hover {
+      transform: translateY(-2px);
+      background: rgba(255, 255, 255, 0.14);
+      border-color: var(--cyan-bd);
+    }
+
+    /* Panoramic Frosted Glass Terminal Preview at Bottom of Portal */
+    .portal-preview-wrap {
+      width: 100%;
+      max-width: 1220px;
+      margin-top: 14px;
+      z-index: 2;
+      perspective: 1200px;
+    }
+    .portal-preview-card {
+      width: 100%;
+      height: 310px;
+      border-radius: 20px 20px 0 0;
+      background: linear-gradient(180deg, rgba(16, 25, 42, 0.78) 0%, rgba(7, 11, 20, 0.94) 100%);
+      backdrop-filter: blur(22px) saturate(150%);
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      border-bottom: none;
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.28),
+        0 -12px 50px rgba(0, 245, 155, 0.14),
+        0 20px 60px rgba(0, 0, 0, 0.75);
+      transform: rotateX(7deg);
+      transform-origin: bottom center;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+    }
+    canvas#portalPreviewCanvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+    .preview-overlay-badge {
+      position: absolute;
+      top: 14px;
+      left: 18px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      pointer-events: none;
+    }
+    .preview-overlay-cta {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      pointer-events: none;
+    }
+
+    /* =====================================================================
+       VIEW 2: LIVE TERMINAL (EXACT LAYOUT FROM USER SCREENSHOT + ANIMATED SPINE)
+       ===================================================================== */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(6, 10, 18, 0.76);
+      backdrop-filter: blur(20px) saturate(150%);
+      -webkit-backdrop-filter: blur(20px) saturate(150%);
+      border-bottom: 1px solid var(--glass-border);
+      padding: 9px 18px;
+      display: flex;
+      flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 10px;
     }
+
+    .brand { display: flex; align-items: center; gap: 11px; cursor: pointer; }
+    .brand-gem {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: linear-gradient(135deg, rgba(0,245,155,0.92), rgba(56,217,255,0.92));
+      display: grid; place-items: center;
+      color: #031217; font-weight: 900; font-family: var(--font-mono); font-size: 13px;
+      box-shadow: 0 0 22px rgba(0, 245, 155, 0.28), inset 0 1px 1px rgba(255,255,255,0.6);
+    }
+    .brand-title { font-size: 14px; font-weight: 800; letter-spacing: 0.7px; display: flex; align-items: center; gap: 7px; }
+    .brand-sub { font-size: 10.5px; color: var(--text-3); font-family: var(--font-mono); }
+
+    .controls { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; }
+
+    .clock-chip {
+      padding: 6px 11px; border-radius: 10px;
+      background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border);
+      font-family: var(--font-mono); font-size: 11px; color: var(--text-2);
+      display: flex; align-items: center; gap: 7px;
+    }
+    .clock-chip strong { color: var(--text-1); }
+
+    .status-chip {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 11px; border-radius: 10px;
+      font-family: var(--font-mono); font-size: 11px; font-weight: 700;
+      background: var(--gold-soft); border: 1px solid var(--gold-bd); color: var(--gold);
+    }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+    .status-chip.live { background: var(--bull-soft); border-color: var(--bull-bd); color: var(--bull); }
+    .status-chip.live .status-dot { background: var(--bull); box-shadow: 0 0 10px var(--bull); animation: pulse 1.4s infinite; }
+    .status-chip.error { background: var(--bear-soft); border-color: var(--bear-bd); color: var(--bear); }
+    .status-chip.error .status-dot { background: var(--bear); }
+    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1);} 50%{opacity:0.4;transform:scale(1.3);} }
+
+    .mode-switch {
+      display: inline-flex;
+      background: rgba(4, 7, 13, 0.75);
+      border: 1px solid var(--glass-border-hi);
+      border-radius: 10px;
+      padding: 2px;
+      gap: 2px;
+    }
+    .mode-tab {
+      cursor: pointer; border: none; background: transparent;
+      color: var(--text-2); padding: 4px 10px; border-radius: 8px;
+      font-family: var(--font-mono); font-size: 10.5px; font-weight: 700;
+      transition: all 0.15s;
+    }
+    .mode-tab.active {
+      background: rgba(56, 217, 255, 0.16);
+      color: var(--cyan);
+      box-shadow: inset 0 0 0 1px var(--cyan-bd);
+    }
+
+    .alert-banner {
+      display: none; margin: 10px 14px 0; padding: 9px 14px; border-radius: 12px;
+      background: var(--bear-soft); border: 1px solid var(--bear-bd);
+      color: #ffd7e2; font-family: var(--font-mono); font-size: 11.5px;
+      align-items: center; justify-content: space-between; gap: 10px;
+    }
     .alert-banner.show { display: flex; }
 
-    /* MAIN LIQUID GLASS DESK — 3-COLUMN MARKET FLOW BENTO */
+    /* MAIN 3-COLUMN LIQUID GLASS DESK */
     .desk {
       display: grid;
       grid-template-columns: minmax(340px, 1.18fr) minmax(360px, 1.12fr) minmax(320px, 0.96fr);
@@ -247,177 +406,94 @@
       .desk { grid-template-columns: 1fr; }
     }
 
-    .pane {
-      display: flex;
-      flex-direction: column;
-      padding: 12px;
-      min-height: 680px;
-    }
+    .pane { display: flex; flex-direction: column; padding: 12px; min-height: 680px; }
+    .pane-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 10px; flex-wrap: wrap; }
+    .pane-title { font-size: 12px; font-weight: 800; letter-spacing: 0.7px; text-transform: uppercase; display: flex; align-items: center; gap: 7px; color: var(--text-1); }
+    .pane-sub { font-size: 10px; font-family: var(--font-mono); color: var(--text-3); }
 
-    .pane-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 10px;
-      flex-wrap: wrap;
-    }
-    .pane-title {
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.7px;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      color: var(--text-1);
-    }
-    .pane-sub {
-      font-size: 10px;
-      font-family: var(--font-mono);
-      color: var(--text-3);
-    }
-
-    /* COL 1: MARKET FLOW CANVAS + SECTOR BREADTH */
-    .flow-kpi-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1.2fr;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
+    /* COL 1: DEMAND INFLOW / SUPPLY OUTFLOW LIQUIDITY SPINE */
+    .flow-kpi-row { display: grid; grid-template-columns: 1fr 1fr 1.25fr; gap: 8px; margin-bottom: 10px; }
     .kpi-glass {
       background: rgba(255, 255, 255, 0.035);
       border: 1px solid var(--glass-border);
-      border-radius: 11px;
-      padding: 8px 10px;
-      box-shadow: var(--specular);
+      border-radius: 11px; padding: 8px 10px; box-shadow: var(--specular);
     }
-    .kpi-lbl {
-      font-size: 9.5px;
-      font-family: var(--font-mono);
-      color: var(--text-3);
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-    .kpi-num {
-      font-size: 20px;
-      font-weight: 900;
-      font-family: var(--font-mono);
-      line-height: 1.15;
-      margin-top: 2px;
-    }
+    .kpi-lbl { font-size: 9.5px; font-family: var(--font-mono); color: var(--text-3); text-transform: uppercase; letter-spacing: 0.5px; }
+    .kpi-num { font-size: 19px; font-weight: 900; font-family: var(--font-mono); line-height: 1.15; margin-top: 2px; }
     .kpi-num.bull { color: var(--bull); text-shadow: 0 0 14px rgba(0,245,155,0.35); }
     .kpi-num.bear { color: var(--bear); text-shadow: 0 0 14px rgba(255,59,107,0.35); }
+    .kpi-mini { font-size: 9.5px; font-family: var(--font-mono); color: var(--text-2); margin-top: 2px; }
 
     .flow-stage {
-      position: relative;
-      flex: 1;
-      min-height: 440px;
-      background: rgba(4, 7, 13, 0.65);
+      position: relative; flex: 1; min-height: 440px;
+      background: rgba(4, 7, 13, 0.72);
       border: 1px solid var(--glass-border);
-      border-radius: 13px;
-      overflow: hidden;
+      border-radius: 13px; overflow: hidden;
     }
-    canvas#marketFlowCanvas {
-      width: 100%;
-      height: 100%;
-      display: block;
-      cursor: crosshair;
-    }
+    canvas#marketFlowCanvas { width: 100%; height: 100%; display: block; cursor: crosshair; }
     .flow-tooltip {
-      display: none;
-      position: absolute;
-      pointer-events: none;
-      z-index: 10;
-      background: rgba(9, 14, 24, 0.94);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--cyan-bd);
-      border-radius: 10px;
-      padding: 8px 10px;
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      min-width: 155px;
+      display: none; position: absolute; pointer-events: none; z-index: 10;
+      background: rgba(9, 14, 24, 0.94); backdrop-filter: blur(12px);
+      border: 1px solid var(--cyan-bd); border-radius: 10px; padding: 8px 10px;
+      font-family: var(--font-mono); font-size: 10.5px; min-width: 160px;
       box-shadow: 0 10px 26px rgba(0, 0, 0, 0.6);
     }
 
-    .sector-strip {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 5px;
-      margin-top: 10px;
-    }
+    .sector-strip { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
     .sec-pill {
-      cursor: pointer;
-      padding: 4px 8px;
-      border-radius: 8px;
-      font-family: var(--font-mono);
-      font-size: 10px;
-      font-weight: 700;
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--glass-border);
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      transition: all 0.14s ease;
+      cursor: pointer; padding: 4px 8px; border-radius: 8px;
+      font-family: var(--font-mono); font-size: 10px; font-weight: 700;
+      background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border);
+      display: inline-flex; align-items: center; gap: 5px; transition: all 0.14s ease;
     }
     .sec-pill:hover { border-color: var(--cyan-bd); background: rgba(56,217,255,0.08); }
     .sec-pill.active { border-color: var(--cyan); background: var(--cyan-soft); color: #fff; }
 
-    /* COL 2: TOP 20 BULLISH / BEARISH GRID */
-    .grid-toolbar {
-      display: flex;
-      align-items: center;
-      gap: 7px;
+    /* BACKTEST STATS STRIP (SHOWN IN BACKTESTING MODE) */
+    .bt-summary-card {
+      display: none;
       margin-bottom: 10px;
-    }
-    .search-input {
-      flex: 1;
-      background: rgba(4, 7, 13, 0.65);
-      border: 1px solid var(--glass-border-hi);
-      color: var(--text-1);
-      padding: 6px 10px;
-      border-radius: 9px;
+      padding: 10px 12px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, rgba(0,245,155,0.10) 0%, rgba(56,217,255,0.08) 100%);
+      border: 1px solid var(--cyan-bd);
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
       font-family: var(--font-mono);
-      font-size: 11px;
-      outline: none;
+    }
+    .bt-summary-card.show { display: grid; }
+    .bt-cell .bt-l { font-size: 9px; color: var(--text-3); text-transform: uppercase; }
+    .bt-cell .bt-v { font-size: 14px; font-weight: 900; margin-top: 2px; }
+
+    /* COL 2: EXACT INSTITUTIONAL F&O SCANNER GRID */
+    .grid-toolbar { display: flex; align-items: center; gap: 7px; margin-bottom: 10px; }
+    .search-input {
+      flex: 1; background: rgba(4, 7, 13, 0.65); border: 1px solid var(--glass-border-hi);
+      color: var(--text-1); padding: 6px 10px; border-radius: 9px;
+      font-family: var(--font-mono); font-size: 11px; outline: none;
     }
     .search-input:focus { border-color: var(--cyan); }
 
     .section-divider {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      font-weight: 800;
-      letter-spacing: 0.6px;
-      padding: 4px 2px 6px;
+      display: flex; align-items: center; justify-content: space-between;
+      font-family: var(--font-mono); font-size: 10.5px; font-weight: 800;
+      letter-spacing: 0.6px; padding: 4px 2px 6px;
     }
     .section-divider.bull { color: var(--bull); }
     .section-divider.bear { color: var(--bear); margin-top: 10px; border-top: 1px solid var(--glass-border); padding-top: 10px; }
 
     .compact-grid {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 7px;
-      max-height: 295px;
-      overflow-y: auto;
-      padding-right: 3px;
+      display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 7px; max-height: 295px; overflow-y: auto; padding-right: 3px;
     }
-    @media (max-width: 1480px) {
-      .compact-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    }
+    @media (max-width: 1480px) { .compact-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 
     .mini-ob-card {
-      cursor: pointer;
-      border-radius: 11px;
-      padding: 8px 9px;
-      border: 1px solid var(--glass-border);
-      background: var(--glass-card);
+      cursor: pointer; border-radius: 11px; padding: 8px 9px;
+      border: 1px solid var(--glass-border); background: var(--glass-card);
       box-shadow: var(--specular);
       transition: transform 0.14s ease, border-color 0.15s ease, background 0.15s ease;
-      position: relative;
-      overflow: hidden;
+      position: relative; overflow: hidden;
     }
     .mini-ob-card.bull {
       background: linear-gradient(155deg, rgba(0, 245, 155, 0.11) 0%, rgba(14, 22, 36, 0.62) 65%);
@@ -427,70 +503,20 @@
       background: linear-gradient(155deg, rgba(255, 59, 107, 0.12) 0%, rgba(14, 22, 36, 0.62) 65%);
       border-color: rgba(255, 59, 107, 0.24);
     }
-    .mini-ob-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--cyan);
-      background: var(--glass-hover);
-    }
-    .mc-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 4px;
-      margin-bottom: 3px;
-    }
-    .mc-sym {
-      font-family: var(--font-mono);
-      font-size: 11.5px;
-      font-weight: 800;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-    .mc-chg {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      font-weight: 800;
-    }
+    .mini-ob-card:hover { transform: translateY(-2px); border-color: var(--cyan); background: var(--glass-hover); }
+    .mc-top { display: flex; align-items: center; justify-content: space-between; gap: 4px; margin-bottom: 3px; }
+    .mc-sym { font-family: var(--font-mono); font-size: 11.5px; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .mc-chg { font-family: var(--font-mono); font-size: 11px; font-weight: 800; }
     .mc-chg.up { color: var(--bull); }
     .mc-chg.dn { color: var(--bear); }
-    .mc-mid {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-family: var(--font-mono);
-      font-size: 9.5px;
-      color: var(--text-2);
-      margin-bottom: 5px;
-    }
-    .mc-spark {
-      width: 100%;
-      height: 24px;
-      display: block;
-    }
-    .mc-foot {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      font-family: var(--font-mono);
-      font-size: 9px;
-      color: var(--text-3);
-      margin-top: 3px;
-    }
+    .mc-mid { display: flex; align-items: center; justify-content: space-between; font-family: var(--font-mono); font-size: 9.5px; color: var(--text-2); margin-bottom: 5px; }
+    .mc-spark { width: 100%; height: 24px; display: block; }
+    .mc-foot { display: flex; align-items: center; justify-content: space-between; font-family: var(--font-mono); font-size: 9px; color: var(--text-3); margin-top: 3px; }
 
-    /* COL 3: TOP 3 BULLISH & TOP 3 BEARISH HERO SPOTLIGHT CARDS (EXACT VIDEO STYLE) */
-    .spotlight-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      overflow-y: auto;
-      padding-right: 2px;
-    }
-
+    /* COL 3: EXACT TOP CONVICTION OB PICKS */
+    .spotlight-stack { display: flex; flex-direction: column; gap: 8px; overflow-y: auto; padding-right: 2px; }
     .hero-card {
-      cursor: pointer;
-      border-radius: 13px;
-      padding: 10px 12px;
+      cursor: pointer; border-radius: 13px; padding: 10px 12px;
       border: 1px solid var(--glass-border);
       box-shadow: var(--specular), 0 8px 22px rgba(0, 0, 0, 0.35);
       transition: transform 0.14s ease, border-color 0.15s ease;
@@ -503,287 +529,242 @@
       background: linear-gradient(135deg, rgba(255, 59, 107, 0.19) 0%, rgba(28, 14, 24, 0.78) 60%, rgba(12, 16, 28, 0.85) 100%);
       border-color: rgba(255, 59, 107, 0.36);
     }
-    .hero-card:hover {
-      transform: translateY(-2px);
-      border-color: var(--cyan);
-    }
-
-    .hc-row1 {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 8px;
-    }
+    .hero-card:hover { transform: translateY(-2px); border-color: var(--cyan); }
+    .hc-row1 { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
     .hc-left { display: flex; flex-direction: column; gap: 3px; }
     .hc-title-row { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
     .hc-sym { font-family: var(--font-mono); font-size: 14px; font-weight: 900; letter-spacing: 0.4px; }
-    .hc-big-pct {
-      font-family: var(--font-mono);
-      font-size: 20px;
-      font-weight: 900;
-      line-height: 1.1;
-    }
+    .hc-big-pct { font-family: var(--font-mono); font-size: 20px; font-weight: 900; line-height: 1.1; }
     .hc-big-pct.up { color: var(--bull); }
     .hc-big-pct.dn { color: var(--bear); }
-    .hc-price-line {
-      font-family: var(--font-mono);
-      font-size: 10.5px;
-      color: var(--text-2);
-    }
-
+    .hc-price-line { font-family: var(--font-mono); font-size: 10.5px; color: var(--text-2); }
     .hc-right-chart {
-      width: 118px;
-      height: 54px;
-      flex-shrink: 0;
-      background: rgba(4, 7, 13, 0.45);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 8px;
-      overflow: hidden;
+      width: 118px; height: 54px; flex-shrink: 0;
+      background: rgba(4, 7, 13, 0.45); border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 8px; overflow: hidden;
     }
     .hc-right-chart canvas { width: 100%; height: 100%; display: block; }
-
     .hc-levels {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 4px;
-      margin-top: 8px;
-      padding-top: 7px;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px;
+      margin-top: 8px; padding-top: 7px; border-top: 1px solid rgba(255, 255, 255, 0.08);
       font-family: var(--font-mono);
     }
     .lvl-cell .l-lbl { font-size: 8.5px; color: var(--text-3); text-transform: uppercase; display: block; }
     .lvl-cell .l-val { font-size: 10px; font-weight: 800; color: var(--text-1); }
 
-    /* LIQUID GLASS ORDER BLOCK CHART MODAL (VIDEO CLICK-POPUP STYLE) */
+    /* MODALS */
     .modal-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      z-index: 90;
-      background: rgba(3, 6, 13, 0.72);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
+      display: none; position: fixed; inset: 0; z-index: 90;
+      background: rgba(3, 6, 13, 0.72); backdrop-filter: blur(12px);
+      align-items: center; justify-content: center; padding: 16px;
     }
     .modal-backdrop.open { display: flex; }
-
     .ob-modal {
-      width: 100%;
-      max-width: 820px;
-      background: rgba(13, 20, 34, 0.86);
-      backdrop-filter: blur(26px) saturate(160%);
-      -webkit-backdrop-filter: blur(26px) saturate(160%);
+      width: 100%; max-width: 820px;
+      background: rgba(13, 20, 34, 0.88); backdrop-filter: blur(26px) saturate(160%);
       border: 1px solid rgba(255, 255, 255, 0.16);
       box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 30px 80px rgba(0, 0, 0, 0.75);
-      border-radius: 18px;
-      padding: 18px 20px;
-      animation: popIn 0.18s ease-out;
+      border-radius: 18px; padding: 18px 20px;
     }
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.96) translateY(8px); }
-      to { opacity: 1; transform: scale(1) translateY(0); }
-    }
-
-    .obm-head {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-    .obm-sym { font-family: var(--font-mono); font-size: 20px; font-weight: 900; display: flex; align-items: center; gap: 9px; }
+    .obm-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+    .obm-sym { font-family: var(--font-mono); font-size: 20px; font-weight: 900; display: flex; align-items: center; gap: 9px; flex-wrap: wrap; }
     .obm-close {
-      background: rgba(255,255,255,0.07);
-      border: 1px solid var(--glass-border-hi);
-      color: var(--text-1);
-      width: 32px;
-      height: 32px;
-      border-radius: 9px;
-      font-size: 18px;
-      cursor: pointer;
+      background: rgba(255,255,255,0.07); border: 1px solid var(--glass-border-hi);
+      color: var(--text-1); width: 32px; height: 32px; border-radius: 9px; font-size: 18px; cursor: pointer;
     }
     .obm-close:hover { background: var(--bear-soft); border-color: var(--bear-bd); color: var(--bear); }
-
-    .obm-stats {
-      display: grid;
-      grid-template-columns: repeat(6, 1fr);
-      gap: 7px;
-      margin-bottom: 12px;
-    }
-    @media (max-width: 720px) {
-      .obm-stats { grid-template-columns: repeat(3, 1fr); }
-    }
-    .obm-stat {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--glass-border);
-      border-radius: 10px;
-      padding: 7px 9px;
-      font-family: var(--font-mono);
-    }
+    .obm-stats { display: grid; grid-template-columns: repeat(6, 1fr); gap: 7px; margin-bottom: 12px; }
+    @media (max-width: 720px) { .obm-stats { grid-template-columns: repeat(3, 1fr); } }
+    .obm-stat { background: rgba(255, 255, 255, 0.04); border: 1px solid var(--glass-border); border-radius: 10px; padding: 7px 9px; font-family: var(--font-mono); }
     .obm-stat .s-lbl { font-size: 9px; color: var(--text-3); text-transform: uppercase; }
     .obm-stat .s-val { font-size: 12px; font-weight: 800; margin-top: 2px; }
-
-    .obm-chart-wrap {
-      position: relative;
-      width: 100%;
-      height: 330px;
-      background: rgba(4, 7, 13, 0.85);
-      border: 1px solid var(--glass-border);
-      border-radius: 13px;
-      overflow: hidden;
-      margin-bottom: 10px;
-    }
+    .obm-chart-wrap { position: relative; width: 100%; height: 330px; background: rgba(4, 7, 13, 0.85); border: 1px solid var(--glass-border); border-radius: 13px; overflow: hidden; margin-bottom: 10px; }
     canvas#obDetailCanvas { width: 100%; height: 100%; display: block; cursor: crosshair; }
+    .obm-note { font-family: var(--font-mono); font-size: 11px; color: var(--text-2); background: rgba(255,255,255,0.035); border: 1px solid var(--glass-border); border-radius: 10px; padding: 9px 12px; line-height: 1.5; }
 
-    .obm-note {
-      font-family: var(--font-mono);
-      font-size: 11px;
-      color: var(--text-2);
-      background: rgba(255,255,255,0.035);
-      border: 1px solid var(--glass-border);
-      border-radius: 10px;
-      padding: 9px 12px;
-      line-height: 1.5;
-    }
-
-    /* Settings Modal */
-    .settings-modal {
-      width: 100%;
-      max-width: 440px;
-      background: rgba(13, 20, 34, 0.92);
-      backdrop-filter: blur(24px);
-      border: 1px solid var(--glass-border-hi);
-      border-radius: 16px;
-      padding: 18px 20px;
-    }
+    .settings-modal { width: 100%; max-width: 440px; background: rgba(13, 20, 34, 0.92); backdrop-filter: blur(24px); border: 1px solid var(--glass-border-hi); border-radius: 16px; padding: 18px 20px; }
     .form-group { margin-bottom: 12px; }
     .form-group label { display: block; font-size: 11px; color: var(--text-2); font-family: var(--font-mono); margin-bottom: 5px; }
-    .form-group input {
-      width: 100%;
-      background: rgba(4,7,13,0.75);
-      border: 1px solid var(--glass-border-hi);
-      color: var(--text-1);
-      padding: 8px 10px;
-      border-radius: 9px;
-      font-family: var(--font-mono);
-      font-size: 12px;
-    }
+    .form-group input { width: 100%; background: rgba(4,7,13,0.75); border: 1px solid var(--glass-border-hi); color: var(--text-1); padding: 8px 10px; border-radius: 9px; font-family: var(--font-mono); font-size: 12px; }
   </style>
 </head>
 <body>
-  <!-- TOP LIQUID GLASS BAR -->
-  <header class="topbar">
-    <div class="brand">
-      <div class="brand-gem">OB</div>
-      <div>
-        <div class="brand-title">
-          ORDER BLOCK TERMINAL
-          <span class="pill pill-cyan">LIQUID GLASS</span>
-          <span class="pill pill-muted">NSE F&amp;O</span>
+  <!-- ===================================================================
+       VIEW 1: CENTERPIECE GLASS PORTAL (MAIN LANDING SCREEN)
+       =================================================================== -->
+  <div id="portalView">
+    <div class="portal-halo"></div>
+
+    <nav class="portal-nav">
+      <div class="brand" onclick="enterTerminal('live')">
+        <div class="brand-gem">OB</div>
+        <div class="brand-title">OrderBlock <span class="pill pill-cyan">PRO</span></div>
+      </div>
+
+      <div class="portal-nav-pill">
+        <a onclick="enterTerminal('live')">Live Liquidity Flow</a>
+        <a onclick="enterTerminal('backtest')">Backtesting Data</a>
+        <a onclick="enterTerminal('live')">F&amp;O OB Scanner</a>
+      </div>
+
+      <button class="btn btn-live active" onclick="enterTerminal('live')">⚡ ENTER TERMINAL</button>
+    </nav>
+
+    <section class="portal-hero">
+      <span class="pill pill-bull">● NSE F&amp;O LIVE LIQUIDITY FLOW ENGINE</span>
+      <h1 class="portal-title">Real-Time <span>Order Block</span><br/>&amp; Liquidity Flow</h1>
+      <p class="portal-desc">
+        Track continuous Demand Inflow vs Supply Outflow through the institutional Liquidity Spine, scan high-conviction F&amp;O Order Blocks, and verify 72.8% backtested setups in real time.
+      </p>
+      <div class="portal-cta-row">
+        <button class="cta-primary" onclick="enterTerminal('live')">⚡ START TRADING</button>
+        <button class="cta-glass" onclick="enterTerminal('backtest')">📊 BACKTESTING DATA</button>
+      </div>
+    </section>
+
+    <div class="portal-preview-wrap">
+      <div class="portal-preview-card" onclick="enterTerminal('live')" title="Click to enter Live Terminal">
+        <div class="preview-overlay-badge">
+          <span class="pill pill-bull">● DEMAND INFLOW LIVE</span>
+          <span class="pill pill-bear">● SUPPLY OUTFLOW LIVE</span>
         </div>
-        <div class="brand-sub" id="syncSub">Institutional Liquidity Flow &amp; Live OB Markings</div>
+        <div class="preview-overlay-cta">
+          <span class="pill pill-cyan">CLICK TO LAUNCH DESK →</span>
+        </div>
+        <canvas id="portalPreviewCanvas"></canvas>
       </div>
     </div>
-
-    <div class="controls">
-      <div class="clock-chip">
-        <span>IST</span>
-        <strong id="istClock">--:--:--</strong>
-        <span class="pill pill-muted" id="mktState">CHECK</span>
-      </div>
-      <div class="status-chip" id="statusChip">
-        <span class="status-dot"></span>
-        <span id="statusText">SIM MODE</span>
-      </div>
-      <button class="btn btn-live" id="liveBtn" onclick="toggleLiveMode()">⚡ LIVE NSE MCP: OFF</button>
-      <button class="btn" onclick="manualRefresh()">↻ Refresh</button>
-      <button class="btn" onclick="openSettings()" title="Bridge Settings">⚙</button>
-    </div>
-  </header>
-
-  <div class="alert-banner" id="alertBanner">
-    <span id="alertText">Bridge offline. Run Start_NSE_Live.bat on your PC.</span>
-    <button class="btn" style="padding:3px 8px;" onclick="hideAlert()">Dismiss</button>
   </div>
 
-  <!-- MAIN 3-COLUMN LIQUID GLASS MARKET FLOW DESK -->
-  <main class="desk">
-    <!-- COLUMN 1: MARKET FLOW SPIDER + LIQUIDITY SPINE + BEZIER FLOW -->
-    <section class="glass pane">
-      <div class="pane-head">
+  <!-- ===================================================================
+       VIEW 2: LIVE LIQUID GLASS TERMINAL (EXACT SCREENSHOT LAYOUT + CONTINUOUS FLOW)
+       =================================================================== -->
+  <div id="terminalView" class="hidden">
+    <header class="topbar">
+      <div class="brand" onclick="showPortal()" title="Back to Main Portal">
+        <div class="brand-gem">OB</div>
         <div>
-          <div class="pane-title">🌊 Live Market Liquidity Flow (09:15 → Now)</div>
-          <div class="pane-sub">Green Demand Flow vs Red Supply Flow • Hover for % trajectory</div>
-        </div>
-        <span class="pill pill-cyan" id="pollCountPill">6 Ticks</span>
-      </div>
-
-      <div class="flow-kpi-row">
-        <div class="kpi-glass">
-          <div class="kpi-lbl">Bullish Liquidity</div>
-          <div class="kpi-num bull" id="bullCountBig">0</div>
-        </div>
-        <div class="kpi-glass">
-          <div class="kpi-lbl">Bearish Liquidity</div>
-          <div class="kpi-num bear" id="bearCountBig">0</div>
-        </div>
-        <div class="kpi-glass">
-          <div class="kpi-lbl">Market Bias</div>
-          <div style="margin-top:4px;" id="biasBadgeWrap"><span class="pill pill-bull">DEMAND CONTROL</span></div>
-          <div class="pane-sub" style="margin-top:4px;" id="breadthPctSub">74% Bullish</div>
+          <div class="brand-title">
+            ORDER BLOCK TERMINAL
+            <span class="pill pill-cyan">LIQUID GLASS</span>
+            <span class="pill pill-muted">NSE F&amp;O</span>
+          </div>
+          <div class="brand-sub" id="syncSub">Institutional Liquidity Flow &amp; Live OB Markings</div>
         </div>
       </div>
 
-      <div class="flow-stage" id="flowStage">
-        <canvas id="marketFlowCanvas"></canvas>
-        <div class="flow-tooltip" id="flowTooltip"></div>
-      </div>
-
-      <div class="sector-strip" id="sectorStrip"></div>
-    </section>
-
-    <!-- COLUMN 2: TOP 20 BULLISH & TOP 20 BEARISH LIQUID GLASS GRID -->
-    <section class="glass pane">
-      <div class="pane-head">
-        <div>
-          <div class="pane-title">⚡ Institutional F&amp;O Scanner Grid</div>
-          <div class="pane-sub">Click any stock card to open Live Order Block Chart Markings</div>
+      <div class="controls">
+        <div class="mode-switch">
+          <button class="mode-tab active" id="tabLiveView" onclick="setDeskMode('live')">LIVE FLOW</button>
+          <button class="mode-tab" id="tabBtView" onclick="setDeskMode('backtest')">BACKTESTING DATA</button>
         </div>
-        <button class="btn" style="padding:4px 9px;font-size:10px;" onclick="resetSector()">All Sectors</button>
-      </div>
 
-      <div class="grid-toolbar">
-        <input type="text" class="search-input" id="searchInput" placeholder="Search F&amp;O stock or sector (e.g. ANGELONE, BANKING)..." oninput="renderGrids()" />
-      </div>
-
-      <div class="section-divider bull">
-        <span>▲ TOP BULLISH BUILD-UP (DEMAND OB)</span>
-        <span id="gridBullCount">0</span>
-      </div>
-      <div class="compact-grid" id="bullGrid"></div>
-
-      <div class="section-divider bear">
-        <span>▼ TOP BEARISH BUILD-UP (SUPPLY OB)</span>
-        <span id="gridBearCount">0</span>
-      </div>
-      <div class="compact-grid" id="bearGrid"></div>
-    </section>
-
-    <!-- COLUMN 3: TOP 3 BULLISH & TOP 3 BEARISH HERO SPOTLIGHT CARDS -->
-    <section class="glass pane col-spotlight">
-      <div class="pane-head">
-        <div>
-          <div class="pane-title">🎯 Top Conviction OB Picks</div>
-          <div class="pane-sub">Top 3 Bullish &amp; Top 3 Bearish with OB Zone, R1/R2 &amp; R:R</div>
+        <div class="clock-chip">
+          <span>IST</span>
+          <strong id="istClock">--:--:--</strong>
+          <span class="pill pill-muted" id="mktState">CHECK</span>
         </div>
-        <span class="pill pill-muted" id="lastSyncPill">--:--:--</span>
+        <div class="status-chip" id="statusChip">
+          <span class="status-dot"></span>
+          <span id="statusText">SIM MODE</span>
+        </div>
+        <button class="btn btn-live" id="liveBtn" onclick="toggleLiveMode()">⚡ LIVE NSE MCP: OFF</button>
+        <button class="btn" onclick="manualRefresh()">↻ Refresh</button>
+        <button class="btn" onclick="openSettings()" title="Bridge Settings">⚙</button>
       </div>
+    </header>
 
-      <div class="spotlight-stack" id="spotlightStack"></div>
-    </section>
-  </main>
+    <div class="alert-banner" id="alertBanner">
+      <span id="alertText">Bridge offline. Run Start_NSE_Live.bat on your PC.</span>
+      <button class="btn" style="padding:3px 8px;" onclick="hideAlert()">Dismiss</button>
+    </div>
+
+    <main class="desk">
+      <!-- COLUMN 1: CONTINUOUS ANIMATED DEMAND INFLOW / SUPPLY OUTFLOW LIQUIDITY SPINE -->
+      <section class="glass pane">
+        <div class="pane-head">
+          <div>
+            <div class="pane-title">🌊 Demand Inflow / Supply Outflow Spine</div>
+            <div class="pane-sub">Continuous Cash In/Out Liquidity Stream (09:15 → Live)</div>
+          </div>
+          <span class="pill pill-cyan" id="pollCountPill">6 Ticks</span>
+        </div>
+
+        <div class="flow-kpi-row">
+          <div class="kpi-glass">
+            <div class="kpi-lbl">Demand Inflow</div>
+            <div class="kpi-num bull" id="bullCountBig">0</div>
+            <div class="kpi-mini" id="inflowCr">+₹0 Cr Est</div>
+          </div>
+          <div class="kpi-glass">
+            <div class="kpi-lbl">Supply Outflow</div>
+            <div class="kpi-num bear" id="bearCountBig">0</div>
+            <div class="kpi-mini" id="outflowCr">-₹0 Cr Est</div>
+          </div>
+          <div class="kpi-glass">
+            <div class="kpi-lbl">Market Bias</div>
+            <div style="margin-top:4px;" id="biasBadgeWrap"><span class="pill pill-bull">DEMAND CONTROL</span></div>
+            <div class="pane-sub" style="margin-top:4px;" id="breadthPctSub">74% Bullish</div>
+          </div>
+        </div>
+
+        <div class="flow-stage" id="flowStage">
+          <canvas id="marketFlowCanvas"></canvas>
+          <div class="flow-tooltip" id="flowTooltip"></div>
+        </div>
+
+        <div class="sector-strip" id="sectorStrip"></div>
+      </section>
+
+      <!-- COLUMN 2: EXACT INSTITUTIONAL F&O SCANNER GRID (MATCHES USER SCREENSHOT) -->
+      <section class="glass pane">
+        <div class="pane-head">
+          <div>
+            <div class="pane-title">⚡ Institutional F&amp;O Scanner Grid</div>
+            <div class="pane-sub">Click any stock card to open Live Order Block Chart Markings</div>
+          </div>
+          <button class="btn" style="padding:4px 9px;font-size:10px;" onclick="resetSector()">All Sectors</button>
+        </div>
+
+        <!-- Backtest Summary Card (visible when BACKTESTING DATA mode is active) -->
+        <div class="bt-summary-card" id="btSummaryCard">
+          <div class="bt-cell"><div class="bt-l">Win Rate</div><div class="bt-v" style="color:var(--bull)">72.8%</div></div>
+          <div class="bt-cell"><div class="bt-l">Total Trades</div><div class="bt-v">1,420</div></div>
+          <div class="bt-cell"><div class="bt-l">Max Drawdown</div><div class="bt-v" style="color:var(--bear)">-4.2%</div></div>
+          <div class="bt-cell"><div class="bt-l">Profit Factor</div><div class="bt-v" style="color:var(--cyan)">2.34</div></div>
+        </div>
+
+        <div class="grid-toolbar">
+          <input type="text" class="search-input" id="searchInput" placeholder="Search F&amp;O stock or sector (e.g. TCS, BANKING)..." oninput="renderGrids()" />
+        </div>
+
+        <div class="section-divider bull">
+          <span>▲ TOP BULLISH BUILD-UP (DEMAND OB)</span>
+          <span id="gridBullCount">0</span>
+        </div>
+        <div class="compact-grid" id="bullGrid"></div>
+
+        <div class="section-divider bear">
+          <span>▼ TOP BEARISH BUILD-UP (SUPPLY OB)</span>
+          <span id="gridBearCount">0</span>
+        </div>
+        <div class="compact-grid" id="bearGrid"></div>
+      </section>
+
+      <!-- COLUMN 3: EXACT TOP CONVICTION OB PICKS (MATCHES USER SCREENSHOT) -->
+      <section class="glass pane col-spotlight">
+        <div class="pane-head">
+          <div>
+            <div class="pane-title">🎯 Top Conviction OB Picks</div>
+            <div class="pane-sub">Top 3 Bullish &amp; Top 3 Bearish with OB Zone, R1/R2 &amp; R:R</div>
+          </div>
+          <span class="pill pill-muted" id="lastSyncPill">--:--:--</span>
+        </div>
+
+        <div class="spotlight-stack" id="spotlightStack"></div>
+      </section>
+    </main>
+  </div>
 
   <!-- CLICK-TO-INSPECT LIVE ORDER BLOCK CHART MODAL -->
   <div class="modal-backdrop" id="obModalBackdrop" onclick="if(event.target===this) closeOBModal()">
@@ -795,13 +776,8 @@
         </div>
         <button class="obm-close" onclick="closeOBModal()">&times;</button>
       </div>
-
       <div class="obm-stats" id="obmStatsGrid"></div>
-
-      <div class="obm-chart-wrap">
-        <canvas id="obDetailCanvas"></canvas>
-      </div>
-
+      <div class="obm-chart-wrap"><canvas id="obDetailCanvas"></canvas></div>
       <div class="obm-note" id="obmNote"></div>
     </div>
   </div>
@@ -841,6 +817,7 @@
       MCX:'CAP MKTS', CAMS:'CAP MKTS', KFINTECH:'CAP MKTS', PNBHOUSING:'FINANCE', LICHSGFIN:'FINANCE',
       MUTHOOTFIN:'FINANCE', MANAPPURAM:'FINANCE', ABCAPITAL:'FINANCE', LTF:'FINANCE', SBICARD:'FINANCE',
       HDFCAMC:'CAP MKTS', HUDCO:'FINANCE', IREDA:'FINANCE', IRFC:'FINANCE', LICI:'FINANCE', POONAWALLA:'FINANCE',
+      POLICYBZR:'FINANCE',
 
       TCS:'IT', INFY:'IT', HCLTECH:'IT', WIPRO:'IT', TECHM:'IT', LTIM:'IT', LTM:'IT', PERSISTENT:'IT',
       COFORGE:'IT', MPHASIS:'IT', TATAELXSI:'IT', KPITTECH:'IT', LTTS:'IT', OFSS:'IT', BSOFT:'IT', CYIENT:'IT',
@@ -858,56 +835,61 @@
       ADANIENSOL:'ENERGY', TORNTPOWER:'ENERGY', JSWENERGY:'ENERGY', NHPC:'ENERGY', COALINDIA:'ENERGY',
 
       TATASTEEL:'METAL', HINDALCO:'METAL', JSWSTEEL:'METAL', JINDALSTEL:'METAL', VEDL:'METAL',
-      NMDC:'METAL', SAIL:'METAL', NATIONALUM:'METAL', HINDCOPPER:'METAL', JSL:'METAL',
+      NMDC:'METAL', SAIL:'METAL', NATIONALUM:'METAL', HINDCOPPER:'METAL', JSL:'METAL', APLAPOLLO:'METAL',
 
       DLF:'REALTY', GODREJPROP:'REALTY', OBEROIRLTY:'REALTY', LODHA:'REALTY', PRESTIGE:'REALTY', PHOENIXLTD:'REALTY',
 
       LT:'INFRA', ULTRACEMCO:'INFRA', GRASIM:'INFRA', AMBUJACEM:'INFRA', ACC:'INFRA', SHREECEM:'INFRA',
       ADANIPORTS:'INFRA', ADANIENT:'INFRA', INDIGO:'INFRA', CONCOR:'INFRA', RVNL:'INFRA', IRCTC:'INFRA',
-      BHARTIARTL:'TELECOM', INDUSTOWER:'TELECOM',
+      BHARTIARTL:'TELECOM', INDUSTOWER:'TELECOM', HFCL:'TELECOM',
 
       HAL:'DEFENCE', BEL:'DEFENCE', BDL:'DEFENCE', MAZDOCK:'DEFENCE', COCHINSHIP:'DEFENCE', ABB:'CAP GOODS',
       SIEMENS:'CAP GOODS', BHEL:'CAP GOODS', CGPOWER:'CAP GOODS', CUMMINSIND:'CAP GOODS', POLYCAB:'CAP GOODS',
       HAVELLS:'CAP GOODS', DIXON:'CAP GOODS', KAYNES:'CAP GOODS',
 
       HINDUNILVR:'FMCG', ITC:'FMCG', NESTLEIND:'FMCG', BRITANNIA:'FMCG', TATACONSUM:'FMCG', VBL:'FMCG',
-      DABUR:'FMCG', MARICO:'FMCG', GODREJCP:'FMCG', TITAN:'FMCG', TRENT:'RETAIL', DMART:'RETAIL',
-      PIDILITIND:'FMCG', ASIANPAINT:'FMCG', INDHOTEL:'HOTELS', ZOMATO:'TECH', PAYTM:'TECH', NAUKRI:'TECH'
+      DABUR:'FMCG', MARICO:'FMCG', GODREJCP:'FMCG', COLPAL:'FMCG', TITAN:'FMCG', TRENT:'RETAIL', DMART:'RETAIL',
+      PIDILITIND:'FMCG', ASIANPAINT:'FMCG', INDHOTEL:'HOTELS', ZOMATO:'TECH', PAYTM:'TECH', NAUKRI:'TECH', KALYANKJIL:'RETAIL'
     };
 
     const SIM_STOCKS = [
-      { symbol: 'INDUSINDBK', ltp: 1003.00, pChange: 8.59, volume: 0, high: 1003.00, low: 906.00 },
-      { symbol: 'CUB', ltp: 248.80, pChange: 6.25, volume: 0, high: 251.00, low: 230.15 },
-      { symbol: 'APOLLOHOSP', ltp: 9200.00, pChange: 5.29, volume: 0, high: 9282.50, low: 8800.00 },
-      { symbol: 'AXISBANK', ltp: 1446.00, pChange: 4.72, volume: 0, high: 1450.00, low: 1368.80 },
-      { symbol: 'UNIONBANK', ltp: 218.85, pChange: 4.21, volume: 0, high: 219.10, low: 206.76 },
-      { symbol: 'PERSISTENT', ltp: 6124.00, pChange: 4.15, volume: 0, high: 6215.00, low: 5831.00 },
-      { symbol: 'MAXHEALTH', ltp: 1081.00, pChange: 3.88, volume: 0, high: 1090.00, low: 1050.05 },
-      { symbol: 'ANGELONE', ltp: 348.30, pChange: 3.52, volume: 0, high: 350.90, low: 331.35 },
-      { symbol: 'TATAELXSI', ltp: 3850.00, pChange: 3.36, volume: 0, high: 3939.00, low: 3680.10 },
-      { symbol: 'MARUTI', ltp: 14011.00, pChange: 3.11, volume: 0, high: 14047.00, low: 13505.00 },
-      { symbol: 'ULTRACEMCO', ltp: 12939.00, pChange: 3.02, volume: 0, high: 12939.00, low: 12575.00 },
-      { symbol: 'HDFCBANK', ltp: 846.00, pChange: 2.94, volume: 0, high: 850.35, low: 815.50 },
-      { symbol: 'BAJFINANCE', ltp: 1122.00, pChange: 2.67, volume: 0, high: 1125.00, low: 1078.15 },
-      { symbol: 'GODREJPROP', ltp: 1930.20, pChange: 2.62, volume: 0, high: 1942.00, low: 1848.60 },
-      { symbol: 'MFSL', ltp: 1435.10, pChange: 2.58, volume: 0, high: 1435.10, low: 1376.10 },
-      { symbol: 'KOTAKBANK', ltp: 515.80, pChange: 2.54, volume: 0, high: 516.60, low: 499.00 },
-      { symbol: 'DLF', ltp: 785.00, pChange: 2.21, volume: 0, high: 792.00, low: 761.00 },
-      { symbol: 'HINDALCO', ltp: 929.50, pChange: 2.14, volume: 0, high: 932.80, low: 894.00 },
-      { symbol: 'TRENT', ltp: 5410.00, pChange: -3.12, volume: 0, high: 5610.00, low: 5395.00 },
-      { symbol: 'LAURUSLABS', ltp: 612.40, pChange: -2.74, volume: 0, high: 632.00, low: 610.20 },
-      { symbol: 'ASIANPAINT', ltp: 2415.00, pChange: -2.64, volume: 0, high: 2489.00, low: 2410.00 },
-      { symbol: 'DIXON', ltp: 14820.00, pChange: -2.42, volume: 0, high: 15250.00, low: 14780.00 },
-      { symbol: 'TATASTEEL', ltp: 142.30, pChange: -2.18, volume: 0, high: 146.90, low: 141.80 },
-      { symbol: 'SUNPHARMA', ltp: 1712.00, pChange: -1.82, volume: 0, high: 1752.00, low: 1708.50 },
-      { symbol: 'INFY', ltp: 1582.40, pChange: -1.45, volume: 0, high: 1618.00, low: 1579.00 },
-      { symbol: 'COFORGE', ltp: 7810.00, pChange: -1.28, volume: 0, high: 7960.00, low: 7795.00 },
-      { symbol: 'MPHASIS', ltp: 2365.00, pChange: -1.12, volume: 0, high: 2415.00, low: 2358.00 }
+      { symbol: 'TCS', ltp: 2498.50, pChange: 4.81, volume: 0, high: 2510.00, low: 2380.00 },
+      { symbol: 'POLICYBZR', ltp: 1071.10, pChange: 4.72, volume: 0, high: 1082.00, low: 1020.00 },
+      { symbol: 'KALYANKJIL', ltp: 667.75, pChange: 4.55, volume: 0, high: 672.00, low: 638.00 },
+      { symbol: 'TECHM', ltp: 1807.80, pChange: 3.53, volume: 0, high: 1815.00, low: 1742.00 },
+      { symbol: 'INFY', ltp: 1129.40, pChange: 2.86, volume: 0, high: 1135.00, low: 1094.00 },
+      { symbol: 'KPITTECH', ltp: 532.40, pChange: 2.57, volume: 0, high: 538.00, low: 515.00 },
+      { symbol: 'LTM', ltp: 4272.20, pChange: 2.54, volume: 0, high: 4290.00, low: 4160.00 },
+      { symbol: 'SHRIRAMFIN', ltp: 995.10, pChange: 2.38, volume: 0, high: 1002.00, low: 969.00 },
+      { symbol: 'HCLTECH', ltp: 1375.50, pChange: 2.31, volume: 0, high: 1384.00, low: 1341.00 },
+      { symbol: 'COFORGE', ltp: 2133.70, pChange: 2.25, volume: 0, high: 2145.00, low: 2080.00 },
+      { symbol: 'WIPRO', ltp: 189.80, pChange: 2.20, volume: 0, high: 191.50, low: 184.80 },
+      { symbol: 'PERSISTENT', ltp: 6253.00, pChange: 2.11, volume: 0, high: 6280.00, low: 6110.00 },
+      { symbol: 'MPHASIS', ltp: 2470.40, pChange: 2.08, volume: 0, high: 2485.00, low: 2410.00 },
+      { symbol: 'MARUTI', ltp: 14297.00, pChange: 2.04, volume: 0, high: 14350.00, low: 13980.00 },
+      { symbol: 'DIXON', ltp: 13356.00, pChange: 1.80, volume: 0, high: 13420.00, low: 13090.00 },
+      { symbol: 'NAUKRI', ltp: 1198.80, pChange: 1.79, volume: 0, high: 1208.00, low: 1172.00 },
+      { symbol: 'COLPAL', ltp: 1789.00, pChange: 1.65, volume: 0, high: 1798.00, low: 1756.00 },
+      { symbol: 'DIVISLAB', ltp: 11296.00, pChange: 1.03, volume: 0, high: 11340.00, low: 11140.00 },
+      { symbol: 'APLAPOLLO', ltp: 1791.80, pChange: -15.54, volume: 0, high: 2110.00, low: 1780.00 },
+      { symbol: 'TATASTEEL', ltp: 167.60, pChange: -5.84, volume: 0, high: 178.40, low: 166.90 },
+      { symbol: 'HFCL', ltp: 178.60, pChange: -5.00, volume: 0, high: 188.20, low: 177.50 },
+      { symbol: 'UNIONBANK', ltp: 209.30, pChange: -4.37, volume: 0, high: 219.00, low: 208.40 },
+      { symbol: 'BANKBARODA', ltp: 277.30, pChange: -3.40, volume: 0, high: 287.50, low: 276.20 },
+      { symbol: 'BANKINDIA', ltp: 159.80, pChange: -2.99, volume: 0, high: 165.00, low: 159.10 },
+      { symbol: 'CANBK', ltp: 134.90, pChange: -2.91, volume: 0, high: 139.20, low: 134.20 },
+      { symbol: 'IREDA', ltp: 128.20, pChange: -2.67, volume: 0, high: 132.10, low: 127.60 },
+      { symbol: 'INDUSINDBK', ltp: 976.50, pChange: -2.65, volume: 0, high: 1004.00, low: 974.00 },
+      { symbol: 'ANGELONE', ltp: 339.10, pChange: -2.63, volume: 0, high: 348.50, low: 337.90 },
+      { symbol: 'PNB', ltp: 151.40, pChange: -2.53, volume: 0, high: 155.60, low: 150.80 },
+      { symbol: 'AXISBANK', ltp: 1410.70, pChange: -2.44, volume: 0, high: 1446.00, low: 1406.00 }
     ];
 
     let bridgeUrl = localStorage.getItem('ob_bridge_url') || 'http://127.0.0.1:8000/api/nse-mcp-live';
     let pollSeconds = Number(localStorage.getItem('ob_poll_sec') || 15);
     let isLiveMode = false;
+    let deskMode = 'live'; // 'live' | 'backtest'
+    let currentView = 'portal'; // 'portal' | 'terminal'
     let pollTimer = null;
     let enrichedStocks = [];
     let selectedSector = 'ALL';
@@ -915,6 +897,40 @@
     let timeLabels = [];
     let flowLayout = null;
     let activeModalSym = null;
+
+    // Continuous 60fps Energy Particles for Demand Inflow / Supply Outflow
+    const flowParticles = Array.from({ length: 46 }, (_, i) => ({
+      seriesIdx: i % 22,
+      t: (i * 0.097) % 1,
+      speed: 0.0038 + (i % 5) * 0.0011,
+      fiberT: (i * 0.13) % 1,
+      size: 2.0 + (i % 3) * 0.9
+    }));
+
+    function enterTerminal(mode) {
+      currentView = 'terminal';
+      document.getElementById('portalView').classList.add('hidden');
+      document.getElementById('terminalView').classList.remove('hidden');
+      setDeskMode(mode || 'live');
+      setTimeout(() => {
+        renderGrids();
+        renderSpotlights();
+      }, 30);
+    }
+
+    function showPortal() {
+      currentView = 'portal';
+      document.getElementById('terminalView').classList.add('hidden');
+      document.getElementById('portalView').classList.remove('hidden');
+    }
+
+    function setDeskMode(mode) {
+      deskMode = mode;
+      document.getElementById('tabLiveView').classList.toggle('active', mode === 'live');
+      document.getElementById('tabBtView').classList.toggle('active', mode === 'backtest');
+      document.getElementById('btSummaryCard').classList.toggle('show', mode === 'backtest');
+      renderGrids();
+    }
 
     function getSector(sym) { return SECTOR_MAP[sym] || 'F&O'; }
 
@@ -932,7 +948,6 @@
       const score = Math.round(Math.min(99, Math.abs(pChange) * 9.5 + (dirStrength / 100) * 38 + Math.min(rangePct * 3.8, 18)));
       const isBull = pChange >= 0;
 
-      // Order Block 1 (Morning Base OB) & Order Block 2 (Mid-Day Continuation OB)
       const ob1Low = isBull ? low : high - span * 0.22;
       const ob1High = isBull ? low + span * 0.22 : high;
       const ob2Low = isBull ? low + span * 0.48 : low + span * 0.34;
@@ -945,12 +960,11 @@
       const sl = isBull ? Math.max(low, ob2Low - span * 0.08) : Math.min(high, ob2High + span * 0.08);
       const riskAmt = Math.max(Math.abs(ltp - sl), ltp * 0.0045);
       const riskPct = (riskAmt / Math.max(ltp, 1)) * 100;
-      const rewardAmt = Math.abs((isBull ? r2 : r2) - ltp);
+      const rewardAmt = Math.abs(r2 - ltp);
       const rr = Math.max(1.5, Math.min(4.5, rewardAmt / riskAmt));
 
       return {
-        symbol: sym,
-        sector: getSector(sym),
+        symbol: sym, sector: getSector(sym),
         ltp, pChange, high, low, span,
         rangePct: Number(rangePct.toFixed(2)),
         closePos: Math.round(closePos),
@@ -960,7 +974,8 @@
         vwap, ob1Low, ob1High, ob2Low, ob2High,
         s1, r1, r2, sl,
         riskPct: Number(riskPct.toFixed(2)),
-        rr: Number(rr.toFixed(1))
+        rr: Number(rr.toFixed(1)),
+        btHit: score >= 82
       };
     }
 
@@ -1016,7 +1031,6 @@
       renderSectors();
       renderGrids();
       renderSpotlights();
-      drawMarketFlow();
       if (activeModalSym) drawOBModalChart(activeModalSym);
     }
 
@@ -1074,12 +1088,17 @@
     }
 
     function renderKPIs() {
-      const bulls = enrichedStocks.filter(s => s.isBull).length;
-      const bears = enrichedStocks.length - bulls;
-      const pct = Math.round((bulls / Math.max(1, enrichedStocks.length)) * 100);
-      document.getElementById('bullCountBig').textContent = bulls;
-      document.getElementById('bearCountBig').textContent = bears;
+      const bulls = enrichedStocks.filter(s => s.isBull);
+      const bears = enrichedStocks.filter(s => !s.isBull);
+      const pct = Math.round((bulls.length / Math.max(1, enrichedStocks.length)) * 100);
+      document.getElementById('bullCountBig').textContent = bulls.length;
+      document.getElementById('bearCountBig').textContent = bears.length;
       document.getElementById('breadthPctSub').textContent = `${pct}% Demand / ${100 - pct}% Supply`;
+
+      const inCr = Math.round(bulls.reduce((acc, s) => acc + Math.abs(s.pChange) * 42, 0));
+      const outCr = Math.round(bears.reduce((acc, s) => acc + Math.abs(s.pChange) * 42, 0));
+      document.getElementById('inflowCr').textContent = `+₹${inCr.toLocaleString('en-IN')} Cr Flow`;
+      document.getElementById('outflowCr').textContent = `-₹${outCr.toLocaleString('en-IN')} Cr Flow`;
 
       const wrap = document.getElementById('biasBadgeWrap');
       if (pct >= 60) wrap.innerHTML = '<span class="pill pill-bull">DEMAND CONTROL</span>';
@@ -1105,12 +1124,9 @@
 
     function toggleSector(sec) {
       selectedSector = (selectedSector === sec) ? 'ALL' : sec;
-      renderSectors();
-      renderGrids();
-      renderSpotlights();
-      drawMarketFlow();
+      renderSectors(); renderGrids(); renderSpotlights();
     }
-    function resetSector() { selectedSector = 'ALL'; renderSectors(); renderGrids(); renderSpotlights(); drawMarketFlow(); }
+    function resetSector() { selectedSector = 'ALL'; renderSectors(); renderGrids(); renderSpotlights(); }
 
     function getFilteredStocks() {
       const q = document.getElementById('searchInput').value.trim().toUpperCase();
@@ -1121,7 +1137,6 @@
       });
     }
 
-    // COL 2: COMPACT TOP 20 BULLISH & BEARISH GRIDS WITH MINI SPARKLINES
     function renderGrids() {
       const list = getFilteredStocks();
       const bulls = list.filter(s => s.isBull).sort((a, b) => b.pChange - a.pChange).slice(0, 18);
@@ -1138,11 +1153,13 @@
         ? bears.map(s => miniCardHtml(s)).join('')
         : '<div class="pane-sub" style="padding:14px;">No bearish stocks in filter.</div>';
 
-      // Draw tiny sparklines on all compact cards
       [...bulls, ...bears].forEach(s => drawMiniSpark(`spark_${s.symbol}`, s));
     }
 
     function miniCardHtml(s) {
+      const btBadge = (deskMode === 'backtest' && s.btHit)
+        ? `<span style="color:var(--bull);font-weight:800;">★ BT HIT</span>`
+        : `<span>STR ${s.dirStrength}%</span>`;
       return `
         <div class="mini-ob-card ${s.isBull ? 'bull' : 'bear'}" onclick="openOBModal('${s.symbol}')">
           <div class="mc-top">
@@ -1156,7 +1173,7 @@
           <canvas class="mc-spark" id="spark_${s.symbol}"></canvas>
           <div class="mc-foot">
             <span>OB ${s.score}</span>
-            <span>STR ${s.dirStrength}%</span>
+            ${btBadge}
           </div>
         </div>
       `;
@@ -1168,8 +1185,7 @@
       const dpr = window.devicePixelRatio || 1;
       const w = c.clientWidth || 100;
       const h = c.clientHeight || 24;
-      c.width = w * dpr;
-      c.height = h * dpr;
+      c.width = w * dpr; c.height = h * dpr;
       const ctx = c.getContext('2d');
       ctx.scale(dpr, dpr);
 
@@ -1189,16 +1205,11 @@
         else ctx.lineTo(x, y);
       });
       ctx.stroke();
-
-      // Subtle fill under line
-      ctx.lineTo(w, h);
-      ctx.lineTo(0, h);
-      ctx.closePath();
+      ctx.lineTo(w, h); ctx.lineTo(0, h); ctx.closePath();
       ctx.fillStyle = s.isBull ? 'rgba(0,245,155,0.14)' : 'rgba(255,59,107,0.14)';
       ctx.fill();
     }
 
-    // COL 3: TOP 3 BULLISH & TOP 3 BEARISH HERO SPOTLIGHT CARDS
     function renderSpotlights() {
       const list = getFilteredStocks();
       const topBulls = list.filter(s => s.isBull).sort((a, b) => b.score - a.score || b.pChange - a.pChange).slice(0, 3);
@@ -1217,9 +1228,7 @@
               <div class="hc-big-pct ${s.isBull ? 'up' : 'dn'}">${s.isBull ? '+' : ''}${s.pChange.toFixed(2)}%</div>
               <div class="hc-price-line">₹${s.ltp.toFixed(2)} • ${s.buildup}</div>
             </div>
-            <div class="hc-right-chart">
-              <canvas id="heroSpark_${s.symbol}"></canvas>
-            </div>
+            <div class="hc-right-chart"><canvas id="heroSpark_${s.symbol}"></canvas></div>
           </div>
           <div class="hc-levels">
             <div class="lvl-cell"><span class="l-lbl">OB Zone</span><span class="l-val">${s.ob2Low.toFixed(0)}-${s.ob2High.toFixed(0)}</span></div>
@@ -1240,8 +1249,7 @@
       const dpr = window.devicePixelRatio || 1;
       const w = c.clientWidth || 118;
       const h = c.clientHeight || 54;
-      c.width = w * dpr;
-      c.height = h * dpr;
+      c.width = w * dpr; c.height = h * dpr;
       const ctx = c.getContext('2d');
       ctx.scale(dpr, dpr);
 
@@ -1249,17 +1257,12 @@
       const maxP = s.high + s.span * 0.1;
       const yOf = p => 4 + ((maxP - p) / Math.max(maxP - minP, 0.1)) * (h - 8);
 
-      // Shaded OB zone band
-      const obT = yOf(s.ob2High);
-      const obB = yOf(s.ob2Low);
+      const obT = yOf(s.ob2High), obB = yOf(s.ob2Low);
       ctx.fillStyle = s.isBull ? 'rgba(0,245,155,0.22)' : 'rgba(255,59,107,0.22)';
       ctx.fillRect(0, obT, w, Math.max(5, obB - obT));
 
-      // Mini candles
       const openEst = s.ltp / (1 + s.pChange / 100);
-      const n = 12;
-      let prev = openEst;
-      const step = w / n;
+      const n = 12; let prev = openEst; const step = w / n;
       for (let i = 0; i < n; i++) {
         const f = (i + 1) / n;
         let close = openEst + (s.ltp - openEst) * f + Math.sin(i * 1.9 + s.symbol.length) * s.span * 0.09;
@@ -1267,34 +1270,44 @@
         const col = close >= prev ? '#00f59b' : '#ff3b6b';
         const cx = i * step + step * 0.5;
         ctx.fillStyle = col;
-        const y1 = yOf(Math.max(prev, close));
-        const y2 = yOf(Math.min(prev, close));
+        const y1 = yOf(Math.max(prev, close)), y2 = yOf(Math.min(prev, close));
         ctx.fillRect(cx - 2.5, y1, 5, Math.max(2, y2 - y1));
         prev = close;
       }
     }
 
-    // COL 1: MARKET LIQUIDITY FLOW VISUALIZATION (SPIDER + VERTICAL SPINE + BEZIER FIBERS)
-    function drawMarketFlow() {
-      const canvas = document.getElementById('marketFlowCanvas');
+    // Helper: Cubic Bezier Point Evaluator for Continuous Cash In/Out Particles
+    function cubicPoint(p0, p1, p2, p3, t) {
+      const u = 1 - t;
+      return u*u*u*p0 + 3*u*u*t*p1 + 3*u*t*t*p2 + t*t*t*p3;
+    }
+
+    // CONTINUOUS 60FPS DEMAND INFLOW / SUPPLY OUTFLOW LIQUIDITY SPINE RENDERER
+    function drawContinuousFlowCanvas(canvas, nowMs, isPortalPreview) {
+      if (!canvas) return;
       const rect = canvas.parentElement.getBoundingClientRect();
+      if (rect.width < 20 || rect.height < 20) return;
       const dpr = window.devicePixelRatio || 1;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
+      if (canvas.width !== Math.round(rect.width * dpr) || canvas.height !== Math.round(rect.height * dpr)) {
+        canvas.width = Math.round(rect.width * dpr);
+        canvas.height = Math.round(rect.height * dpr);
+      }
       const ctx = canvas.getContext('2d');
-      ctx.scale(dpr, dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
       const W = rect.width, H = rect.height;
       ctx.clearRect(0, 0, W, H);
 
-      const pad = { top: 24, bottom: 26, left: 40, spineX: W * 0.72, right: W - 8 };
+      const pad = isPortalPreview
+        ? { top: 44, bottom: 20, left: 32, spineX: W * 0.68, right: W - 12 }
+        : { top: 24, bottom: 26, left: 40, spineX: W * 0.72, right: W - 8 };
       const plotW = pad.spineX - pad.left;
       const plotH = H - pad.top - pad.bottom;
 
       const list = getFilteredStocks();
       const bulls = list.filter(s => s.isBull).sort((a, b) => b.pChange - a.pChange);
       const bears = list.filter(s => !s.isBull).sort((a, b) => a.pChange - b.pChange);
-      const allFlow = [...bulls.slice(0, 14), ...bears.slice(0, 10)];
+      const allFlow = [...bulls.slice(0, 12), ...bears.slice(0, 10)];
 
       let minV = -2.5, maxV = 2.5;
       allFlow.forEach(s => {
@@ -1318,58 +1331,74 @@
       for (let i = 0; i <= 5; i++) {
         const v = maxV - (spanV * i) / 5;
         const y = yOf(v);
-        ctx.beginPath();
-        ctx.moveTo(pad.left, y);
-        ctx.lineTo(pad.spineX, y);
-        ctx.stroke();
-        ctx.fillText(`${v >= 0 ? '+' : ''}${v.toFixed(0)}%`, 5, y + 3);
+        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(pad.spineX, y); ctx.stroke();
+        if (!isPortalPreview) ctx.fillText(`${v >= 0 ? '+' : ''}${v.toFixed(0)}%`, 5, y + 3);
       }
 
       // Zero Axis
       const zeroY = yOf(0);
       ctx.strokeStyle = 'rgba(255,255,255,0.22)';
       ctx.setLineDash([4, 4]);
-      ctx.beginPath();
-      ctx.moveTo(pad.left, zeroY);
-      ctx.lineTo(pad.spineX, zeroY);
-      ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(pad.left, zeroY); ctx.lineTo(pad.spineX, zeroY); ctx.stroke();
       ctx.setLineDash([]);
 
       // Time Labels
-      timeLabels.forEach((lbl, i) => {
-        if (timeLabels.length > 7 && i % 2 !== 0 && i !== timeLabels.length - 1) return;
-        ctx.fillText(lbl, xOf(i) - 14, H - 8);
-      });
+      if (!isPortalPreview) {
+        timeLabels.forEach((lbl, i) => {
+          if (timeLabels.length > 7 && i % 2 !== 0 && i !== timeLabels.length - 1) return;
+          ctx.fillText(lbl, xOf(i) - 14, H - 8);
+        });
+      }
 
-      // Vertical Liquidity Spine (Green Demand Top + Red Supply Bottom — Video Signature!)
-      const spineW = 14;
+      // Pulsing Vertical Liquidity Spine (Demand Inflow Top / Supply Outflow Bottom)
+      const pulseWave = 0.78 + 0.22 * Math.sin(nowMs * 0.004);
+      const spineW = isPortalPreview ? 12 : 14;
+
+      // Outer spine glow
+      ctx.save();
+      ctx.shadowColor = '#00f59b';
+      ctx.shadowBlur = 16 * pulseWave;
       const gradBull = ctx.createLinearGradient(0, pad.top, 0, zeroY);
-      gradBull.addColorStop(0, 'rgba(0, 245, 155, 0.72)');
-      gradBull.addColorStop(1, 'rgba(0, 245, 155, 0.08)');
+      gradBull.addColorStop(0, `rgba(0, 245, 155, ${0.82 * pulseWave})`);
+      gradBull.addColorStop(1, 'rgba(0, 245, 155, 0.12)');
       ctx.fillStyle = gradBull;
       ctx.fillRect(pad.spineX - spineW / 2, pad.top, spineW, Math.max(4, zeroY - pad.top));
+      ctx.restore();
 
+      ctx.save();
+      ctx.shadowColor = '#ff3b6b';
+      ctx.shadowBlur = 16 * pulseWave;
       const gradBear = ctx.createLinearGradient(0, zeroY, 0, H - pad.bottom);
-      gradBear.addColorStop(0, 'rgba(255, 59, 107, 0.08)');
-      gradBear.addColorStop(1, 'rgba(255, 59, 107, 0.72)');
+      gradBear.addColorStop(0, 'rgba(255, 59, 107, 0.12)');
+      gradBear.addColorStop(1, `rgba(255, 59, 107, ${0.82 * pulseWave})`);
       ctx.fillStyle = gradBear;
       ctx.fillRect(pad.spineX - spineW / 2, zeroY, spineW, Math.max(4, H - pad.bottom - zeroY));
+      ctx.restore();
 
-      // Draw Glowing Spider Curves + Right-Side Bezier Liquidity Fibers
+      // Travelling energy shimmer inside spine
+      const shimmerUpY = zeroY - ((nowMs * 0.06) % Math.max(20, zeroY - pad.top));
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+      ctx.fillRect(pad.spineX - 2, shimmerUpY, 4, 14);
+      const shimmerDnY = zeroY + ((nowMs * 0.06) % Math.max(20, H - pad.bottom - zeroY));
+      ctx.fillRect(pad.spineX - 2, shimmerDnY, 4, 14);
+
       const seriesMeta = [];
+      const fiberAnchors = [];
+
       allFlow.forEach((s, idx) => {
         const pts = historySeries[s.symbol] || [0, s.pChange];
-        const isTopLeader = idx < 4 || (!s.isBull && idx < bulls.slice(0, 14).length + 3);
+        const isTopLeader = idx < 4 || (!s.isBull && idx < bulls.slice(0, 12).length + 3);
+        const baseCol = s.isBull ? '#00f59b' : '#ff3b6b';
         const col = s.isBull
-          ? (isTopLeader ? '#00f59b' : 'rgba(0, 245, 155, 0.42)')
-          : (isTopLeader ? '#ff3b6b' : 'rgba(255, 59, 107, 0.45)');
+          ? (isTopLeader ? '#00f59b' : 'rgba(0, 245, 155, 0.36)')
+          : (isTopLeader ? '#ff3b6b' : 'rgba(255, 59, 107, 0.38)');
 
-        seriesMeta.push({ symbol: s.symbol, color: s.isBull ? '#00f59b' : '#ff3b6b', pts, pChange: s.pChange });
+        seriesMeta.push({ symbol: s.symbol, color: baseCol, pts, pChange: s.pChange });
 
         ctx.save();
         ctx.strokeStyle = col;
-        ctx.lineWidth = isTopLeader ? 2.1 : 1.1;
-        if (isTopLeader) { ctx.shadowColor = col; ctx.shadowBlur = 8; }
+        ctx.lineWidth = isTopLeader ? 2.1 : 1.05;
+        if (isTopLeader) { ctx.shadowColor = baseCol; ctx.shadowBlur = 8; }
         ctx.beginPath();
         pts.forEach((val, i) => {
           const x = xOf(i), y = yOf(val);
@@ -1383,35 +1412,95 @@
         ctx.stroke();
         ctx.restore();
 
-        // Bezier Liquidity Fiber radiating from Spine to Right Edge (connecting to Stock Grid!)
+        // Bezier Liquidity Fibers radiating out of Spine
         const endY = yOf(pts[pts.length - 1]);
         const targetY = s.isBull
-          ? pad.top + ((idx % 10) / 10) * (zeroY - pad.top - 10)
-          : zeroY + 12 + ((idx % 8) / 8) * (H - pad.bottom - zeroY - 18);
+          ? pad.top + ((idx % 10) / 10) * Math.max(20, zeroY - pad.top - 10)
+          : zeroY + 12 + ((idx % 8) / 8) * Math.max(20, H - pad.bottom - zeroY - 18);
 
-        ctx.strokeStyle = s.isBull ? 'rgba(0, 245, 155, 0.30)' : 'rgba(255, 59, 107, 0.30)';
+        const fx0 = pad.spineX + spineW / 2;
+        const fx3 = W - 4;
+        const midX = pad.spineX + (W - pad.spineX) * 0.55;
+
+        ctx.strokeStyle = s.isBull ? 'rgba(0, 245, 155, 0.28)' : 'rgba(255, 59, 107, 0.28)';
         ctx.lineWidth = isTopLeader ? 1.5 : 0.8;
         ctx.beginPath();
-        ctx.moveTo(pad.spineX + spineW / 2, endY);
-        const midX = pad.spineX + (W - pad.spineX) * 0.55;
-        ctx.bezierCurveTo(midX, endY, midX, targetY, W - 4, targetY);
+        ctx.moveTo(fx0, endY);
+        ctx.bezierCurveTo(midX, endY, midX, targetY, fx3, targetY);
         ctx.stroke();
 
         // Spine tick node
-        ctx.fillStyle = s.isBull ? '#00f59b' : '#ff3b6b';
+        ctx.fillStyle = baseCol;
         ctx.beginPath();
-        ctx.arc(pad.spineX, endY, isTopLeader ? 3 : 1.8, 0, Math.PI * 2);
+        ctx.arc(pad.spineX, endY, isTopLeader ? 3.2 : 1.8, 0, Math.PI * 2);
         ctx.fill();
 
-        // Top mover labels near right edge
         if (isTopLeader) {
           ctx.font = 'bold 9.5px ui-monospace, monospace';
-          ctx.fillStyle = s.isBull ? '#00f59b' : '#ff3b6b';
+          ctx.fillStyle = baseCol;
           ctx.fillText(s.symbol.slice(0, 9), pad.spineX + 16, targetY + 3);
         }
+
+        fiberAnchors.push({ pts, isBull: s.isBull, baseCol, fx0, endY, midX, fx3, targetY });
       });
 
-      flowLayout = { pad, plotW, seriesMeta };
+      // CONTINUOUS FLOWING ENERGY PARTICLES (CASH INFLOW / OUTFLOW)
+      if (fiberAnchors.length > 0) {
+        flowParticles.forEach(p => {
+          p.t = (p.t + p.speed) % 1;
+          p.fiberT = (p.fiberT + p.speed * 1.4) % 1;
+
+          const item = fiberAnchors[p.seriesIdx % fiberAnchors.length];
+          const pts = item.pts;
+          if (pts.length >= 2) {
+            const segF = p.t * (pts.length - 1);
+            const segI = Math.min(pts.length - 2, Math.floor(segF));
+            const localT = segF - segI;
+            const x0 = xOf(segI), y0 = yOf(pts[segI]);
+            const x3 = xOf(segI + 1), y3 = yOf(pts[segI + 1]);
+            const cx = (x0 + x3) / 2;
+
+            const px = cubicPoint(x0, cx, cx, x3, localT);
+            const py = cubicPoint(y0, y0, y3, y3, localT);
+
+            ctx.save();
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = item.baseCol;
+            ctx.shadowBlur = 10;
+            ctx.beginPath();
+            ctx.arc(px, py, p.size, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+          }
+
+          // Particle continuing out along right Bezier fiber into the Stock Grid
+          const bx = cubicPoint(item.fx0, item.midX, item.midX, item.fx3, p.fiberT);
+          const by = cubicPoint(item.endY, item.endY, item.targetY, item.targetY, p.fiberT);
+          ctx.save();
+          ctx.fillStyle = item.baseCol;
+          ctx.shadowColor = item.baseCol;
+          ctx.shadowBlur = 8;
+          ctx.beginPath();
+          ctx.arc(bx, by, p.size * 0.85, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        });
+      }
+
+      if (!isPortalPreview) {
+        flowLayout = { pad, plotW, seriesMeta };
+      }
+    }
+
+    function animLoop(nowMs) {
+      if (enrichedStocks.length > 0) {
+        if (currentView === 'portal') {
+          drawContinuousFlowCanvas(document.getElementById('portalPreviewCanvas'), nowMs, true);
+        } else {
+          drawContinuousFlowCanvas(document.getElementById('marketFlowCanvas'), nowMs, false);
+        }
+      }
+      requestAnimationFrame(animLoop);
     }
 
     // Hover Tooltip for Market Flow Canvas
@@ -1442,7 +1531,7 @@
       document.getElementById('flowTooltip').style.display = 'none';
     });
 
-    // CLICK-TO-INSPECT ORDER BLOCK CHART MODAL (VIDEO SIGNATURE)
+    // ORDER BLOCK CHART MODAL
     function openOBModal(sym) {
       const s = enrichedStocks.find(x => x.symbol === sym);
       if (!s) return;
@@ -1482,8 +1571,7 @@
       const canvas = document.getElementById('obDetailCanvas');
       const rect = canvas.parentElement.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
-      canvas.width = rect.width * dpr;
-      canvas.height = rect.height * dpr;
+      canvas.width = rect.width * dpr; canvas.height = rect.height * dpr;
       const ctx = canvas.getContext('2d');
       ctx.scale(dpr, dpr);
 
@@ -1493,28 +1581,22 @@
       const plotH = H - pad.top - pad.bottom;
 
       ctx.clearRect(0, 0, W, H);
-
       const allPrices = [s.low, s.high, s.r1, s.r2, s.sl, s.vwap];
       const minP = Math.min(...allPrices) - s.span * 0.1;
       const maxP = Math.max(...allPrices) + s.span * 0.1;
       const spanP = Math.max(maxP - minP, 1);
       const yOf = p => pad.top + ((maxP - p) / spanP) * plotH;
 
-      // Grid + Price Axis
       ctx.strokeStyle = 'rgba(255,255,255,0.06)';
       ctx.font = '10px ui-monospace, monospace';
       ctx.fillStyle = '#647691';
       for (let i = 0; i <= 5; i++) {
         const p = maxP - (spanP * i) / 5;
         const y = yOf(p);
-        ctx.beginPath();
-        ctx.moveTo(pad.left, y);
-        ctx.lineTo(W - pad.right, y);
-        ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
         ctx.fillText(`₹${p.toFixed(1)}`, 6, y + 3);
       }
 
-      // Draw OB Zone 1 (Morning Base OB)
       const ob1T = yOf(s.ob1High), ob1B = yOf(s.ob1Low);
       ctx.fillStyle = s.isBull ? 'rgba(0, 245, 155, 0.16)' : 'rgba(255, 59, 107, 0.16)';
       ctx.fillRect(pad.left + plotW * 0.08, ob1T, plotW * 0.92, Math.max(10, ob1B - ob1T));
@@ -1524,7 +1606,6 @@
       ctx.font = 'bold 10px ui-monospace, monospace';
       ctx.fillText(`MORNING OB1  ₹${s.ob1Low.toFixed(1)}–${s.ob1High.toFixed(1)}`, pad.left + plotW * 0.10, ob1T + 12);
 
-      // Draw OB Zone 2 (Continuation OB)
       const ob2T = yOf(s.ob2High), ob2B = yOf(s.ob2Low);
       ctx.fillStyle = s.isBull ? 'rgba(0, 245, 155, 0.13)' : 'rgba(255, 59, 107, 0.13)';
       ctx.fillRect(pad.left + plotW * 0.42, ob2T, plotW * 0.58, Math.max(10, ob2B - ob2T));
@@ -1533,19 +1614,12 @@
       ctx.fillStyle = '#38d9ff';
       ctx.fillText(`RETEST OB2  ₹${s.ob2Low.toFixed(1)}–${s.ob2High.toFixed(1)}`, pad.left + plotW * 0.44, ob2T + 12);
 
-      // Horizontal Key Levels: R2, R1, VWAP, SL
       const drawLevel = (price, label, color, dash) => {
         const y = yOf(price);
-        ctx.strokeStyle = color;
-        ctx.lineWidth = 1.1;
-        ctx.setLineDash(dash);
-        ctx.beginPath();
-        ctx.moveTo(pad.left, y);
-        ctx.lineTo(W - pad.right, y);
-        ctx.stroke();
+        ctx.strokeStyle = color; ctx.lineWidth = 1.1; ctx.setLineDash(dash);
+        ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
         ctx.setLineDash([]);
-        ctx.fillStyle = color;
-        ctx.font = 'bold 9.5px ui-monospace, monospace';
+        ctx.fillStyle = color; ctx.font = 'bold 9.5px ui-monospace, monospace';
         ctx.fillText(`${label} ${price.toFixed(1)}`, W - pad.right + 5, y + 3);
       };
       drawLevel(s.r2, 'R2', '#fbbf24', [4, 4]);
@@ -1553,11 +1627,8 @@
       drawLevel(s.vwap, 'VWAP', '#38d9ff', [2, 3]);
       drawLevel(s.sl, 'SL', '#ff3b6b', [3, 3]);
 
-      // Intraday Candlesticks with OB1 -> Impulse -> OB2 Retest -> Expansion
       const openEst = s.ltp / (1 + s.pChange / 100);
-      const count = 26;
-      let prev = openEst;
-      const step = plotW / count;
+      const count = 26; let prev = openEst; const step = plotW / count;
       for (let i = 0; i < count; i++) {
         let target;
         if (i < 4) target = s.isBull ? s.ob1Low + s.span * 0.14 : s.ob1High - s.span * 0.14;
@@ -1574,35 +1645,24 @@
         const cx = pad.left + i * step + step * 0.5;
         const col = c >= prev ? '#00f59b' : '#ff3b6b';
 
-        ctx.strokeStyle = col;
-        ctx.lineWidth = 1.4;
-        ctx.beginPath();
-        ctx.moveTo(cx, yOf(h));
-        ctx.lineTo(cx, yOf(l));
-        ctx.stroke();
+        ctx.strokeStyle = col; ctx.lineWidth = 1.4;
+        ctx.beginPath(); ctx.moveTo(cx, yOf(h)); ctx.lineTo(cx, yOf(l)); ctx.stroke();
 
-        const y1 = yOf(Math.max(prev, c));
-        const y2 = yOf(Math.min(prev, c));
+        const y1 = yOf(Math.max(prev, c)), y2 = yOf(Math.min(prev, c));
         const bw = Math.max(5, step * 0.56);
         ctx.fillStyle = col;
         ctx.fillRect(cx - bw / 2, y1, bw, Math.max(2.5, y2 - y1));
         prev = c;
       }
 
-      // Live LTP Tag
       const ltpY = yOf(s.ltp);
       ctx.fillStyle = s.isBull ? '#00f59b' : '#ff3b6b';
       ctx.fillRect(W - pad.right + 2, ltpY - 9, 80, 18);
-      ctx.fillStyle = '#031217';
-      ctx.font = 'bold 10px ui-monospace, monospace';
+      ctx.fillStyle = '#031217'; ctx.font = 'bold 10px ui-monospace, monospace';
       ctx.fillText(`₹${s.ltp.toFixed(1)}`, W - pad.right + 7, ltpY + 3);
     }
 
-    function closeOBModal() {
-      activeModalSym = null;
-      document.getElementById('obModalBackdrop').classList.remove('open');
-    }
-
+    function closeOBModal() { activeModalSym = null; document.getElementById('obModalBackdrop').classList.remove('open'); }
     function openSettings() {
       document.getElementById('bridgeUrlInput').value = bridgeUrl;
       document.getElementById('pollSecInput').value = pollSeconds;
@@ -1622,15 +1682,10 @@
       }
     }
 
-    function showAlert(msg) {
-      document.getElementById('alertText').textContent = msg;
-      document.getElementById('alertBanner').classList.add('show');
-    }
+    function showAlert(msg) { document.getElementById('alertText').textContent = msg; document.getElementById('alertBanner').classList.add('show'); }
     function hideAlert() { document.getElementById('alertBanner').classList.remove('show'); }
 
-    function getISTTime() {
-      return new Date().toLocaleTimeString('en-IN', { hour12: false, timeZone: 'Asia/Kolkata' });
-    }
+    function getISTTime() { return new Date().toLocaleTimeString('en-IN', { hour12: false, timeZone: 'Asia/Kolkata' }); }
     function tickClock() {
       const now = new Date();
       const t = getISTTime();
@@ -1647,16 +1702,14 @@
     }
 
     window.addEventListener('resize', () => {
-      if (enrichedStocks.length) {
-        drawMarketFlow();
-        if (activeModalSym) drawOBModalChart(activeModalSym);
-      }
+      if (activeModalSym) drawOBModalChart(activeModalSym);
     });
     setInterval(tickClock, 1000);
     tickClock();
 
     // Boot
     loadData(SIM_STOCKS, getISTTime(), false);
+    requestAnimationFrame(animLoop);
   </script>
 </body>
 </html>
