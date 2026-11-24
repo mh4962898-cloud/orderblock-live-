@@ -3,32 +3,35 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ICT Top-3 Liquid Glass Terminal — NSE F&O</title>
+  <title>ICT Top-3 Liquid Glass Terminal — NSE F&O Live & Backtest</title>
   <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
   <style>
     :root {
-      --bg-0: #050811;
-      --bg-1: #0b1120;
-      --glass: rgba(255, 255, 255, 0.045);
-      --glass-strong: rgba(255, 255, 255, 0.08);
+      --bg-0: #040710;
+      --bg-1: #090f1e;
+      --glass: rgba(255, 255, 255, 0.042);
+      --glass-2: rgba(255, 255, 255, 0.075);
+      --glass-hover: rgba(255, 255, 255, 0.11);
       --border: rgba(255, 255, 255, 0.11);
-      --border-hi: rgba(255, 255, 255, 0.22);
-      --text: #eef2ff;
+      --border-hi: rgba(255, 255, 255, 0.24);
+      --text: #f1f5f9;
       --muted: #94a3b8;
       --bull: #10b981;
       --bear: #f43f5e;
       --accent: #38bdf8;
+      --indigo: #818cf8;
       --amber: #f59e0b;
       --radius: 20px;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
     body {
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background:
-        radial-gradient(900px 500px at 12% 8%, rgba(56, 189, 248, 0.14), transparent 60%),
-        radial-gradient(800px 500px at 88% 12%, rgba(16, 185, 129, 0.11), transparent 60%),
-        radial-gradient(700px 500px at 50% 95%, rgba(99, 102, 241, 0.10), transparent 60%),
+        radial-gradient(950px 550px at 10% 6%, rgba(56, 189, 248, 0.16), transparent 60%),
+        radial-gradient(850px 500px at 90% 10%, rgba(16, 185, 129, 0.13), transparent 58%),
+        radial-gradient(750px 520px at 50% 96%, rgba(129, 140, 248, 0.12), transparent 60%),
         var(--bg-0);
       color: var(--text);
       min-height: 100vh;
@@ -37,115 +40,147 @@
 
     .glass {
       background: var(--glass);
-      backdrop-filter: blur(22px) saturate(140%);
-      -webkit-backdrop-filter: blur(22px) saturate(140%);
+      backdrop-filter: blur(24px) saturate(150%);
+      -webkit-backdrop-filter: blur(24px) saturate(150%);
       border: 1px solid var(--border);
       border-radius: var(--radius);
-      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      box-shadow: 0 22px 55px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.09);
     }
 
-    /* TOP NAV */
+    /* TOP NAVIGATION BAR */
     .topbar {
-      position: sticky; top: 14px; z-index: 40;
-      max-width: 1440px; margin: 14px auto 0; padding: 12px 20px;
-      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      position: sticky; top: 12px; z-index: 50;
+      max-width: 1460px; margin: 12px auto 0; padding: 11px 20px;
+      display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap;
     }
     .brand { display: flex; align-items: center; gap: 12px; cursor: pointer; }
-    .brand-dot {
-      width: 12px; height: 12px; border-radius: 50%;
+    .brand-orb {
+      width: 14px; height: 14px; border-radius: 50%;
       background: linear-gradient(135deg, #38bdf8, #10b981);
-      box-shadow: 0 0 16px rgba(56, 189, 248, 0.8);
+      box-shadow: 0 0 18px rgba(56, 189, 248, 0.85);
     }
-    .brand h1 { font-size: 15px; font-weight: 700; letter-spacing: 0.6px; }
+    .brand h1 { font-size: 15px; font-weight: 800; letter-spacing: 0.7px; }
     .brand span { font-size: 11px; color: var(--muted); display: block; }
 
-    .nav-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .nav-mid { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .pill {
+      display: inline-flex; align-items: center; gap: 7px;
       font-size: 11px; color: var(--muted); padding: 6px 12px;
       border-radius: 999px; border: 1px solid var(--border);
       background: rgba(255, 255, 255, 0.03);
     }
-    .pill strong { color: var(--text); }
+    .pill strong { color: var(--text); font-weight: 700; }
+    .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+    .dot-ok { background: var(--bull); box-shadow: 0 0 10px var(--bull); }
+    .dot-warn { background: var(--amber); box-shadow: 0 0 10px var(--amber); }
+    .dot-off { background: var(--bear); box-shadow: 0 0 10px var(--bear); }
 
+    .nav-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
     .btn {
       cursor: pointer; border: 1px solid var(--border);
-      background: var(--glass-strong); color: var(--text);
-      padding: 9px 16px; border-radius: 12px; font-size: 12px; font-weight: 600;
-      letter-spacing: 0.4px; transition: all 0.2s ease;
+      background: var(--glass-2); color: var(--text);
+      padding: 8px 15px; border-radius: 12px; font-size: 12px; font-weight: 600;
+      letter-spacing: 0.35px; transition: all 0.2s ease;
     }
-    .btn:hover { border-color: var(--border-hi); transform: translateY(-1px); background: rgba(255,255,255,0.12); }
+    .btn:hover { border-color: var(--border-hi); transform: translateY(-1px); background: var(--glass-hover); }
+    .btn:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
     .btn-primary {
-      background: linear-gradient(135deg, rgba(56,189,248,0.28), rgba(16,185,129,0.26));
-      border-color: rgba(56,189,248,0.45);
+      background: linear-gradient(135deg, rgba(56,189,248,0.3), rgba(16,185,129,0.28));
+      border-color: rgba(56,189,248,0.5);
     }
-    .btn-primary:hover { box-shadow: 0 0 24px rgba(56,189,248,0.25); }
+    .btn-primary:hover { box-shadow: 0 0 26px rgba(56,189,248,0.28); }
     .btn-active {
-      background: rgba(56, 189, 248, 0.2);
-      border-color: rgba(56, 189, 248, 0.65);
+      background: rgba(56, 189, 248, 0.22);
+      border-color: rgba(56, 189, 248, 0.72);
       color: #fff;
     }
 
-    /* CENTERPIECE PORTAL */
-    .portal-wrap {
-      max-width: 980px; margin: 70px auto 40px; padding: 0 20px;
-    }
-    .portal-card {
-      padding: 56px 40px; text-align: center; position: relative; overflow: hidden;
-    }
+    /* VIEW 1: CENTERPIECE GLASS PORTAL */
+    .portal-wrap { max-width: 1080px; margin: 54px auto 50px; padding: 0 20px; }
+    .portal-card { padding: 54px 42px 42px; text-align: center; position: relative; overflow: hidden; }
     .portal-badge {
       display: inline-flex; align-items: center; gap: 8px;
-      font-size: 11px; letter-spacing: 1.2px; text-transform: uppercase;
-      color: var(--accent); padding: 7px 14px; border-radius: 999px;
-      border: 1px solid rgba(56,189,248,0.3); background: rgba(56,189,248,0.08);
+      font-size: 11px; font-weight: 700; letter-spacing: 1.3px; text-transform: uppercase;
+      color: var(--accent); padding: 7px 15px; border-radius: 999px;
+      border: 1px solid rgba(56,189,248,0.35); background: rgba(56,189,248,0.09);
       margin-bottom: 22px;
     }
     .portal-card h2 {
-      font-size: clamp(28px, 4vw, 44px); font-weight: 800; letter-spacing: -0.6px;
-      line-height: 1.15; margin-bottom: 14px;
-      background: linear-gradient(180deg, #ffffff, #94a3b8);
+      font-size: clamp(28px, 4.2vw, 48px); font-weight: 800; letter-spacing: -0.8px;
+      line-height: 1.12; margin-bottom: 14px;
+      background: linear-gradient(180deg, #ffffff 10%, #94a3b8 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
     .portal-card p {
-      color: var(--muted); font-size: 14px; max-width: 640px; margin: 0 auto 32px; line-height: 1.65;
+      color: var(--muted); font-size: 14px; max-width: 680px; margin: 0 auto 30px; line-height: 1.65;
     }
-    .portal-cta {
-      display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 36px;
-    }
+    .portal-cta { display: flex; justify-content: center; gap: 16px; flex-wrap: wrap; margin-bottom: 34px; }
     .cta-lg {
-      padding: 15px 30px; font-size: 13px; font-weight: 700; letter-spacing: 0.9px;
-      border-radius: 14px; min-width: 220px;
+      padding: 16px 32px; font-size: 13px; font-weight: 800; letter-spacing: 1px;
+      border-radius: 15px; min-width: 235px;
     }
-    .rule-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-      gap: 12px; text-align: left;
-    }
-    .rule-box {
-      padding: 14px 16px; border-radius: 14px;
-      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07);
-    }
-    .rule-box .rk { font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; color: var(--muted); }
-    .rule-box .rv { font-size: 13px; font-weight: 600; margin-top: 4px; color: var(--text); }
 
-    /* MAIN WORKSPACE */
-    .container { max-width: 1440px; margin: 20px auto 50px; padding: 0 20px; }
+    /* PRE-9:00 AM & RULE BENTO INSIDE PORTAL */
+    .portal-bento {
+      display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr; gap: 12px; text-align: left;
+    }
+    @media (max-width: 900px) { .portal-bento { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 560px) { .portal-bento { grid-template-columns: 1fr; } }
+
+    .p-tile {
+      padding: 16px 18px; border-radius: 16px;
+      background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
+    }
+    .p-tile .k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.9px; color: var(--muted); }
+    .p-tile .v { font-size: 15px; font-weight: 700; margin-top: 6px; color: var(--text); }
+    .p-tile .s { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+    /* MAIN WORKSPACE CONTAINER */
+    .container { max-width: 1460px; margin: 18px auto 54px; padding: 0 20px; }
     .hidden { display: none !important; }
 
     .section-head {
       display: flex; align-items: center; justify-content: space-between;
       flex-wrap: wrap; gap: 12px; margin-bottom: 16px;
     }
-    .section-head h3 { font-size: 18px; font-weight: 700; }
+    .section-head h3 { font-size: 19px; font-weight: 800; letter-spacing: -0.2px; }
     .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
 
-    /* BENTO LAYOUTS */
-    .live-grid {
-      display: grid; grid-template-columns: 380px 1fr; gap: 18px; align-items: start;
+    /* BENTO MARKET FLOW PANELS */
+    .bento-4 {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 18px;
     }
-    @media (max-width: 1024px) { .live-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 1120px) { .bento-4 { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 600px) { .bento-4 { grid-template-columns: 1fr; } }
+
+    .bento-card { padding: 16px 18px; }
+    .bento-k { font-size: 10px; text-transform: uppercase; letter-spacing: 0.9px; color: var(--muted); display: flex; justify-content: space-between; }
+    .bento-v { font-size: 22px; font-weight: 800; margin-top: 6px; }
+    .bento-s { font-size: 11px; color: var(--muted); margin-top: 5px; }
+
+    .flow-bar {
+      height: 8px; border-radius: 999px; background: rgba(244,63,94,0.35);
+      overflow: hidden; margin-top: 10px; border: 1px solid rgba(255,255,255,0.08);
+    }
+    .flow-fill {
+      height: 100%; background: linear-gradient(90deg, #10b981, #34d399);
+      width: 50%; transition: width 0.35s ease;
+    }
+
+    .risk-inputs { display: flex; gap: 8px; margin-top: 8px; align-items: center; }
+    .risk-inputs input {
+      width: 100%; padding: 7px 10px; border-radius: 10px; font-size: 12px; font-weight: 600;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text); outline: none;
+    }
+    .risk-inputs input:focus { border-color: var(--accent); }
+
+    /* LIVE WORKSPACE GRID */
+    .live-grid { display: grid; grid-template-columns: 390px 1fr; gap: 18px; align-items: start; }
+    @media (max-width: 1060px) { .live-grid { grid-template-columns: 1fr; } }
 
     .picks-panel { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
     .group-label {
-      font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
       padding: 4px 2px; display: flex; justify-content: space-between;
     }
     .bull-txt { color: var(--bull); }
@@ -154,35 +189,30 @@
     .amber-txt { color: var(--amber); }
 
     .pick-card {
-      padding: 13px 14px; border-radius: 14px; cursor: pointer;
+      padding: 13px 14px; border-radius: 15px; cursor: pointer;
       background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08);
       transition: all 0.18s ease;
     }
-    .pick-card:hover { background: rgba(255,255,255,0.065); border-color: var(--border-hi); }
+    .pick-card:hover { background: rgba(255,255,255,0.07); border-color: var(--border-hi); }
     .pick-card.selected {
-      background: rgba(56,189,248,0.11);
-      border-color: rgba(56,189,248,0.55);
-      box-shadow: 0 0 20px rgba(56,189,248,0.12);
+      background: rgba(56,189,248,0.12);
+      border-color: rgba(56,189,248,0.6);
+      box-shadow: 0 0 22px rgba(56,189,248,0.14);
     }
     .pick-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
-    .pick-sym { font-size: 14px; font-weight: 700; }
+    .pick-sym { font-size: 14px; font-weight: 800; }
     .badge {
-      font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px;
-      letter-spacing: 0.4px;
+      font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 999px; letter-spacing: 0.4px;
     }
-    .b-bull { background: rgba(16,185,129,0.16); color: #34d399; border: 1px solid rgba(16,185,129,0.35); }
-    .b-bear { background: rgba(244,63,94,0.16); color: #fb7185; border: 1px solid rgba(244,63,94,0.35); }
+    .b-bull { background: rgba(16,185,129,0.16); color: #34d399; border: 1px solid rgba(16,185,129,0.38); }
+    .b-bear { background: rgba(244,63,94,0.16); color: #fb7185; border: 1px solid rgba(244,63,94,0.38); }
     .b-wait { background: rgba(148,163,184,0.15); color: #cbd5e1; border: 1px solid rgba(148,163,184,0.3); }
-    .b-amber { background: rgba(245,158,11,0.16); color: #fbbf24; border: 1px solid rgba(245,158,11,0.35); }
+    .b-amber { background: rgba(245,158,11,0.16); color: #fbbf24; border: 1px solid rgba(245,158,11,0.38); }
 
-    .pick-meta {
-      display: flex; justify-content: space-between; font-size: 11px; color: var(--muted);
-      margin-bottom: 6px;
-    }
+    .pick-meta { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 6px; }
     .pick-levels {
       display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
-      padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06);
-      font-size: 10px;
+      padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06); font-size: 10px;
     }
     .pick-levels span { color: var(--muted); display: block; }
     .pick-levels strong { font-size: 11px; color: var(--text); }
@@ -193,10 +223,14 @@
       display: flex; justify-content: space-between; align-items: flex-start;
       flex-wrap: wrap; gap: 12px; margin-bottom: 14px;
     }
-    .chart-title { font-size: 17px; font-weight: 700; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .chart-title { font-size: 18px; font-weight: 800; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .chart-box {
       width: 100%; height: 470px; border-radius: 14px; overflow: hidden;
-      border: 1px solid rgba(255,255,255,0.08); background: #070b14;
+      border: 1px solid rgba(255,255,255,0.09); background: #060a14;
+    }
+    .eq-box {
+      width: 100%; height: 220px; border-radius: 14px; overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.08); background: #060a14;
     }
     .level-strip {
       display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
@@ -209,9 +243,18 @@
     .lvl-chip small { font-size: 10px; color: var(--muted); text-transform: uppercase; display: block; }
     .lvl-chip b { font-size: 13px; margin-top: 3px; display: block; }
 
-    /* BACKTEST KPI & TABLE */
+    /* LIVE SIGNAL LOG */
+    .log-panel { padding: 16px; margin-top: 16px; }
+    .log-list { display: flex; flex-direction: column; gap: 6px; margin-top: 10px; max-height: 150px; overflow-y: auto; }
+    .log-item {
+      font-size: 11px; color: var(--muted); padding: 7px 10px; border-radius: 10px;
+      background: rgba(255,255,255,0.025); border: 1px solid rgba(255,255,255,0.06);
+      display: flex; justify-content: space-between; gap: 10px;
+    }
+
+    /* BACKTEST ANALYTICS */
     .kpi-grid {
-      display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(185px, 1fr));
       gap: 14px; margin-bottom: 18px;
     }
     .kpi-card { padding: 18px; }
@@ -219,11 +262,21 @@
     .kpi-val { font-size: 26px; font-weight: 800; margin-top: 6px; }
     .kpi-sub { font-size: 11px; color: var(--muted); margin-top: 4px; }
 
+    .bt-split { display: grid; grid-template-columns: 1.55fr 1fr; gap: 18px; margin-bottom: 18px; }
+    @media (max-width: 1060px) { .bt-split { grid-template-columns: 1fr; } }
+
     .filter-row {
-      display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px;
+      display: flex; gap: 8px; flex-wrap: wrap; align-items: center; justify-content: space-between; margin-bottom: 14px;
     }
-    .table-panel { padding: 16px; overflow-x: auto; margin-top: 18px; }
-    table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 980px; }
+    .filter-btns { display: flex; gap: 8px; flex-wrap: wrap; }
+    .search-box {
+      padding: 8px 13px; border-radius: 11px; font-size: 12px; min-width: 200px;
+      background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text); outline: none;
+    }
+    .search-box:focus { border-color: var(--accent); }
+
+    .table-panel { padding: 16px; overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; min-width: 1020px; }
     th {
       text-align: left; padding: 11px 10px; font-size: 10px; text-transform: uppercase;
       letter-spacing: 0.7px; color: var(--muted); border-bottom: 1px solid var(--border);
@@ -234,8 +287,9 @@
     tbody tr.active-row { background: rgba(56,189,248,0.16); }
 
     .status-toast {
-      font-size: 12px; color: var(--accent); padding: 8px 14px;
-      border-radius: 10px; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.28);
+      font-size: 12px; color: var(--accent); padding: 10px 15px;
+      border-radius: 12px; background: rgba(56,189,248,0.1); border: 1px solid rgba(56,189,248,0.3);
+      margin-bottom: 14px;
     }
   </style>
 </head>
@@ -244,15 +298,20 @@
   <!-- TOP NAVIGATION -->
   <header class="topbar glass">
     <div class="brand" onclick="showView('portal')">
-      <div class="brand-dot"></div>
+      <div class="brand-orb"></div>
       <div>
-        <h1>ICT TOP-3 TERMINAL</h1>
-        <span>NSE F&amp;O • BOS/CHoCH • 1H Supertrend</span>
+        <h1>ICT TOP-3 GLASS TERMINAL</h1>
+        <span>NSE F&amp;O • Pure BOS/CHoCH • 1H Supertrend</span>
       </div>
     </div>
+
+    <div class="nav-mid">
+      <div class="pill"><span class="dot dot-warn" id="marketDot"></span><strong id="istClock">--:--:-- IST</strong> • <span id="marketPhase">Checking...</span></div>
+      <div class="pill"><span class="dot dot-off" id="serverDot"></span><span id="serverStatus">Engine Offline</span></div>
+    </div>
+
     <div class="nav-actions">
-      <div class="pill">Entry Window: <strong>09:30 – 12:00</strong></div>
-      <div class="pill">Limit: <strong>1 Trade / Stock</strong></div>
+      <button class="btn" id="soundBtn" onclick="toggleSound()">Alerts: ON</button>
       <button class="btn" id="navLiveBtn" onclick="showView('live')">START TRADING</button>
       <button class="btn" id="navBtBtn" onclick="showView('backtest')">BACKTESTING DATA</button>
     </div>
@@ -261,42 +320,47 @@
   <!-- VIEW 1: CENTERPIECE GLASS PORTAL -->
   <section id="view-portal" class="portal-wrap">
     <div class="portal-card glass">
-      <div class="portal-badge">NSE F&amp;O • PURE ICT STRUCTURE ENGINE</div>
+      <div class="portal-badge">NSE F&amp;O • LIQUID GLASS EXECUTION &amp; BACKTEST SUITE</div>
       <h2>Top-3 Intraday Terminal &amp; Real-Chart Backtester</h2>
       <p>
-        Automated 09:30 Top-3 Bullish &amp; Bearish F&amp;O scanner powered by 5m ICT BOS/CHoCH (Swing 4),
-        completed 1H Supertrend bias (10, 3.0), strict 09:30–12:00 entry filter, and ITM CE/PE strike mapping.
+        Pre-9:00 AM market tracking, 09:30 Top-3 Bullish &amp; Bearish F&amp;O selection, 5m ICT BOS/CHoCH (Swing 4) with completed 1H Supertrend (10, 3.0), strict 09:30–12:00 entry discipline, and saved 60-day real candlestick charts.
       </p>
+
       <div class="portal-cta">
         <button class="btn btn-primary cta-lg" onclick="showView('live')">START TRADING</button>
         <button class="btn cta-lg" onclick="showView('backtest')">BACKTESTING DATA</button>
       </div>
-      <div class="rule-grid">
-        <div class="rule-box">
-          <div class="rk">Entry Window</div>
-          <div class="rv">09:30 AM – 12:00 PM</div>
+
+      <div class="portal-bento">
+        <div class="p-tile">
+          <div class="k">Pre-9:00 AM / Session Tracker</div>
+          <div class="v accent-txt" id="portalCountdown">--:--:--</div>
+          <div class="s" id="portalCountdownSub">Syncing IST Market Clock...</div>
         </div>
-        <div class="rule-box">
-          <div class="rk">Position Discipline</div>
-          <div class="rv">1 Stock = 1 Entry Max</div>
+        <div class="p-tile">
+          <div class="k">Entry Window &amp; Cap</div>
+          <div class="v">09:30 – 12:00 PM</div>
+          <div class="s">Max 1 Entry / Stock / Day</div>
         </div>
-        <div class="rule-box">
-          <div class="rk">Strike Selection (ITM)</div>
-          <div class="rv">CE Lower • PE Higher</div>
+        <div class="p-tile">
+          <div class="k">ITM Option Chain Rule</div>
+          <div class="v">CE Lower • PE Higher</div>
+          <div class="s">e.g. ₹1020 → 1000 CE / 1040 PE</div>
         </div>
-        <div class="rule-box">
-          <div class="rk">Risk : Reward</div>
-          <div class="rv">SL Extreme • TP1 1:1 • TP2 1:2</div>
+        <div class="p-tile">
+          <div class="k">Risk : Reward Targets</div>
+          <div class="v">SL • TP1 1:1 • TP2 1:2</div>
+          <div class="s">Strong Candle ≥ 50% Body</div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- VIEW 2: LIVE TRADING TERMINAL -->
+  <!-- VIEW 2: START TRADING (LIVE BENTO TERMINAL + LIVE 5M CHART) -->
   <section id="view-live" class="container hidden">
     <div class="section-head">
       <div>
-        <h3>Live Top-3 Picks &amp; Real-Time 5m Chart</h3>
+        <h3>Live Top-3 Picks &amp; Real-Time 5m Candlestick Chart</h3>
         <div class="sub" id="liveMeta">Connecting to local Python engine (http://localhost:8000)...</div>
       </div>
       <div class="nav-actions">
@@ -305,9 +369,47 @@
       </div>
     </div>
 
+    <!-- BENTO MARKET FLOW PANELS -->
+    <div class="bento-4">
+      <div class="bento-card glass">
+        <div class="bento-k"><span>Pre-9:00 AM &amp; Entry Window</span><span id="windowTag" class="accent-txt">--</span></div>
+        <div class="bento-v" id="liveCountdown">--:--:--</div>
+        <div class="bento-s" id="liveCountdownSub">09:15 Open • 09:30 Picks • 12:00 Cutoff</div>
+      </div>
+
+      <div class="bento-card glass">
+        <div class="bento-k"><span>Top-3 Market Flow</span><span id="flowRatioTxt">--</span></div>
+        <div class="bento-v" id="flowNetTxt">NEUTRAL</div>
+        <div class="flow-bar"><div class="flow-fill" id="flowFill"></div></div>
+        <div class="bento-s" id="flowSub">Bullish vs Bearish Momentum</div>
+      </div>
+
+      <div class="bento-card glass">
+        <div class="bento-k"><span>Signal Pulse (1 Trade / Stock)</span><span>ICT Swing 4</span></div>
+        <div class="bento-v" id="pulseCount">0 / 6</div>
+        <div class="bento-s" id="pulseBreakdown">Active: 0 • TP Hits: 0 • SL: 0 • Scanning: 6</div>
+      </div>
+
+      <div class="bento-card glass">
+        <div class="bento-k"><span>Risk Sizing (Selected Stock)</span><span class="amber-txt">₹ Risk</span></div>
+        <div class="risk-inputs">
+          <input type="number" id="riskAmount" value="2000" min="100" step="100" oninput="updateRiskCalc()" title="Max Risk per Trade in INR" />
+        </div>
+        <div class="bento-s" id="riskCalcOut">Select a setup with Entry &amp; SL to calculate qty.</div>
+      </div>
+    </div>
+
     <div class="live-grid">
-      <div class="picks-panel glass" id="livePicksContainer">
-        <div class="sub">Loading Top-3 Bullish &amp; Bearish F&amp;O picks...</div>
+      <div>
+        <div class="picks-panel glass" id="livePicksContainer">
+          <div class="sub">Loading Top-3 Bullish &amp; Bearish F&amp;O picks...</div>
+        </div>
+        <div class="log-panel glass">
+          <div class="bento-k"><span>Live Signal &amp; Engine Log</span><span class="accent-txt">IST</span></div>
+          <div class="log-list" id="liveLogList">
+            <div class="log-item"><span>Terminal initialized. Waiting for live scan...</span><span>--:--</span></div>
+          </div>
+        </div>
       </div>
 
       <div class="chart-panel glass">
@@ -336,44 +438,64 @@
           Load JSON File
           <input type="file" id="jsonFileInput" accept=".json" style="display:none;" onchange="handleJsonUpload(event)" />
         </label>
+        <button class="btn" onclick="exportBacktestCsv()">Export CSV</button>
         <button class="btn btn-primary" id="runBtBtn" onclick="triggerRunBacktest()">Run 60D Backtest</button>
       </div>
     </div>
 
-    <div id="btToast" class="status-toast hidden" style="margin-bottom:14px;"></div>
+    <div id="btToast" class="status-toast hidden"></div>
 
     <!-- KPI CARDS -->
-    <div class="kpi-grid" id="btKpiGrid">
-      <div class="kpi-card glass"><div class="kpi-label">Total Trades</div><div class="kpi-val" id="kpiTotal">--</div><div class="kpi-sub" id="kpiSplit">--</div></div>
+    <div class="kpi-grid">
+      <div class="kpi-card glass"><div class="kpi-label">Total Trades (09:30-12:00)</div><div class="kpi-val" id="kpiTotal">--</div><div class="kpi-sub" id="kpiSplit">--</div></div>
       <div class="kpi-card glass"><div class="kpi-label">Overall Accuracy</div><div class="kpi-val accent-txt" id="kpiAcc">--</div><div class="kpi-sub" id="kpiAccSplit">--</div></div>
       <div class="kpi-card glass"><div class="kpi-label">TP2 Hit (1:2)</div><div class="kpi-val bull-txt" id="kpiTp2">--</div><div class="kpi-sub">Full Target</div></div>
-      <div class="kpi-card glass"><div class="kpi-label">TP1 Hit (1:1)</div><div class="kpi-val amber-txt" id="kpiTp1">--</div><div class="kpi-sub">Partial / Protected</div></div>
+      <div class="kpi-card glass"><div class="kpi-label">TP1 Hit (1:1)</div><div class="kpi-val amber-txt" id="kpiTp1">--</div><div class="kpi-sub">Protected Profit</div></div>
       <div class="kpi-card glass"><div class="kpi-label">SL Hit</div><div class="kpi-val bear-txt" id="kpiSl">--</div><div class="kpi-sub">Stopped Out</div></div>
       <div class="kpi-card glass"><div class="kpi-label">Net Spot P&amp;L</div><div class="kpi-val" id="kpiPnl">--</div><div class="kpi-sub" id="kpiRange">--</div></div>
     </div>
 
-    <!-- SAVED REAL CHART VIEWER -->
-    <div class="chart-panel glass">
-      <div class="chart-header">
-        <div>
-          <div class="chart-title" id="btChartTitle">Saved Historical Chart Inspector</div>
-          <div class="sub" id="btChartSub">Select any trade from the journal below to view its real 5m candlestick chart</div>
+    <!-- REAL CHART INSPECTOR + EQUITY CURVE -->
+    <div class="bt-split">
+      <div class="chart-panel glass">
+        <div class="chart-header">
+          <div>
+            <div class="chart-title" id="btChartTitle">Saved Historical Chart Inspector</div>
+            <div class="sub" id="btChartSub">Click any trade row below to inspect its real 5m candlestick chart</div>
+          </div>
+          <div id="btChartBadge"></div>
         </div>
-        <div id="btChartBadge"></div>
+        <div id="btChartBox" class="chart-box"></div>
+        <div class="level-strip" id="btLevelStrip"></div>
       </div>
-      <div id="btChartBox" class="chart-box"></div>
-      <div class="level-strip" id="btLevelStrip"></div>
+
+      <div class="chart-panel glass" style="display:flex;flex-direction:column;justify-content:space-between;gap:14px;">
+        <div>
+          <div class="chart-title" style="font-size:15px;margin-bottom:4px;">Cumulative Spot P&amp;L Curve (%)</div>
+          <div class="sub" style="margin-bottom:12px;">60-Day Top-3 Picks (09:30–12:00 | 1 Entry/Stock)</div>
+          <div id="eqChartBox" class="eq-box"></div>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div class="lvl-chip"><small>Bullish CE Accuracy</small><b class="bull-txt" id="sideBullAcc">--</b></div>
+          <div class="lvl-chip"><small>Bearish PE Accuracy</small><b class="bear-txt" id="sideBearAcc">--</b></div>
+          <div class="lvl-chip"><small>Entry Window</small><b class="accent-txt">09:30 – 12:00</b></div>
+          <div class="lvl-chip"><small>Strike Rule</small><b>ITM (CE↓ / PE↑)</b></div>
+        </div>
+      </div>
     </div>
 
     <!-- TRADE JOURNAL TABLE -->
     <div class="table-panel glass">
       <div class="filter-row">
-        <button class="btn btn-active" onclick="setBtFilter('ALL', this)">All Trades</button>
-        <button class="btn" onclick="setBtFilter('BUY', this)">Bullish CE</button>
-        <button class="btn" onclick="setBtFilter('SELL', this)">Bearish PE</button>
-        <button class="btn" onclick="setBtFilter('TP2', this)">TP2 (1:2)</button>
-        <button class="btn" onclick="setBtFilter('TP1', this)">TP1 (1:1)</button>
-        <button class="btn" onclick="setBtFilter('SL', this)">SL Hit</button>
+        <div class="filter-btns">
+          <button class="btn btn-active" onclick="setBtFilter('ALL', this)">All Trades</button>
+          <button class="btn" onclick="setBtFilter('BUY', this)">Bullish CE</button>
+          <button class="btn" onclick="setBtFilter('SELL', this)">Bearish PE</button>
+          <button class="btn" onclick="setBtFilter('TP2', this)">TP2 (1:2)</button>
+          <button class="btn" onclick="setBtFilter('TP1', this)">TP1 (1:1)</button>
+          <button class="btn" onclick="setBtFilter('SL', this)">SL Hit</button>
+        </div>
+        <input type="text" id="stockSearch" class="search-box" placeholder="Search stock (e.g. SBIN, TCS)..." oninput="renderBtTable()" />
       </div>
       <table>
         <thead>
@@ -396,7 +518,7 @@
           </tr>
         </thead>
         <tbody id="btTableBody">
-          <tr><td colspan="15" style="color:var(--muted);padding:20px;">No backtest data loaded yet. Run 60D Backtest or Load JSON.</td></tr>
+          <tr><td colspan="15" style="color:var(--muted);padding:20px;">No backtest data loaded yet. Click 'Run 60D Backtest' or 'Load JSON File'.</td></tr>
         </tbody>
       </table>
     </div>
@@ -407,14 +529,122 @@
       ? ""
       : "http://localhost:8000";
 
-    let liveChart = null, liveSeries = null;
-    let btChart = null, btSeries = null;
     let livePicks = [];
     let selectedLiveIdx = 0;
     let btData = null;
     let btFilter = "ALL";
     let autoRefresh = true;
+    let soundOn = true;
     let refreshTimer = null;
+    let seenSignals = new Set();
+
+    // ─── IST CLOCK & PRE-9:00 AM TRACKER ───
+    function getISTDate() {
+      const now = new Date();
+      const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+      return new Date(utc + 5.5 * 3600000);
+    }
+
+    function fmtCountdown(sec) {
+      const s = Math.max(0, Math.floor(sec));
+      const h = String(Math.floor(s / 3600)).padStart(2, "0");
+      const m = String(Math.floor((s % 3600) / 60)).padStart(2, "0");
+      const r = String(s % 60).padStart(2, "0");
+      return `${h}:${m}:${r}`;
+    }
+
+    function updateClock() {
+      const ist = getISTDate();
+      const hh = ist.getHours(), mm = ist.getMinutes(), ss = ist.getSeconds();
+      const totalSec = hh * 3600 + mm * 60 + ss;
+      const clockStr = `${String(hh).padStart(2,"0")}:${String(mm).padStart(2,"0")}:${String(ss).padStart(2,"0")} IST`;
+      document.getElementById("istClock").textContent = clockStr;
+
+      const t0900 = 9 * 3600;
+      const t0915 = 9 * 3600 + 15 * 60;
+      const t0930 = 9 * 3600 + 30 * 60;
+      const t1200 = 12 * 3600;
+      const t1530 = 15 * 3600 + 30 * 60;
+
+      let phase = "", cd = "", sub = "", dotCls = "dot-warn", winTag = "CLOSED";
+
+      if (totalSec < t0900) {
+        phase = "Pre-9:00 AM Prep";
+        cd = fmtCountdown(t0900 - totalSec);
+        sub = "Countdown to 09:00 AM Pre-Open";
+        dotCls = "dot-warn"; winTag = "PRE-OPEN";
+      } else if (totalSec < t0915) {
+        phase = "Pre-Open Session";
+        cd = fmtCountdown(t0915 - totalSec);
+        sub = "Countdown to 09:15 AM Market Open";
+        dotCls = "dot-warn"; winTag = "09:15 OPEN";
+      } else if (totalSec < t0930) {
+        phase = "09:15 Swing Building";
+        cd = fmtCountdown(t0930 - totalSec);
+        sub = "Top-3 Picks lock at 09:30 AM";
+        dotCls = "dot-ok"; winTag = "WAIT 09:30";
+      } else if (totalSec <= t1200) {
+        phase = "ENTRY WINDOW OPEN";
+        cd = fmtCountdown(t1200 - totalSec);
+        sub = "Time left in 09:30–12:00 Entry Window";
+        dotCls = "dot-ok"; winTag = "ACTIVE";
+      } else if (totalSec <= t1530) {
+        phase = "No New Entries (>12:00)";
+        cd = fmtCountdown(t1530 - totalSec);
+        sub = "Managing open trades till 15:30 Close";
+        dotCls = "dot-warn"; winTag = "LOCKED";
+      } else {
+        phase = "Market Closed";
+        cd = "CLOSED";
+        sub = "Next session starts 09:00 AM IST";
+        dotCls = "dot-off"; winTag = "EOD";
+      }
+
+      document.getElementById("marketPhase").textContent = phase;
+      document.getElementById("marketDot").className = "dot " + dotCls;
+      document.getElementById("portalCountdown").textContent = cd;
+      document.getElementById("portalCountdownSub").textContent = sub;
+      document.getElementById("liveCountdown").textContent = cd;
+      document.getElementById("liveCountdownSub").textContent = sub;
+      document.getElementById("windowTag").textContent = winTag;
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    function playBeep() {
+      if (!soundOn) return;
+      try {
+        const ctx = new (window.AudioContext || window.webkitAudioContext)();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = "sine"; osc.frequency.value = 880;
+        gain.gain.value = 0.08;
+        osc.connect(gain); gain.connect(ctx.destination);
+        osc.start(); osc.stop(ctx.currentTime + 0.16);
+      } catch (e) {}
+    }
+
+    function toggleSound() {
+      soundOn = !soundOn;
+      document.getElementById("soundBtn").textContent = `Alerts: ${soundOn ? "ON" : "OFF"}`;
+      if (soundOn) playBeep();
+    }
+
+    function addLog(msg) {
+      const box = document.getElementById("liveLogList");
+      const ist = getISTDate();
+      const ts = `${String(ist.getHours()).padStart(2,"0")}:${String(ist.getMinutes()).padStart(2,"0")}:${String(ist.getSeconds()).padStart(2,"0")}`;
+      const row = document.createElement("div");
+      row.className = "log-item";
+      row.innerHTML = `<span>${msg}</span><span>${ts}</span>`;
+      box.prepend(row);
+      while (box.children.length > 20) box.removeChild(box.lastChild);
+    }
+
+    function setServerState(online) {
+      document.getElementById("serverDot").className = "dot " + (online ? "dot-ok" : "dot-off");
+      document.getElementById("serverStatus").textContent = online ? "Python Engine Online" : "Engine Offline";
+    }
 
     function showView(name) {
       ["portal", "live", "backtest"].forEach(v => {
@@ -434,34 +664,24 @@
       }
     }
 
-    function createChart(containerId) {
+    function createChart(containerId, height = 470) {
       const el = document.getElementById(containerId);
       el.innerHTML = "";
       const chart = LightweightCharts.createChart(el, {
-        width: el.clientWidth || 800,
-        height: 470,
-        layout: {
-          background: { type: "solid", color: "#070b14" },
-          textColor: "#94a3b8",
-        },
+        width: el.clientWidth || 760,
+        height,
+        layout: { background: { type: "solid", color: "#060a14" }, textColor: "#94a3b8" },
         grid: {
           vertLines: { color: "rgba(255,255,255,0.04)" },
           horzLines: { color: "rgba(255,255,255,0.04)" },
         },
         crosshair: { mode: LightweightCharts.CrosshairMode.Normal },
         rightPriceScale: { borderColor: "rgba(255,255,255,0.1)" },
-        timeScale: {
-          borderColor: "rgba(255,255,255,0.1)",
-          timeVisible: true,
-          secondsVisible: false,
-        },
+        timeScale: { borderColor: "rgba(255,255,255,0.1)", timeVisible: true, secondsVisible: false },
       });
       const series = chart.addCandlestickSeries({
-        upColor: "#10b981",
-        downColor: "#f43f5e",
-        borderVisible: false,
-        wickUpColor: "#10b981",
-        wickDownColor: "#f43f5e",
+        upColor: "#10b981", downColor: "#f43f5e",
+        borderVisible: false, wickUpColor: "#10b981", wickDownColor: "#f43f5e",
       });
       window.addEventListener("resize", () => {
         if (el.clientWidth > 0) chart.applyOptions({ width: el.clientWidth });
@@ -472,10 +692,7 @@
     function renderTradeOnChart(target, item) {
       if (!item || !item.Candles || !item.Candles.length) return;
       const boxId = target === "live" ? "liveChartBox" : "btChartBox";
-      const obj = createChart(boxId);
-      if (target === "live") { liveChart = obj.chart; liveSeries = obj.series; }
-      else { btChart = obj.chart; btSeries = obj.series; }
-
+      const obj = createChart(boxId, 470);
       obj.series.setData(item.Candles);
 
       const markers = [];
@@ -499,18 +716,10 @@
       }
       if (markers.length) obj.series.setMarkers(markers);
 
-      if (item.Entry != null) {
-        obj.series.createPriceLine({ price: item.Entry, color: "#38bdf8", lineWidth: 2, lineStyle: 0, title: "ENTRY" });
-      }
-      if (item.SL != null) {
-        obj.series.createPriceLine({ price: item.SL, color: "#f43f5e", lineWidth: 2, lineStyle: 2, title: "SL" });
-      }
-      if (item.TP1_1to1 != null) {
-        obj.series.createPriceLine({ price: item.TP1_1to1, color: "#f59e0b", lineWidth: 1, lineStyle: 2, title: "TP1 (1:1)" });
-      }
-      if (item.TP2_1to2 != null) {
-        obj.series.createPriceLine({ price: item.TP2_1to2, color: "#10b981", lineWidth: 2, lineStyle: 0, title: "TP2 (1:2)" });
-      }
+      if (item.Entry != null) obj.series.createPriceLine({ price: item.Entry, color: "#38bdf8", lineWidth: 2, lineStyle: 0, title: "ENTRY" });
+      if (item.SL != null) obj.series.createPriceLine({ price: item.SL, color: "#f43f5e", lineWidth: 2, lineStyle: 2, title: "SL" });
+      if (item.TP1_1to1 != null) obj.series.createPriceLine({ price: item.TP1_1to1, color: "#f59e0b", lineWidth: 1, lineStyle: 2, title: "TP1 (1:1)" });
+      if (item.TP2_1to2 != null) obj.series.createPriceLine({ price: item.TP2_1to2, color: "#10b981", lineWidth: 2, lineStyle: 0, title: "TP2 (1:2)" });
       obj.chart.timeScale().fitContent();
 
       const titleId = target === "live" ? "liveChartTitle" : "btChartTitle";
@@ -542,27 +751,83 @@
       return `<span class="badge b-wait">${st}</span>`;
     }
 
-    // ─── LIVE SCANNER ───
+    // ─── LIVE SCANNER & BENTO FLOW ───
     async function fetchLiveScan() {
       const meta = document.getElementById("liveMeta");
       meta.textContent = "Fetching live 5m NSE candles & Top-3 Picks...";
       try {
         const res = await fetch(API_BASE + "/api/live");
         const data = await res.json();
+        setServerState(true);
         if (data.error && !data.picks.length) {
           meta.textContent = "Error: " + data.error;
           return;
         }
         livePicks = data.picks || [];
         meta.textContent = `Session: ${data.session_date} • Entry Window: ${data.entry_window} • Updated: ${data.updated_at}`;
+
+        // Detect new signals for audio alert
+        livePicks.forEach(p => {
+          if (p.Entry != null) {
+            const key = `${p.Date}-${p.Stock}-${p.Entry_Time}`;
+            if (!seenSignals.has(key)) {
+              seenSignals.add(key);
+              addLog(`SIGNAL: ${p.Stock} ${p.Side} (${p.Signal}) • ${p.ITM_Option} @ ${p.Entry}`);
+              playBeep();
+            }
+          }
+        });
+
+        updateLiveBento();
         renderLiveCards();
         if (livePicks.length) {
           selectedLiveIdx = Math.min(selectedLiveIdx, livePicks.length - 1);
           renderTradeOnChart("live", livePicks[selectedLiveIdx]);
+          updateRiskCalc();
         }
       } catch (err) {
-        meta.textContent = "Local Python server not running. CMD madhe 'python ict_terminal_server.py' run kara.";
+        setServerState(false);
+        meta.textContent = "Local Python server offline. CMD madhe 'python ict_terminal_server.py' run kara.";
       }
+    }
+
+    function updateLiveBento() {
+      const bull = livePicks.filter(p => p.Side === "BUY");
+      const bear = livePicks.filter(p => p.Side === "SELL");
+      const avgBull = bull.length ? bull.reduce((a, b) => a + Math.abs(b.Pct_Now || 0), 0) / bull.length : 0;
+      const avgBear = bear.length ? bear.reduce((a, b) => a + Math.abs(b.Pct_Now || 0), 0) / bear.length : 0;
+      const ratio = (avgBull + avgBear) > 0 ? Math.round((avgBull / (avgBull + avgBear)) * 100) : 50;
+
+      document.getElementById("flowRatioTxt").textContent = `${ratio}% Bull / ${100 - ratio}% Bear`;
+      document.getElementById("flowFill").style.width = `${ratio}%`;
+      const fTxt = document.getElementById("flowNetTxt");
+      if (ratio >= 56) { fTxt.textContent = "BULLISH FLOW"; fTxt.className = "bento-v bull-txt"; }
+      else if (ratio <= 44) { fTxt.textContent = "BEARISH FLOW"; fTxt.className = "bento-v bear-txt"; }
+      else { fTxt.textContent = "BALANCED"; fTxt.className = "bento-v accent-txt"; }
+      document.getElementById("flowSub").textContent = `Avg Move: +${avgBull.toFixed(2)}% vs -${avgBear.toFixed(2)}%`;
+
+      const triggered = livePicks.filter(p => p.Entry != null);
+      const activeCnt = livePicks.filter(p => p.Status === "ACTIVE").length;
+      const tpCnt = livePicks.filter(p => p.Status.includes("TP")).length;
+      const slCnt = livePicks.filter(p => p.Status.includes("SL")).length;
+      const scanCnt = livePicks.length - triggered.length;
+
+      document.getElementById("pulseCount").textContent = `${triggered.length} / ${livePicks.length}`;
+      document.getElementById("pulseBreakdown").textContent = `Active: ${activeCnt} • TP: ${tpCnt} • SL: ${slCnt} • Wait: ${scanCnt}`;
+    }
+
+    function updateRiskCalc() {
+      const out = document.getElementById("riskCalcOut");
+      const item = livePicks[selectedLiveIdx];
+      const riskRs = parseFloat(document.getElementById("riskAmount").value) || 0;
+      if (!item || item.Entry == null || item.SL == null || riskRs <= 0) {
+        out.textContent = "Select a triggered setup to calculate exact spot qty.";
+        return;
+      }
+      const riskPts = Math.max(Math.abs(item.Entry - item.SL), 0.05);
+      const qty = Math.floor(riskRs / riskPts);
+      const tp2Profit = Math.round(qty * riskPts * 2);
+      out.innerHTML = `<strong>${item.Stock}</strong>: Risk ₹${riskPts.toFixed(2)}/sh → <strong>${qty} Qty</strong> (TP2 ≈ +₹${tp2Profit.toLocaleString("en-IN")})`;
     }
 
     function renderLiveCards() {
@@ -605,6 +870,7 @@
       selectedLiveIdx = idx;
       renderLiveCards();
       renderTradeOnChart("live", livePicks[idx]);
+      updateRiskCalc();
     }
 
     function toggleAutoRefresh() {
@@ -632,32 +898,30 @@
       try {
         const res = await fetch(API_BASE + "/api/backtest");
         const data = await res.json();
-        if (data.empty) {
-          showBtToast(data.message);
-          return;
-        }
+        setServerState(true);
+        if (data.empty) { showBtToast(data.message); return; }
         loadBacktestPayload(data);
       } catch (err) {
+        setServerState(false);
         showBtToast("Local server offline. Run 'python ict_terminal_server.py' OR click 'Load JSON File' to open ict_backtest_data.json.");
       }
     }
 
     async function triggerRunBacktest() {
       const btn = document.getElementById("runBtBtn");
-      btn.disabled = true;
-      btn.textContent = "Running 60D Backtest...";
+      btn.disabled = true; btn.textContent = "Running 60D Backtest...";
       showBtToast("Downloading 60-day real 5m NSE candles & saving charts... Please wait 25–40 seconds.");
       try {
         const res = await fetch(API_BASE + "/api/run-backtest");
         const data = await res.json();
+        setServerState(true);
         if (data.error) throw new Error(data.error);
         loadBacktestPayload(data);
         showBtToast("60-Day Top-3 Backtest complete! Saved ict_top3_60d_results.csv + ict_backtest_data.json.");
       } catch (err) {
         showBtToast("Error: " + err.message + " — Make sure 'python ict_terminal_server.py' is running.");
       } finally {
-        btn.disabled = false;
-        btn.textContent = "Run 60D Backtest";
+        btn.disabled = false; btn.textContent = "Run 60D Backtest";
       }
     }
 
@@ -669,12 +933,47 @@
         try {
           const parsed = JSON.parse(ev.target.result);
           loadBacktestPayload(parsed);
-          showBtToast(`Loaded ${file.name} (${parsed.trades.length} trades with real 5m charts).`);
+          showBtToast(`Loaded ${file.name} (${parsed.trades.length} trades with saved real 5m charts).`);
         } catch (err) {
           showBtToast("Invalid JSON file.");
         }
       };
       reader.readAsText(file);
+    }
+
+    function renderEquityCurve(trades) {
+      const el = document.getElementById("eqChartBox");
+      el.innerHTML = "";
+      if (!trades || !trades.length) return;
+      const chart = LightweightCharts.createChart(el, {
+        width: el.clientWidth || 420,
+        height: 220,
+        layout: { background: { type: "solid", color: "#060a14" }, textColor: "#94a3b8" },
+        grid: { vertLines: { color: "rgba(255,255,255,0.03)" }, horzLines: { color: "rgba(255,255,255,0.04)" } },
+        rightPriceScale: { borderColor: "rgba(255,255,255,0.08)" },
+        timeScale: { borderColor: "rgba(255,255,255,0.08)", timeVisible: false },
+      });
+      const area = chart.addAreaSeries({
+        lineColor: "#38bdf8",
+        topColor: "rgba(56, 189, 248, 0.35)",
+        bottomColor: "rgba(56, 189, 248, 0.0)",
+        lineWidth: 2,
+      });
+      let cum = 0;
+      const pts = [];
+      let lastT = 0;
+      trades.forEach((t, idx) => {
+        cum = Number((cum + (t.PnL_Pct || 0)).toFixed(2));
+        let ts = t.Entry_Ts || (1700000000 + idx * 3600);
+        if (ts <= lastT) ts = lastT + 60;
+        lastT = ts;
+        pts.push({ time: ts, value: cum });
+      });
+      area.setData(pts);
+      chart.timeScale().fitContent();
+      window.addEventListener("resize", () => {
+        if (el.clientWidth > 0) chart.applyOptions({ width: el.clientWidth });
+      });
     }
 
     function loadBacktestPayload(data) {
@@ -690,6 +989,8 @@
       document.getElementById("kpiTp2").textContent = s.tp2_hits ?? 0;
       document.getElementById("kpiTp1").textContent = s.tp1_hits ?? 0;
       document.getElementById("kpiSl").textContent = s.sl_hits ?? 0;
+      document.getElementById("sideBullAcc").textContent = `${s.bull_accuracy ?? 0}%`;
+      document.getElementById("sideBearAcc").textContent = `${s.bear_accuracy ?? 0}%`;
 
       const pnlEl = document.getElementById("kpiPnl");
       const net = s.net_pnl_pct ?? 0;
@@ -697,16 +998,16 @@
       pnlEl.className = "kpi-val " + (net >= 0 ? "bull-txt" : "bear-txt");
       document.getElementById("kpiRange").textContent = data.date_range || "";
 
+      renderEquityCurve(data.trades || []);
       renderBtTable();
       if (data.trades && data.trades.length) {
-        const lastIdx = data.trades.length - 1;
-        renderTradeOnChart("bt", data.trades[lastIdx]);
+        renderTradeOnChart("bt", data.trades[data.trades.length - 1]);
       }
     }
 
     function setBtFilter(f, btnEl) {
       btFilter = f;
-      document.querySelectorAll(".filter-row .btn").forEach(b => b.classList.remove("btn-active"));
+      document.querySelectorAll(".filter-btns .btn").forEach(b => b.classList.remove("btn-active"));
       btnEl.classList.add("btn-active");
       renderBtTable();
     }
@@ -717,8 +1018,9 @@
         tbody.innerHTML = '<tr><td colspan="15" style="color:var(--muted);padding:20px;">No trades found.</td></tr>';
         return;
       }
-
+      const q = (document.getElementById("stockSearch").value || "").trim().toUpperCase();
       const filtered = btData.trades.filter(t => {
+        if (q && !t.Stock.toUpperCase().includes(q) && !t.ITM_Option.toUpperCase().includes(q)) return false;
         if (btFilter === "BUY") return t.Side === "BUY";
         if (btFilter === "SELL") return t.Side === "SELL";
         if (btFilter === "TP2") return t.Status.includes("TP2");
@@ -758,6 +1060,25 @@
       renderTradeOnChart("bt", tr);
       document.getElementById("btChartBox").scrollIntoView({ behavior: "smooth", block: "center" });
     }
+
+    function exportBacktestCsv() {
+      if (!btData || !btData.trades || !btData.trades.length) {
+        showBtToast("No backtest data to export.");
+        return;
+      }
+      const cols = ["Trade_No","Date","Entry_Time","Exit_Time","Stock","Pick_Type","Side","Signal","ITM_Option","Entry","SL","TP1_1to1","TP2_1to2","Exit","Status","PnL_Pts","PnL_Pct"];
+      const lines = [cols.join(",")].concat(
+        btData.trades.map(t => cols.map(c => `"${String(t[c] ?? "").replace(/"/g, '""')}"`).join(","))
+      );
+      const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = "ict_top3_60d_results.csv";
+      a.click();
+    }
+
+    // Ping local server on load
+    fetch(API_BASE + "/api/backtest").then(() => setServerState(true)).catch(() => setServerState(false));
   </script>
 </body>
 </html>
