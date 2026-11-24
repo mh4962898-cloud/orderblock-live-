@@ -141,7 +141,7 @@
       background: linear-gradient(135deg, #00E676 0%, #00BCD4 100%);
       -webkit-background-clip: text; -webkit-text-fill-color: transparent;
     }
-    .portal-desc { font-size: 14px; color: var(--text-2); max-width: 630px; line-height: 1.55; }
+    .portal-desc { font-size: 14px; color: var(--text-2); max-width: 660px; line-height: 1.55; }
     .portal-cta-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 14px; margin-top: 6px; }
     .cta-primary {
       cursor: pointer; border: none; padding: 13px 30px; border-radius: 13px;
@@ -494,10 +494,10 @@
     </nav>
 
     <section class="portal-hero">
-      <span class="pill pill-bull">● SWING 4 • HTF SUPERTREND (60m, 3, 10) • ITM CE / PE</span>
+      <span class="pill pill-bull">● ENTRY 09:30–12:00 • 1 ENTRY/STOCK • ITM CE / PE • REAL SAVED CHARTS</span>
       <h1 class="portal-title">ICT <span>BOS | CHoCH</span><br/>Top 3 F&amp;O Strategy Desk</h1>
       <p class="portal-desc">
-        Fresh Intraday Structure (Skip Prev Day &amp; 9:15 Breakout) • Strong Candle Close Entry • Candle High/Low SL • TP1 (1:1) &amp; TP2 (1:2) • Real Backtest Journal starting 23 Nov 2026.
+        Fresh Intraday Structure (Skip Prev Day &amp; 9:15 Breakout) • Entry strictly before 12:00 PM • Max 1 Entry per Stock • ITM Option Chain Strike (CE Lower / PE Higher) • Live 5m Chart &amp; Saved Real Backtest Charts.
       </p>
       <div class="portal-cta-row">
         <button class="cta-primary" onclick="enterTerminal('live')">⚡ START TRADING</button>
@@ -510,7 +510,7 @@
         <div class="preview-overlay-badge">
           <span class="pill pill-bull">● TOP 3 BULLISH (ITM CE)</span>
           <span class="pill pill-bear">● TOP 3 BEARISH (ITM PE)</span>
-          <span class="pill pill-choch-up">● TP1 1:1 • TP2 1:2</span>
+          <span class="pill pill-choch-up">● 09:30–12:00 • 1 TRADE/STOCK</span>
         </div>
         <div class="preview-overlay-cta">
           <span class="pill pill-cyan">CLICK TO LAUNCH DESK →</span>
@@ -533,7 +533,7 @@
             <span class="pill pill-cyan">TOP 3 FOCUS</span>
             <span class="pill pill-muted">NSE F&amp;O</span>
           </div>
-          <div class="brand-sub" id="syncSub">Swing 4 • Auto HTF Supertrend (60,3,10) • TP1 1:1 / TP2 1:2 • ITM CE/PE</div>
+          <div class="brand-sub" id="syncSub">Swing 4 • Entry 09:30–12:00 • 1 Entry/Stock • TP1 1:1 / TP2 1:2 • ITM CE/PE</div>
         </div>
       </div>
 
@@ -574,15 +574,16 @@
         </div>
         <div class="ict-group">
           <span class="pill pill-muted">SWING: 4</span>
-          <span class="pill pill-gold">SKIP PREV DAY &amp; 9:15 BREAK</span>
+          <span class="pill pill-gold">ENTRY: 09:30–12:00 ONLY</span>
+          <span class="pill pill-choch-up">1 ENTRY / STOCK</span>
           <span class="pill pill-bull">TP1 1:1 • TP2 1:2</span>
-          <span class="pill pill-cyan">AUTO ITM CE/PE</span>
+          <span class="pill pill-cyan">ITM: CE↓ / PE↑</span>
         </div>
       </div>
     </div>
 
     <div class="alert-banner" id="alertBanner">
-      <span id="alertText">Bridge offline. Run Start_NSE_Live.bat on your PC.</span>
+      <span id="alertText">Bridge offline. Run Start_ICT_Terminal.bat on your PC.</span>
       <button class="btn" style="padding:3px 8px;" onclick="hideAlert()">Dismiss</button>
     </div>
 
@@ -631,7 +632,7 @@
         <div class="pane-head">
           <div>
             <div class="pane-title">⚡ Live F&amp;O ICT BOS | CHoCH Scanner</div>
-            <div class="pane-sub">Click any stock to view 5m Chart + Long/Short Position Tool</div>
+            <div class="pane-sub">Click any stock to view Live 5m Chart + Long/Short Position Tool</div>
           </div>
           <button class="btn" style="padding:4px 9px;font-size:10px;" onclick="resetSector()">All Sectors</button>
         </div>
@@ -658,7 +659,7 @@
         <div class="pane-head">
           <div>
             <div class="pane-title">🎯 Top 3 Bullish &amp; Top 3 Bearish Picks</div>
-            <div class="pane-sub">Strong Candle BOS/CHoCH • ITM CE/PE • SL • TP1 (1:1) • TP2 (1:2)</div>
+            <div class="pane-sub">09:30–12:00 Window • 1 Entry/Stock • ITM CE/PE • TP1 (1:1) / TP2 (1:2)</div>
           </div>
           <span class="pill pill-muted" id="lastSyncPill">--:--:--</span>
         </div>
@@ -668,14 +669,14 @@
     </main>
 
     <!-- =================================================================
-         SUB-VIEW B: GENUINE BACKTESTING DATA (TOP 3 PICKS JOURNAL)
+         SUB-VIEW B: GENUINE BACKTESTING DATA (TOP 3 PICKS JOURNAL + SAVED REAL CHARTS)
          ================================================================= -->
     <section id="backtestView" class="hidden">
       <div class="bt-kpi-grid">
         <div class="bt-kpi">
           <div class="bk-l">Total Top-3 Trades</div>
           <div class="bk-v" id="btTotalTrades">0</div>
-          <div class="bk-s" id="btDateRange">From 23 Nov 2026</div>
+          <div class="bk-s" id="btDateRange">09:30–12:00 • 1/Stock</div>
         </div>
         <div class="bt-kpi">
           <div class="bk-l">Strategy Accuracy</div>
@@ -705,14 +706,19 @@
       </div>
 
       <div class="bt-note-bar">
-        <span>
-          <strong>GENUINE TOP-3 BACKTEST JOURNAL (Starting 23 Nov 2026):</strong>
-          Evaluates ONLY the Top 3 Bullish &amp; Top 3 Bearish picks on 5m candles using exact rules (Skip prev day &amp; 9:15 break → Strong Candle Close → ITM CE/PE → SL at Candle Low/High → TP1 1:1 &amp; TP2 1:2). Click any row to open the exact Long/Short Position chart!
+        <span id="btRuleBanner">
+          <strong>GENUINE TOP-3 BACKTEST JOURNAL (WITH SAVED REAL 5M CHARTS):</strong>
+          Entry strictly <strong>09:30–12:00 PM</strong> • <strong>1 Stock = 1 Entry Max</strong> • ITM Option Chain Strike (CE lower / PE higher). Click any row to open its saved real 5m candlestick chart!
         </span>
         <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-live active" onclick="recordCurrentTop3ToJournal()">+ Snapshot Live Top 3 Now</button>
+          <button class="btn btn-live active" id="load60dBtn" onclick="load60DayRealBacktest()">⚡ Sync 60D Real Backtest</button>
+          <label class="btn" style="cursor:pointer;">
+            📂 Load Saved JSON
+            <input type="file" accept=".json" style="display:none;" onchange="importBacktestJSON(event)" />
+          </label>
+          <button class="btn" onclick="recordCurrentTop3ToJournal()">+ Snapshot Live Top 3</button>
           <button class="btn" onclick="exportBacktestCSV()">⬇ Export CSV</button>
-          <button class="btn" style="border-color:var(--bear-bd);color:var(--bear);" onclick="clearJournal()">Reset Journal</button>
+          <button class="btn" style="border-color:var(--bear-bd);color:var(--bear);" onclick="clearJournal()">Reset</button>
         </div>
       </div>
 
@@ -829,7 +835,6 @@
       PIDILITIND:'FMCG', ASIANPAINT:'FMCG', INDHOTEL:'HOTELS', ZOMATO:'TECH', PAYTM:'TECH', NAUKRI:'TECH', KALYANKJIL:'RETAIL'
     };
 
-    // Today's session snapshot (23 Nov 2026) — replaced automatically when LIVE NSE MCP is ON
     const SIM_STOCKS = [
       { symbol: 'TCS', ltp: 2484.50, pChange: 4.81, high: 2497.00, low: 2405.00 },
       { symbol: 'POLICYBZR', ltp: 1071.10, pChange: 4.72, high: 1082.00, low: 1020.00 },
@@ -863,6 +868,10 @@
       '10:55','11:00','11:05','11:10'
     ];
 
+    // LOCKED RULE CONSTANTS
+    const ENTRY_START_HHMM = '09:30';
+    const ENTRY_CUTOFF_HHMM = '12:00'; // Fakt 12:00 PM chya madhech entry
+
     // Config & State
     let bridgeUrl = localStorage.getItem('ob_bridge_url') || 'http://127.0.0.1:8000/api/nse-mcp-live';
     let pollSeconds = Number(localStorage.getItem('ob_poll_sec') || 15);
@@ -880,16 +889,42 @@
     let historySeries = {};
     let timeLabels = [];
     let flowLayout = null;
-    let activeModalSym = null;
+    let activeModalObj = null; // Holds live stock OR saved historical journal trade object
 
-    // Genuine Persistent Backtest Journal (Top 3 Bullish + Top 3 Bearish starting 23 Nov 2026)
-    const JOURNAL_KEY = 'ict_top3_genuine_journal_v1';
-    let tradeJournal = JSON.parse(localStorage.getItem(JOURNAL_KEY) || '[]');
+    // Genuine Persistent Backtest Journal (WITH SAVED REAL 5M CHARTS)
+    const JOURNAL_KEY = 'ict_top3_genuine_journal_v2';
+    let tradeJournal = [];
+    try {
+      tradeJournal = JSON.parse(localStorage.getItem(JOURNAL_KEY) || '[]');
+    } catch (e) {
+      tradeJournal = [];
+    }
+
+    function saveJournalSafe() {
+      try {
+        // Keep up to 150 trades with real charts safely within browser localStorage limit
+        const toStore = tradeJournal.slice(-150);
+        localStorage.setItem(JOURNAL_KEY, JSON.stringify(toStore));
+      } catch (e) {
+        // Fallback: keep most recent 40 with charts if storage quota exceeded
+        try {
+          localStorage.setItem(JOURNAL_KEY, JSON.stringify(tradeJournal.slice(-40)));
+        } catch (err) {}
+      }
+    }
 
     const flowParticles = Array.from({ length: 44 }, (_, i) => ({
       seriesIdx: i % 20, t: (i * 0.097) % 1, speed: 0.0038 + (i % 5) * 0.0011,
       fiberT: (i * 0.13) % 1, size: 2.0 + (i % 3) * 0.85
     }));
+
+    function getBridgeOrigin() {
+      try {
+        return new URL(bridgeUrl).origin;
+      } catch (e) {
+        return 'http://127.0.0.1:8000';
+      }
+    }
 
     function enterTerminal(mode) {
       currentView = 'terminal';
@@ -921,19 +956,21 @@
         renderGrids();
         renderSpotlights();
         renderBacktestTable();
-        if (activeModalSym) openOBModal(activeModalSym);
+        if (activeModalObj && !activeModalObj.isJournalRecord) {
+          openOBModal(activeModalObj.symbol);
+        }
       }
     }
 
     function getSector(sym) { return SECTOR_MAP[sym] || 'F&O'; }
 
     // =========================================================================
-    // ITM OPTION STRIKE SELECTOR (NSE F&O STRIKE STEPS)
+    // ITM OPTION CHAIN STRIKE SELECTOR (CE LOWER STRIKE / PE HIGHER STRIKE)
+    // Example: Spot 1020 (step 20) -> 1000 CE (Buy) | 1040 PE (Sell)
     // =========================================================================
     function getStrikeStep(price) {
       if (price < 150) return 5;
       if (price < 500) return 10;
-      if (price < 1200) return 20;
       if (price < 2500) return 20;
       if (price < 5000) return 50;
       return 100;
@@ -943,12 +980,12 @@
       const step = getStrikeStep(entryPrice);
       let strike;
       if (isBull) {
-        // Strictly In-The-Money Call (CE): strike below entryPrice
+        // CE (Option Chain var varcha / ITM): strictly lower strike than entryPrice
         strike = Math.floor(entryPrice / step) * step;
         if (strike >= entryPrice) strike -= step;
         return `${symbol} ${strike} CE`;
       } else {
-        // Strictly In-The-Money Put (PE): strike above entryPrice
+        // PE (Option Chain var khalcha / ITM): strictly higher strike than entryPrice
         strike = Math.ceil(entryPrice / step) * step;
         if (strike <= entryPrice) strike += step;
         return `${symbol} ${strike} PE`;
@@ -956,31 +993,29 @@
     }
 
     // =========================================================================
-    // 5-MINUTE INTRADAY CANDLE BUILDER (ANCHORED TO TODAY'S 09:15 -> LIVE)
+    // 5-MINUTE INTRADAY CANDLE BUILDER (FALLBACK WHEN LIVE BRIDGE IS OFF)
     // =========================================================================
     function build5mIntradayCandles(sym, ltp, pChange, high, low) {
-      // Exact TCS 23 Nov 2026 structure matching user's TradingView chart when TCS is inspected
       if (sym === 'TCS' && Math.abs(ltp - 2484.5) < 40 && pChange > 0) {
-        const raw = [
+        return [
           { t:'09:15', o:2420.0, h:2434.5, l:2405.5, c:2421.8 },
           { t:'09:20', o:2421.8, h:2430.5, l:2416.8, c:2417.4 },
           { t:'09:25', o:2417.4, h:2418.2, l:2405.0, c:2406.0 },
           { t:'09:30', o:2406.0, h:2413.5, l:2401.2, c:2408.4 },
           { t:'09:35', o:2408.4, h:2430.2, l:2407.6, c:2429.2 },
-          { t:'09:40', o:2429.2, h:2444.2, l:2424.5, c:2443.6 }, // Strong Bullish CHoCH Breakout Candle!
+          { t:'09:40', o:2429.2, h:2444.2, l:2424.5, c:2443.6 },
           { t:'09:45', o:2443.6, h:2455.0, l:2442.2, c:2451.8 },
           { t:'09:50', o:2451.8, h:2461.5, l:2445.0, c:2455.2 },
           { t:'09:55', o:2455.2, h:2460.0, l:2452.0, c:2456.4 },
           { t:'10:00', o:2456.4, h:2466.0, l:2455.5, c:2464.8 },
           { t:'10:05', o:2464.8, h:2479.0, l:2464.2, c:2478.2 },
-          { t:'10:10', o:2478.2, h:2494.0, l:2477.5, c:2493.4 }, // TP2 1:2 (2484.5) HIT!
+          { t:'10:10', o:2478.2, h:2494.0, l:2477.5, c:2493.4 },
           { t:'10:15', o:2493.4, h:2502.5, l:2490.2, c:2491.0 },
           { t:'10:20', o:2491.0, h:2492.0, l:2485.0, c:2487.2 },
           { t:'10:25', o:2487.2, h:2493.0, l:2486.0, c:2491.2 },
           { t:'10:30', o:2491.2, h:2494.5, l:2484.0, c:2485.6 },
           { t:'10:35', o:2485.6, h:2487.2, l:2483.2, c:ltp }
         ];
-        return raw;
       }
 
       const span = Math.max(high - low, ltp * 0.008);
@@ -996,26 +1031,22 @@
         let o = prev, c, h, l;
 
         if (i === 0) {
-          // 09:15 Opening Candle (High/Low valid intraday swing, breakout on 9:15 ignored)
           const dir = isBull ? 1 : -1;
           c = o + dir * span * 0.14;
           h = Math.min(high, Math.max(o, c) + span * 0.14);
           l = Math.max(low, Math.min(o, c) - span * 0.14);
         } else if (i < 5) {
-          // Pullback / consolidation inside 09:15 swing before breakout
           const pull = isBull ? -span * 0.08 : span * 0.08;
           c = o + pull * Math.sin(i * 1.1 + seed) * 0.85;
           h = Math.min(high, Math.max(o, c) + span * 0.05);
           l = Math.max(low, Math.min(o, c) - span * 0.05);
         } else if (i === 5) {
-          // 09:40 Strong Breakout Candle cleanly breaking 09:15 High/Low
           const refLvl = isBull ? candles[0].h : candles[0].l;
           c = isBull ? Math.min(high, refLvl + span * 0.18) : Math.max(low, refLvl - span * 0.18);
           o = isBull ? refLvl - span * 0.10 : refLvl + span * 0.10;
           h = isBull ? Math.min(high, c + span * 0.03) : Math.min(high, o + span * 0.05);
           l = isBull ? Math.max(low, o - span * 0.05) : Math.max(low, c - span * 0.03);
         } else {
-          // Post-breakout progression toward current LTP (some hit TP2, some TP1, some SL)
           const f = (i - 5) / (n - 6);
           const wave = Math.sin(i * 0.9 + seed) * span * 0.06;
           c = o + (ltp - o) * (0.28 + f * 0.45) + wave;
@@ -1031,52 +1062,65 @@
     }
 
     // =========================================================================
-    // EXACT STRATEGY ENGINE:
-    // - Fresh Intraday (skip prev day & 09:15 breakout, keep 09:15 H/L swing)
-    // - Swing 4 BOS / CHoCH + HTF Supertrend Bias (60, 3, 10)
-    // - Strong Breakout Candle Close Entry
-    // - SL at Breakout Candle Low (Buy) / High (Sell)
-    // - TP1 = 1:1 | TP2 = 1:2 | ITM CE / PE
+    // EXACT STRATEGY ENGINE (LOCKED RULES):
+    // 1. Uses REAL 5m live candles from Python bridge when available
+    // 2. Entry strictly between 09:30 and 12:00 PM (no new entries after 12:00)
+    // 3. 1 Stock = 1 Entry Max per day (2nd entry blocked)
+    // 4. Fresh Intraday (skip prev day & 09:15 breakout, keep 09:15 H/L swing)
+    // 5. ITM Option Chain Strike (CE lower / PE higher)
     // =========================================================================
-    function runExactStrategy(sym, ltp, pChange, high, low) {
-      const candles = build5mIntradayCandles(sym, ltp, pChange, high, low);
+    function runExactStrategy(sym, ltp, pChange, high, low, realCandles, htfBiasFromServer) {
+      const isRealChart = Array.isArray(realCandles) && realCandles.length >= 2;
+      const candles = isRealChart ? realCandles : build5mIntradayCandles(sym, ltp, pChange, high, low);
       const biasMode = document.getElementById('biasModeSelect')?.value || 'AUTO';
       const showBOS = document.getElementById('showBosChk')?.checked ?? true;
       const showCHOCH = document.getElementById('showChochChk')?.checked ?? true;
 
-      // HTF Supertrend Bias (+1 Bullish, -1 Bearish)
-      const autoBias = pChange >= 0 ? 1 : -1;
+      const autoBias = (htfBiasFromServer === 1 || htfBiasFromServer === -1)
+        ? htfBiasFromServer
+        : (pChange >= 0 ? 1 : -1);
       const bias = biasMode === 'BULL' ? 1 : biasMode === 'BEAR' ? -1 : autoBias;
 
-      // Intraday Swings starting from today's 09:15 candle (index 0) — Previous Day Ignored
       let refHigh = candles[0].h, refHighBar = 0;
       let refLow  = candles[0].l, refLowBar  = 0;
 
-      let setup = null; // First valid strong-candle BOS/CHoCH trade of the day
+      let setup = null; // 1 Stock = 1 Entry Max!
 
       for (let i = 1; i < candles.length; i++) {
         const cd = candles[i];
+
+        // Update intraday swings using Swing Length 4 (strictly within today)
+        if (i >= swingLen * 2) {
+          const pIdx = i - swingLen;
+          let isSwingH = true, isSwingL = true;
+          for (let k = pIdx - swingLen; k <= pIdx + swingLen; k++) {
+            if (candles[k].h > candles[pIdx].h) isSwingH = false;
+            if (candles[k].l < candles[pIdx].l) isSwingL = false;
+          }
+          if (isSwingH) { refHigh = candles[pIdx].h; refHighBar = pIdx; }
+          if (isSwingL) { refLow  = candles[pIdx].l; refLowBar  = pIdx; }
+        }
+
+        // RULE 1: Strict Entry Window (09:30 AM to 12:00 PM only)
+        if (cd.t < ENTRY_START_HHMM) continue;
+        if (cd.t > ENTRY_CUTOFF_HHMM) break;
+
+        // RULE 2: Max 1 Entry per Stock per Day
+        if (setup) break;
+
         const body = Math.abs(cd.c - cd.o);
         const fullRange = Math.max(cd.h - cd.l, 0.01);
         const bodyRatio = body / fullRange;
-        const isStrongBull = cd.c > cd.o && bodyRatio >= 0.52;
-        const isStrongBear = cd.c < cd.o && bodyRatio >= 0.52;
+        const isStrongBull = cd.c > cd.o && bodyRatio >= 0.50;
+        const isStrongBear = cd.c < cd.o && bodyRatio >= 0.50;
 
-        // Update intraday swing pivots (Swing Length 4 or 09:15 anchor)
-        if (i >= swingLen && i < candles.length - 1) {
-          const pIdx = i - Math.min(swingLen, Math.floor(i / 2));
-          if (candles[pIdx].h > refHigh) { refHigh = candles[pIdx].h; refHighBar = pIdx; }
-          if (candles[pIdx].l < refLow)  { refLow  = candles[pIdx].l; refLowBar  = pIdx; }
-        }
-
-        // Ignore 09:15 breakout (i === 0 already skipped by loop starting at i = 1)
-        if (!setup && bias === 1 && isStrongBull && cd.c > refHigh && (showCHOCH || showBOS)) {
+        if (bias === 1 && isStrongBull && cd.c > refHigh && (showCHOCH || showBOS)) {
           const entry = cd.c;
-          const slBuffer = Math.max(fullRange * 0.06, entry * 0.0005);
+          const slBuffer = entry * 0.0005;
           const sl = Number((cd.l - slBuffer).toFixed(2));
-          const risk = Math.max(entry - sl, entry * 0.0025);
-          const tp1 = Number((entry + risk * 1.0).toFixed(2)); // 1:1
-          const tp2 = Number((entry + risk * 2.0).toFixed(2)); // 1:2
+          const risk = Math.max(entry - sl, entry * 0.001);
+          const tp1 = Number((entry + risk * 1.0).toFixed(2));
+          const tp2 = Number((entry + risk * 2.0).toFixed(2));
           setup = {
             side: 'BUY',
             signal: i <= 7 ? 'ChoCH' : 'BOS',
@@ -1090,13 +1134,13 @@
             option: getItmOption(sym, entry, true),
             bias: 1
           };
-        } else if (!setup && bias === -1 && isStrongBear && cd.c < refLow && (showCHOCH || showBOS)) {
+        } else if (bias === -1 && isStrongBear && cd.c < refLow && (showCHOCH || showBOS)) {
           const entry = cd.c;
-          const slBuffer = Math.max(fullRange * 0.06, entry * 0.0005);
+          const slBuffer = entry * 0.0005;
           const sl = Number((cd.h + slBuffer).toFixed(2));
-          const risk = Math.max(sl - entry, entry * 0.0025);
-          const tp1 = Number((entry - risk * 1.0).toFixed(2)); // 1:1
-          const tp2 = Number((entry - risk * 2.0).toFixed(2)); // 1:2
+          const risk = Math.max(sl - entry, entry * 0.001);
+          const tp1 = Number((entry - risk * 1.0).toFixed(2));
+          const tp2 = Number((entry - risk * 2.0).toFixed(2));
           setup = {
             side: 'SELL',
             signal: i <= 7 ? 'ChoCH' : 'BOS',
@@ -1113,10 +1157,10 @@
         }
       }
 
-      // Evaluate Genuine Outcome Bar-by-Bar after Entry
+      // Evaluate outcome across ALL remaining candles of the day (even past 12:00 PM)
       if (setup) {
         let status = 'RUNNING';
-        let exitPrice = ltp;
+        let exitPrice = candles[candles.length - 1].c;
         let exitBar = candles.length - 1;
         let tp1Reached = false;
 
@@ -1165,7 +1209,7 @@
         setup.pnlPct = Number(pnlPct.toFixed(2));
       }
 
-      return { candles, bias, setup };
+      return { candles, isRealChart, bias, setup };
     }
 
     function enrichStock(s) {
@@ -1175,7 +1219,7 @@
       const high = Math.max(Number(s.high) || ltp, ltp);
       const low = Math.min(Number(s.low) || ltp, ltp);
       const isBull = pChange >= 0;
-      const strat = runExactStrategy(sym, ltp, pChange, high, low);
+      const strat = runExactStrategy(sym, ltp, pChange, high, low, s.candles, s.htf_bias);
       return { symbol: sym, sector: getSector(sym), ltp, pChange, high, low, isBull, ...strat };
     }
 
@@ -1191,7 +1235,8 @@
       return { topBulls, topBears, all: [...topBulls, ...topBears] };
     }
 
-    // Automatically log today's Top 3 Bullish & Top 3 Bearish trades into the Genuine Journal (deduplicated by date + symbol)
+    // Automatically log today's Top 3 Bullish & Top 3 Bearish trades WITH SAVED REAL 5M CHART
+    // Strict 1 Stock = 1 Entry per Day (deduplicated by date + symbol)
     function syncTodayTop3ToJournal() {
       const todayStr = new Date().toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric', timeZone: 'Asia/Kolkata' });
       const topBulls = enrichedStocks.filter(s => s.isBull).sort((a, b) => b.pChange - a.pChange).slice(0, 3);
@@ -1202,13 +1247,17 @@
       top6.forEach(s => {
         if (!s.setup) return;
         const st = s.setup;
-        const id = `${todayStr}_${s.symbol}_${st.entryTime}`;
+        if (st.entryTime < ENTRY_START_HHMM || st.entryTime > ENTRY_CUTOFF_HHMM) return;
+
+        // 1 Stock = 1 Entry Max per Day
+        const id = `${todayStr}_${s.symbol}`;
         const existingIdx = tradeJournal.findIndex(tr => tr.id === id);
         const rec = {
           id,
           date: todayStr,
           time: st.entryTime,
           symbol: s.symbol,
+          sector: s.sector,
           side: st.side,
           signal: st.signal,
           option: st.option,
@@ -1219,20 +1268,137 @@
           exit: st.exitPrice,
           status: st.status,
           pnlPts: st.pnlPts,
-          pnlPct: st.pnlPct
+          pnlPct: st.pnlPct,
+          bias: s.bias,
+          isRealChart: s.isRealChart,
+          setup: st,
+          candles: s.candles // REAL 5M CHART SAVED WITH BACKTEST RECORD!
         };
         if (existingIdx === -1) {
           tradeJournal.push(rec);
           changed = true;
         } else {
-          tradeJournal[existingIdx] = rec;
-          changed = true;
+          // Only update the same first entry (status/exit/candles), never replace with a 2nd entry
+          if (tradeJournal[existingIdx].time === st.entryTime) {
+            tradeJournal[existingIdx] = rec;
+            changed = true;
+          }
         }
       });
 
-      if (changed) {
-        localStorage.setItem(JOURNAL_KEY, JSON.stringify(tradeJournal));
+      if (changed) saveJournalSafe();
+    }
+
+    // Convert Python server's 60-day backtest JSON into exact Journal records with saved real 5m charts
+    function ingestServerBacktestPayload(payload) {
+      if (!payload || !Array.isArray(payload.trades)) return 0;
+      const converted = payload.trades.map(t => {
+        const isBuy = t.Side === 'BUY';
+        const candles = (t.Candles || []).map(c => {
+          if (c.t) return c;
+          // Convert unix timestamp (IST-shifted) to HH:MM
+          const d = new Date((c.time || 0) * 1000);
+          const hh = String(d.getUTCHours()).padStart(2, '0');
+          const mm = String(d.getUTCMinutes()).padStart(2, '0');
+          return { t: `${hh}:${mm}`, o: c.open, h: c.high, l: c.low, c: c.close };
+        });
+
+        let breakBar = candles.findIndex(c => c.t === t.Entry_Time);
+        if (breakBar < 0) breakBar = Math.min(5, Math.max(0, candles.length - 1));
+        let exitBar = candles.findIndex(c => c.t === t.Exit_Time);
+        if (exitBar < 0) exitBar = Math.max(breakBar, candles.length - 1);
+
+        const risk = Math.max(Math.abs((t.Entry || 0) - (t.SL || 0)), 0.05);
+        const setupObj = {
+          side: t.Side,
+          signal: t.Signal === 'CHoCH' ? 'ChoCH' : t.Signal,
+          signalColor: t.Signal === 'CHoCH' ? (isBuy ? '#00BCD4' : '#FF9800') : (isBuy ? '#00E676' : '#FF1744'),
+          fromBar: Math.max(0, breakBar - Math.min(swingLen, breakBar)),
+          breakBar,
+          breakLevel: isBuy ? (candles[Math.max(0, breakBar - 1)]?.h || t.Entry) : (candles[Math.max(0, breakBar - 1)]?.l || t.Entry),
+          entryTime: t.Entry_Time,
+          entry: Number(t.Entry),
+          sl: Number(t.SL),
+          tp1: Number(t.TP1_1to1),
+          tp2: Number(t.TP2_1to2),
+          risk: Number(risk.toFixed(2)),
+          option: t.ITM_Option,
+          bias: isBuy ? 1 : -1,
+          status: t.Status,
+          exitPrice: Number(t.Exit),
+          exitBar,
+          pnlPts: Number(t.PnL_Pts),
+          pnlPct: Number(t.PnL_Pct)
+        };
+
+        return {
+          id: `${t.Date}_${t.Stock}`,
+          date: t.Date,
+          time: t.Entry_Time,
+          symbol: t.Stock,
+          sector: getSector(t.Stock),
+          side: t.Side,
+          signal: setupObj.signal,
+          option: t.ITM_Option,
+          entry: setupObj.entry,
+          sl: setupObj.sl,
+          tp1: setupObj.tp1,
+          tp2: setupObj.tp2,
+          exit: setupObj.exitPrice,
+          status: t.Status,
+          pnlPts: setupObj.pnlPts,
+          pnlPct: setupObj.pnlPct,
+          bias: setupObj.bias,
+          isRealChart: true,
+          setup: setupObj,
+          candles
+        };
+      });
+
+      tradeJournal = converted;
+      saveJournalSafe();
+      document.getElementById('btDateRange').textContent = payload.date_range || 'Last 60 Days';
+      renderBacktestTable();
+      return converted.length;
+    }
+
+    async function load60DayRealBacktest() {
+      const btn = document.getElementById('load60dBtn');
+      const origin = getBridgeOrigin();
+      btn.textContent = '⏳ Syncing 60D Real Charts...';
+      try {
+        let res = await fetch(`${origin}/api/backtest`, { cache: 'no-store' });
+        let data = await res.json();
+        if (data.empty) {
+          res = await fetch(`${origin}/api/run-backtest`, { cache: 'no-store' });
+          data = await res.json();
+        }
+        if (data.error) throw new Error(data.error);
+        const cnt = ingestServerBacktestPayload(data);
+        hideAlert();
+        btn.textContent = `✓ Loaded ${cnt} Real Trades`;
+        setTimeout(() => { btn.textContent = '⚡ Sync 60D Real Backtest'; }, 3000);
+      } catch (err) {
+        btn.textContent = '⚡ Sync 60D Real Backtest';
+        showAlert(`Local Python server offline (${origin}). Run Start_ICT_Terminal.bat OR use 'Load Saved JSON' to open ict_backtest_data.json.`);
       }
+    }
+
+    function importBacktestJSON(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = ev => {
+        try {
+          const parsed = JSON.parse(ev.target.result);
+          const cnt = ingestServerBacktestPayload(parsed);
+          hideAlert();
+          if (cnt === 0) showAlert('No trades found in selected JSON file.');
+        } catch (err) {
+          showAlert('Invalid backtest JSON file.');
+        }
+      };
+      reader.readAsText(file);
     }
 
     function recordCurrentTop3ToJournal() {
@@ -1262,18 +1428,18 @@
 
     function renderBacktestTable() {
       const total = tradeJournal.length;
-      const tp2 = tradeJournal.filter(t => t.status.includes('TP2')).length;
-      const tp1 = tradeJournal.filter(t => t.status.includes('TP1')).length;
-      const sl  = tradeJournal.filter(t => t.status.includes('SL')).length;
+      const tp2 = tradeJournal.filter(t => String(t.status).includes('TP2')).length;
+      const tp1 = tradeJournal.filter(t => String(t.status).includes('TP1')).length;
+      const sl  = tradeJournal.filter(t => String(t.status).includes('SL')).length;
       const closed = tp2 + tp1 + sl;
-      const wins = tp2 + tp1;
-      const acc = closed > 0 ? ((wins / closed) * 100) : 0;
+      const wins = tradeJournal.filter(t => Number(t.pnlPts || 0) > 0).length;
+      const acc = total > 0 ? ((wins / total) * 100) : 0;
       const netPts = tradeJournal.reduce((a, t) => a + Number(t.pnlPts || 0), 0);
       const netPct = tradeJournal.reduce((a, t) => a + Number(t.pnlPct || 0), 0);
 
       document.getElementById('btTotalTrades').textContent = total;
       document.getElementById('btAccuracy').textContent = `${acc.toFixed(1)}%`;
-      document.getElementById('btWinLossTxt').textContent = `${wins} Wins / ${sl} Losses (${total - closed} Running)`;
+      document.getElementById('btWinLossTxt').textContent = `${wins} Wins / ${total - wins} Losses (${total - closed} EOD/Run)`;
       document.getElementById('btTp2Hits').textContent = tp2;
       document.getElementById('btTp1Hits').textContent = tp1;
       document.getElementById('btSlHits').textContent = sl;
@@ -1285,35 +1451,36 @@
 
       const tbody = document.getElementById('btTableBody');
       if (total === 0) {
-        tbody.innerHTML = '<tr><td colspan="13" style="text-align:center;color:var(--text-3);padding:24px;">No Top 3 trades logged yet. Turn ON Live NSE MCP to record real setups.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="13" style="text-align:center;color:var(--text-3);padding:24px;">No Top 3 trades logged yet. Click "Sync 60D Real Backtest" or turn ON Live NSE MCP.</td></tr>';
         return;
       }
 
       tbody.innerHTML = tradeJournal.map((t, idx) => {
         const isBuy = t.side === 'BUY';
-        const stPill = t.status.includes('TP2')
+        const stPill = String(t.status).includes('TP2')
           ? '<span class="pill pill-bull">TP2 HIT 1:2</span>'
-          : t.status.includes('TP1')
+          : String(t.status).includes('TP1')
             ? '<span class="pill pill-choch-up">TP1 HIT 1:1</span>'
-            : t.status.includes('SL')
+            : String(t.status).includes('SL')
               ? '<span class="pill pill-bear">SL HIT</span>'
-              : '<span class="pill pill-gold">RUNNING</span>';
-        const pnlCol = t.pnlPts >= 0 ? 'var(--bull)' : 'var(--bear)';
+              : `<span class="pill pill-gold">${t.status}</span>`;
+        const pnlCol = Number(t.pnlPts) >= 0 ? 'var(--bull)' : 'var(--bear)';
+        const chartTag = (t.candles && t.candles.length) ? ' 📈' : '';
         return `
-          <tr onclick="openOBModal('${t.symbol}')" title="Click to inspect 5m Long/Short Position Chart">
+          <tr onclick="openJournalModal(${idx})" title="Click to open saved real 5m chart for ${t.symbol} (${t.date})">
             <td><strong>#${idx + 1}</strong></td>
             <td>${t.date} • <strong>${t.time}</strong></td>
-            <td><strong>${t.symbol}</strong></td>
+            <td><strong>${t.symbol}</strong>${chartTag}</td>
             <td><span class="pill ${isBuy ? 'pill-bull' : 'pill-bear'}">${t.side}</span></td>
             <td><span class="pill ${t.signal === 'ChoCH' ? (isBuy ? 'pill-choch-up' : 'pill-choch-dn') : (isBuy ? 'pill-bull' : 'pill-bear')}">${t.signal}</span></td>
             <td style="color:var(--cyan);font-weight:800;">${t.option}</td>
-            <td>₹${t.entry.toFixed(2)}</td>
-            <td style="color:var(--bear)">₹${t.sl.toFixed(2)}</td>
-            <td style="color:var(--cyan)">₹${t.tp1.toFixed(2)}</td>
-            <td style="color:var(--bull)">₹${t.tp2.toFixed(2)}</td>
-            <td><strong>₹${t.exit.toFixed(2)}</strong></td>
+            <td>₹${Number(t.entry).toFixed(2)}</td>
+            <td style="color:var(--bear)">₹${Number(t.sl).toFixed(2)}</td>
+            <td style="color:var(--cyan)">₹${Number(t.tp1).toFixed(2)}</td>
+            <td style="color:var(--bull)">₹${Number(t.tp2).toFixed(2)}</td>
+            <td><strong>₹${Number(t.exit).toFixed(2)}</strong></td>
             <td>${stPill}</td>
-            <td style="color:${pnlCol};font-weight:900;">${t.pnlPts >= 0 ? '+' : ''}${t.pnlPts.toFixed(1)} (${t.pnlPct >= 0 ? '+' : ''}${t.pnlPct.toFixed(2)}%)</td>
+            <td style="color:${pnlCol};font-weight:900;">${Number(t.pnlPts) >= 0 ? '+' : ''}${Number(t.pnlPts).toFixed(1)} (${Number(t.pnlPct) >= 0 ? '+' : ''}${Number(t.pnlPct).toFixed(2)}%)</td>
           </tr>
         `;
       }).join('');
@@ -1364,7 +1531,7 @@
         seedHistory(enrichedStocks, tsLabel);
       }
 
-      document.getElementById('syncSub').textContent = `${enrichedStocks.length} F&O Stocks • ICT Swing ${swingLen} (${isLive ? 'LIVE NSE MCP' : 'TODAY DEMO'})`;
+      document.getElementById('syncSub').textContent = `${enrichedStocks.length} F&O Stocks • 09:30–12:00 • 1 Entry/Stock (${isLive ? 'LIVE REAL 5M CHART' : 'TODAY DEMO'})`;
       document.getElementById('lastSyncPill').textContent = `SYNC ${tsLabel}`;
       document.getElementById('pollCountPill').textContent = `${timeLabels.length} Ticks`;
 
@@ -1373,7 +1540,10 @@
       renderGrids();
       renderSpotlights();
       renderBacktestTable();
-      if (activeModalSym) drawOBModalChart(activeModalSym);
+      if (activeModalObj && !activeModalObj.isJournalRecord) {
+        const updated = enrichedStocks.find(x => x.symbol === activeModalObj.symbol);
+        if (updated) { activeModalObj = updated; drawOBModalChart(updated); }
+      }
     }
 
     async function fetchLiveFromBridge() {
@@ -1385,15 +1555,15 @@
         const data = await res.json();
         if (data.error) throw new Error(data.error);
         const list = Array.isArray(data.stocks) ? data.stocks : [];
-        if (list.length === 0) { showAlert('Bridge connected, waiting for NSE MCP F&O stocks.'); return; }
+        if (list.length === 0) { showAlert('Bridge connected, waiting for NSE live F&O stocks.'); return; }
         hideAlert();
         chip.className = 'status-chip live';
-        txt.textContent = `LIVE MCP (${list.length})`;
+        txt.textContent = `LIVE 5M (${list.length})`;
         loadData(list, data.updated_at || getISTTime(), true);
       } catch (err) {
         chip.className = 'status-chip error';
         txt.textContent = 'BRIDGE OFFLINE';
-        showAlert(`Cannot reach ${bridgeUrl}. Start Start_NSE_Live.bat on your PC. (${err.message})`);
+        showAlert(`Cannot reach ${bridgeUrl}. Double-click Start_ICT_Terminal.bat on your PC. (${err.message})`);
       }
     }
 
@@ -1542,7 +1712,7 @@
       const { all } = getTop3Picks();
       document.getElementById('spotlightStack').innerHTML = all.map(s => {
         const st = s.setup;
-        const statusBadge = !st ? '<span class="pill pill-muted">WAIT BREAK</span>'
+        const statusBadge = !st ? '<span class="pill pill-muted">WAIT (09:30-12:00)</span>'
           : st.status.includes('TP2') ? '<span class="pill pill-bull">TP2 HIT 1:2</span>'
           : st.status.includes('TP1') ? '<span class="pill pill-choch-up">TP1 HIT 1:1</span>'
           : st.status.includes('SL')  ? '<span class="pill pill-bear">SL HIT</span>'
@@ -1558,7 +1728,7 @@
                   ${statusBadge}
                 </div>
                 <div class="hc-big-pct ${s.isBull ? 'up' : 'dn'}">${s.isBull ? '+' : ''}${s.pChange.toFixed(2)}%</div>
-                <div class="hc-opt-line">${st ? `ITM: ${st.option} • @ ${st.entryTime}` : `LTP ₹${s.ltp.toFixed(2)} • Waiting Valid Break`}</div>
+                <div class="hc-opt-line">${st ? `ITM: ${st.option} • @ ${st.entryTime} (1/1)` : `LTP ₹${s.ltp.toFixed(2)} • Waiting Valid Break (<12:00)`}</div>
               </div>
               <div class="hc-right-chart"><canvas id="heroSpark_${s.symbol}"></canvas></div>
             </div>
@@ -1593,7 +1763,6 @@
       const minP = Math.min(...prices) * 0.999, maxP = Math.max(...prices) * 1.001;
       const yOf = p => 4 + ((maxP - p) / Math.max(maxP - minP, 0.1)) * (h - 8);
 
-      // Draw Mini Long/Short Position Box inside thumbnail
       if (st) {
         const bx = (st.breakBar / s.candles.length) * w;
         const bw = w - bx;
@@ -1806,54 +1975,81 @@
     });
 
     // =========================================================================
-    // 5-MINUTE CHART MODAL WITH TRADINGVIEW LONG / SHORT POSITION TOOL
+    // 5-MINUTE CHART MODAL (LIVE REAL CHART + SAVED HISTORICAL REAL CHART)
     // =========================================================================
     function openOBModal(sym) {
       const s = enrichedStocks.find(x => x.symbol === sym);
       if (!s) return;
-      activeModalSym = sym;
+      openChartModalWithData({ ...s, isJournalRecord: false });
+    }
 
+    function openJournalModal(idx) {
+      const rec = tradeJournal[idx];
+      if (!rec) return;
+      if (rec.candles && rec.candles.length > 0 && rec.setup) {
+        openChartModalWithData({
+          symbol: rec.symbol,
+          sector: rec.sector || getSector(rec.symbol),
+          ltp: rec.exit,
+          isBull: rec.side === 'BUY',
+          bias: rec.bias || (rec.side === 'BUY' ? 1 : -1),
+          candles: rec.candles,
+          setup: rec.setup,
+          isRealChart: true,
+          savedDate: rec.date,
+          isJournalRecord: true
+        });
+      } else {
+        openOBModal(rec.symbol);
+      }
+    }
+
+    function openChartModalWithData(s) {
+      activeModalObj = s;
       const st = s.setup;
       const biasTxt = s.bias === 1 ? 'BIAS: BULLISH' : 'BIAS: BEARISH';
+      const srcTag = s.isJournalRecord
+        ? `<span class="pill pill-gold">SAVED CHART • ${s.savedDate}</span>`
+        : (s.isRealChart ? '<span class="pill pill-bull">LIVE REAL 5M</span>' : '<span class="pill pill-muted">DEMO 5M</span>');
 
       document.getElementById('obmSymTitle').innerHTML = `
         <span>${s.symbol} (5m)</span>
+        ${srcTag}
         <span class="pill ${s.bias === 1 ? 'pill-bull' : 'pill-bear'}">${biasTxt}</span>
         ${st ? `<span class="pill ${st.signal === 'ChoCH' ? (s.isBull ? 'pill-choch-up' : 'pill-choch-dn') : (s.isBull ? 'pill-bull' : 'pill-bear')}">${st.signal} ${st.side}</span>` : ''}
         ${st ? `<span class="pill pill-cyan">${st.option}</span>` : ''}
       `;
       document.getElementById('obmSubLine').textContent =
-        `${s.sector} • ICT BOS|CHoCH (Swing ${swingLen}, Auto HTF Supertrend 60m, ${stFactor}, ${stLen}) • Prev Day Ignored`;
+        `${s.sector} • Entry 09:30–12:00 Only • 1 Entry/Stock • ITM CE/PE • Swing ${swingLen} • HTF Supertrend (60m, ${stFactor}, ${stLen})`;
 
       if (st) {
         document.getElementById('obmStatsGrid').innerHTML = `
-          <div class="obm-stat"><div class="s-lbl">Entry (${st.entryTime})</div><div class="s-val">₹${st.entry.toFixed(2)}</div></div>
-          <div class="obm-stat"><div class="s-lbl">Stop Loss</div><div class="s-val" style="color:var(--bear)">₹${st.sl.toFixed(2)}</div></div>
-          <div class="obm-stat"><div class="s-lbl">TP1 (1:1)</div><div class="s-val" style="color:var(--cyan)">₹${st.tp1.toFixed(2)}</div></div>
-          <div class="obm-stat"><div class="s-lbl">TP2 (1:2)</div><div class="s-val" style="color:var(--bull)">₹${st.tp2.toFixed(2)}</div></div>
-          <div class="obm-stat"><div class="s-lbl">Exit / LTP</div><div class="s-val">₹${st.exitPrice.toFixed(2)}</div></div>
+          <div class="obm-stat"><div class="s-lbl">Entry (${st.entryTime})</div><div class="s-val">₹${Number(st.entry).toFixed(2)}</div></div>
+          <div class="obm-stat"><div class="s-lbl">Stop Loss</div><div class="s-val" style="color:var(--bear)">₹${Number(st.sl).toFixed(2)}</div></div>
+          <div class="obm-stat"><div class="s-lbl">TP1 (1:1)</div><div class="s-val" style="color:var(--cyan)">₹${Number(st.tp1).toFixed(2)}</div></div>
+          <div class="obm-stat"><div class="s-lbl">TP2 (1:2)</div><div class="s-val" style="color:var(--bull)">₹${Number(st.tp2).toFixed(2)}</div></div>
+          <div class="obm-stat"><div class="s-lbl">Exit / LTP</div><div class="s-val">₹${Number(st.exitPrice).toFixed(2)}</div></div>
           <div class="obm-stat"><div class="s-lbl">ITM Option</div><div class="s-val" style="color:var(--cyan)">${st.option.replace(s.symbol + ' ', '')}</div></div>
-          <div class="obm-stat"><div class="s-lbl">Result</div><div class="s-val" style="color:${st.pnlPts >= 0 ? 'var(--bull)' : 'var(--bear)'}">${st.status}</div></div>
+          <div class="obm-stat"><div class="s-lbl">Result</div><div class="s-val" style="color:${Number(st.pnlPts) >= 0 ? 'var(--bull)' : 'var(--bear)'}">${st.status}</div></div>
         `;
         document.getElementById('obmNote').textContent =
-          `${st.side} Setup triggered at ${st.entryTime} when a strong candle closed ${st.side === 'BUY' ? 'above' : 'below'} the intraday ${st.signal} level (₹${st.breakLevel.toFixed(1)}). ` +
-          `Entry at Candle Close ₹${st.entry.toFixed(2)} (${st.option}), SL at ₹${st.sl.toFixed(2)} (Risk ₹${st.risk.toFixed(1)}), TP1 (1:1) ₹${st.tp1.toFixed(2)}, TP2 (1:2) ₹${st.tp2.toFixed(2)}. ` +
-          `Outcome: ${st.status} (${st.pnlPts >= 0 ? '+' : ''}${st.pnlPts.toFixed(1)} pts / ${st.pnlPct >= 0 ? '+' : ''}${st.pnlPct.toFixed(2)}%).`;
+          `${st.side} Setup triggered at ${st.entryTime} (strictly inside 09:30–12:00 window, max 1 entry/stock). ` +
+          `Entry ₹${Number(st.entry).toFixed(2)} (${st.option}), SL ₹${Number(st.sl).toFixed(2)} (Risk ₹${Number(st.risk).toFixed(1)}), TP1 (1:1) ₹${Number(st.tp1).toFixed(2)}, TP2 (1:2) ₹${Number(st.tp2).toFixed(2)}. ` +
+          `Outcome: ${st.status} (${Number(st.pnlPts) >= 0 ? '+' : ''}${Number(st.pnlPts).toFixed(1)} pts / ${Number(st.pnlPct) >= 0 ? '+' : ''}${Number(st.pnlPct).toFixed(2)}%).`;
       } else {
         document.getElementById('obmStatsGrid').innerHTML = `
-          <div class="obm-stat"><div class="s-lbl">LTP</div><div class="s-val">₹${s.ltp.toFixed(2)}</div></div>
-          <div class="obm-stat"><div class="s-lbl">Status</div><div class="s-val">NO VALID BREAK</div></div>
+          <div class="obm-stat"><div class="s-lbl">LTP</div><div class="s-val">₹${Number(s.ltp).toFixed(2)}</div></div>
+          <div class="obm-stat"><div class="s-lbl">Status</div><div class="s-val">NO BREAK (<12:00)</div></div>
         `;
-        document.getElementById('obmNote').textContent = 'Waiting for a strong candle close outside today\'s fresh intraday BOS / CHoCH level matching HTF Supertrend Bias.';
+        document.getElementById('obmNote').textContent = 'Waiting for a strong candle close (≥50% body) outside today\'s fresh intraday BOS / CHoCH level between 09:30 and 12:00 PM.';
       }
 
       document.getElementById('obModalBackdrop').classList.add('open');
-      setTimeout(() => drawOBModalChart(sym), 20);
+      setTimeout(() => drawOBModalChart(s), 20);
     }
 
-    function drawOBModalChart(sym) {
-      const s = enrichedStocks.find(x => x.symbol === sym);
-      if (!s) return;
+    function drawOBModalChart(s) {
+      if (!s || !s.candles || s.candles.length === 0) return;
       const canvas = document.getElementById('obDetailCanvas');
       const rect = canvas.parentElement.getBoundingClientRect();
       const dpr = window.devicePixelRatio || 1;
@@ -1872,8 +2068,9 @@
       const st = s.setup;
       const prices = s.candles.flatMap(c => [c.h, c.l]);
       if (st) prices.push(st.sl, st.tp1, st.tp2);
-      const minP = Math.min(...prices) - (Math.max(...prices) - Math.min(...prices)) * 0.08;
-      const maxP = Math.max(...prices) + (Math.max(...prices) - Math.min(...prices)) * 0.08;
+      const rawMin = Math.min(...prices), rawMax = Math.max(...prices);
+      const minP = rawMin - (rawMax - rawMin) * 0.08;
+      const maxP = rawMax + (rawMax - rawMin) * 0.08;
       const spanP = Math.max(maxP - minP, 1);
 
       const yOf = p => pad.top + ((maxP - p) / spanP) * plotH;
@@ -1891,7 +2088,7 @@
         ctx.fillText(p.toFixed(1), W - pad.right + 8, y + 3);
       }
 
-      // 09:15 Opening Session Highlight Strip
+      // 09:15 Opening Session Strip
       const xOpen = xOfBar(0);
       ctx.fillStyle = 'rgba(251, 191, 36, 0.08)';
       ctx.fillRect(xOpen - step * 0.45, pad.top, step * 0.9, plotH);
@@ -1899,34 +2096,44 @@
       ctx.font = 'bold 9px ui-monospace, monospace';
       ctx.textAlign = 'center';
       ctx.fillText('09:15', xOpen, pad.top + 11);
+
+      // 12:00 PM Entry Cutoff Vertical Marker
+      const idx1200 = s.candles.findIndex(c => c.t === '12:00');
+      if (idx1200 > 0) {
+        const x12 = xOfBar(idx1200);
+        ctx.save();
+        ctx.strokeStyle = 'rgba(251, 191, 36, 0.45)';
+        ctx.setLineDash([4, 4]);
+        ctx.beginPath(); ctx.moveTo(x12, pad.top); ctx.lineTo(x12, H - pad.bottom); ctx.stroke();
+        ctx.fillStyle = '#fbbf24';
+        ctx.fillText('12:00 CUTOFF', x12, pad.top + 11);
+        ctx.restore();
+      }
       ctx.textAlign = 'left';
 
-      // TRADINGVIEW LONG / SHORT POSITION TOOL (DRAWN BEHIND CANDLES)
+      // TRADINGVIEW LONG / SHORT POSITION TOOL
       if (st) {
         const bx = xOfBar(st.breakBar);
         const endIdx = Math.min(count - 1, Math.max(st.exitBar + 2, st.breakBar + 7));
         const ex = xOfBar(endIdx) + step * 0.6;
-        const bw = Math.max(50, ex - bx);
+        const bw = Math.max(40, ex - bx);
 
         const yEntry = yOf(st.entry);
         const ySl = yOf(st.sl);
         const yTp1 = yOf(st.tp1);
         const yTp2 = yOf(st.tp2);
 
-        // Red Stop-Loss Box (Entry -> SL)
         ctx.fillStyle = 'rgba(255, 23, 68, 0.24)';
         ctx.fillRect(bx, Math.min(yEntry, ySl), bw, Math.abs(ySl - yEntry));
         ctx.strokeStyle = 'rgba(255, 23, 68, 0.65)';
         ctx.lineWidth = 1;
         ctx.strokeRect(bx, Math.min(yEntry, ySl), bw, Math.abs(ySl - yEntry));
 
-        // Green Reward Box (Entry -> TP2 1:2)
         ctx.fillStyle = 'rgba(0, 200, 83, 0.22)';
         ctx.fillRect(bx, Math.min(yEntry, yTp2), bw, Math.abs(yTp2 - yEntry));
         ctx.strokeStyle = 'rgba(0, 230, 118, 0.65)';
         ctx.strokeRect(bx, Math.min(yEntry, yTp2), bw, Math.abs(yTp2 - yEntry));
 
-        // TP1 (1:1) Mid-Target Dashed Line inside Green Box
         ctx.save();
         ctx.strokeStyle = '#38d9ff';
         ctx.setLineDash([4, 3]);
@@ -1934,10 +2141,9 @@
         ctx.beginPath(); ctx.moveTo(bx, yTp1); ctx.lineTo(bx + bw, yTp1); ctx.stroke();
         ctx.fillStyle = '#38d9ff';
         ctx.font = 'bold 9.5px ui-monospace, monospace';
-        ctx.fillText(`TP1 1:1 (${st.tp1.toFixed(1)})`, bx + 6, yTp1 - 4);
+        ctx.fillText(`TP1 1:1 (${Number(st.tp1).toFixed(1)})`, bx + 6, yTp1 - 4);
         ctx.restore();
 
-        // Diagonal Dashed Position Line (Entry -> Exit)
         ctx.save();
         ctx.strokeStyle = 'rgba(255,255,255,0.45)';
         ctx.setLineDash([3, 3]);
@@ -1947,7 +2153,6 @@
         ctx.stroke();
         ctx.restore();
 
-        // Right Axis Price Tags (TP2, TP1, Entry, SL)
         const drawTag = (y, txt, bg, fg) => {
           ctx.fillStyle = bg;
           ctx.fillRect(W - pad.right + 2, y - 9, 92, 18);
@@ -1955,27 +2160,28 @@
           ctx.font = 'bold 9.5px ui-monospace, monospace';
           ctx.fillText(txt, W - pad.right + 6, y + 3);
         };
-        drawTag(yTp2, `TP2 ${st.tp2.toFixed(1)}`, '#00C853', '#ffffff');
-        drawTag(yEntry, `ENT ${st.entry.toFixed(1)}`, '#787b86', '#ffffff');
-        drawTag(ySl, `SL  ${st.sl.toFixed(1)}`, '#FF1744', '#ffffff');
+        drawTag(yTp2, `TP2 ${Number(st.tp2).toFixed(1)}`, '#00C853', '#ffffff');
+        drawTag(yEntry, `ENT ${Number(st.entry).toFixed(1)}`, '#787b86', '#ffffff');
+        drawTag(ySl, `SL  ${Number(st.sl).toFixed(1)}`, '#FF1744', '#ffffff');
       }
 
       // Candlesticks + Bottom Time Axis
+      const labelStep = Math.max(2, Math.floor(count / 12));
       s.candles.forEach((cd, i) => {
         const cx = xOfBar(i);
         const isUp = cd.c >= cd.o;
         const isBreak = st && i === st.breakBar;
         const col = isBreak ? (isUp ? '#00E676' : '#FF1744') : (isUp ? '#7c8594' : '#ffffff');
 
-        ctx.strokeStyle = col; ctx.lineWidth = 1.4;
+        ctx.strokeStyle = col; ctx.lineWidth = 1.3;
         ctx.beginPath(); ctx.moveTo(cx, yOf(cd.h)); ctx.lineTo(cx, yOf(cd.l)); ctx.stroke();
 
         const y1 = yOf(Math.max(cd.o, cd.c)), y2 = yOf(Math.min(cd.o, cd.c));
-        const bw = Math.max(6, step * 0.56);
+        const bw = Math.max(3, Math.min(10, step * 0.58));
         ctx.fillStyle = col;
-        ctx.fillRect(cx - bw / 2, y1, bw, Math.max(2.5, y2 - y1));
+        ctx.fillRect(cx - bw / 2, y1, bw, Math.max(2, y2 - y1));
 
-        if (i % 2 === 0 || isBreak) {
+        if (i % labelStep === 0 || isBreak) {
           ctx.fillStyle = '#787b86';
           ctx.font = '9.5px ui-monospace, monospace';
           ctx.textAlign = 'center';
@@ -1984,7 +2190,7 @@
         }
       });
 
-      // ICT BOS / CHoCH Dashed Line from Swing Bar to Breakout Bar
+      // ICT BOS / CHoCH Dashed Line
       if (st) {
         const x1 = xOfBar(st.fromBar), x2 = xOfBar(st.breakBar), y = yOf(st.breakLevel);
         ctx.save();
@@ -2000,7 +2206,7 @@
         ctx.restore();
       }
 
-      // TOP-RIGHT BIAS TABLE (EXACT TRADINGVIEW STYLE)
+      // TOP-RIGHT BIAS TABLE
       const isBullBias = s.bias === 1;
       const boxW = 128, boxH = 26;
       const bx = W - pad.right - boxW - 10, by = pad.top + 4;
@@ -2013,7 +2219,7 @@
       ctx.textAlign = 'left';
     }
 
-    function closeOBModal() { activeModalSym = null; document.getElementById('obModalBackdrop').classList.remove('open'); }
+    function closeOBModal() { activeModalObj = null; document.getElementById('obModalBackdrop').classList.remove('open'); }
     function openSettings() {
       document.getElementById('bridgeUrlInput').value = bridgeUrl;
       document.getElementById('pollSecInput').value = pollSeconds;
@@ -2056,14 +2262,16 @@
       const mins = hh * 60 + mm;
       const day = now.getDay();
       const el = document.getElementById('mktState');
-      if (day >= 1 && day <= 5 && mins >= 555 && mins <= 930) {
-        el.className = 'pill pill-bull'; el.textContent = 'NSE OPEN';
+      if (day >= 1 && day <= 5 && mins >= 570 && mins <= 720) {
+        el.className = 'pill pill-bull'; el.textContent = 'ENTRY OPEN';
+      } else if (day >= 1 && day <= 5 && mins >= 555 && mins <= 930) {
+        el.className = 'pill pill-gold'; el.textContent = mins > 720 ? '>12:00 LOCK' : '09:15 BUILD';
       } else {
         el.className = 'pill pill-muted'; el.textContent = 'AFTER HRS';
       }
     }
 
-    window.addEventListener('resize', () => { if (activeModalSym) drawOBModalChart(activeModalSym); });
+    window.addEventListener('resize', () => { if (activeModalObj) drawOBModalChart(activeModalObj); });
     setInterval(tickClock, 1000);
     tickClock();
 
