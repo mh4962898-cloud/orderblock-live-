@@ -494,7 +494,7 @@
     </nav>
 
     <section class="portal-hero">
-      <span class="pill pill-bull">● ENTRY 09:30–12:00 • 1 ENTRY/STOCK • ITM CE / PE • REAL SAVED CHARTS</span>
+      <span class="pill pill-bull">● 173 LIQUID F&O STOCKS • ENTRY 09:30–12:00 • 1 ENTRY/STOCK • ITM CE / PE</span>
       <h1 class="portal-title">ICT <span>BOS | CHoCH</span><br/>Top 3 F&amp;O Strategy Desk</h1>
       <p class="portal-desc">
         Fresh Intraday Structure (Skip Prev Day &amp; 9:15 Breakout) • Entry strictly before 12:00 PM • Max 1 Entry per Stock • ITM Option Chain Strike (CE Lower / PE Higher) • Live 5m Chart &amp; Saved Real Backtest Charts.
@@ -533,7 +533,7 @@
             <span class="pill pill-cyan">TOP 3 FOCUS</span>
             <span class="pill pill-muted">NSE F&amp;O</span>
           </div>
-          <div class="brand-sub" id="syncSub">Swing 4 • Entry 09:30–12:00 • 1 Entry/Stock • TP1 1:1 / TP2 1:2 • ITM CE/PE</div>
+          <div class="brand-sub" id="syncSub">173 F&O Stocks • Swing 4 • Entry 09:30–12:00 • 1 Entry/Stock • TP1 1:1 / TP2 1:2 • ITM CE/PE</div>
         </div>
       </div>
 
@@ -832,7 +832,8 @@
       HAVELLS:'CAP GOODS', DIXON:'CAP GOODS', KAYNES:'CAP GOODS',
       HINDUNILVR:'FMCG', ITC:'FMCG', NESTLEIND:'FMCG', BRITANNIA:'FMCG', TATACONSUM:'FMCG', VBL:'FMCG',
       DABUR:'FMCG', MARICO:'FMCG', GODREJCP:'FMCG', COLPAL:'FMCG', TITAN:'FMCG', TRENT:'RETAIL', DMART:'RETAIL',
-      PIDILITIND:'FMCG', ASIANPAINT:'FMCG', INDHOTEL:'HOTELS', ZOMATO:'TECH', PAYTM:'TECH', NAUKRI:'TECH', KALYANKJIL:'RETAIL'
+      PIDILITIND:'FMCG', ASIANPAINT:'FMCG', INDHOTEL:'HOTELS', ZOMATO:'TECH', PAYTM:'TECH', NAUKRI:'TECH', KALYANKJIL:'RETAIL',
+      PETRONET:'ENERGY', IGL:'ENERGY', VOLTAS:'CAP GOODS', SRF:'CHEMICALS', PIIND:'CHEMICALS', UPL:'CHEMICALS', SUPREMEIND:'INFRA'
     };
 
     const SIM_STOCKS = [
@@ -892,7 +893,7 @@
     let activeModalObj = null; // Holds live stock OR saved historical journal trade object
 
     // Genuine Persistent Backtest Journal (WITH SAVED REAL 5M CHARTS)
-    const JOURNAL_KEY = 'ict_top3_genuine_journal_v2';
+    const JOURNAL_KEY = 'ict_top3_genuine_journal_v4';
     let tradeJournal = [];
     try {
       tradeJournal = JSON.parse(localStorage.getItem(JOURNAL_KEY) || '[]');
@@ -1081,15 +1082,21 @@
         : (pChange >= 0 ? 1 : -1);
       const bias = biasMode === 'BULL' ? 1 : biasMode === 'BEAR' ? -1 : autoBias;
 
-      let refHigh = candles[0].h, refHighBar = 0;
-      let refLow  = candles[0].l, refLowBar  = 0;
+      // If we don't have REAL 5m candles from the live server, NEVER fabricate fake 09:40 CHoCH signals!
+      if (!isRealChart) {
+        return { candles, isRealChart: false, bias, setup: null };
+      }
+
+      let refHigh = null, refHighBar = -1;
+      let refLow  = null, refLowBar  = -1;
+      let bullTrend = false, bearTrend = false;
 
       let setup = null; // 1 Stock = 1 Entry Max!
 
       for (let i = 1; i < candles.length; i++) {
         const cd = candles[i];
 
-        // Update intraday swings using Swing Length 4 (strictly within today)
+        // Genuine Intraday Swing Length 4 Pivot Detection (Previous Day & 09:15 Breakout Ignored)
         if (i >= swingLen * 2) {
           const pIdx = i - swingLen;
           let isSwingH = true, isSwingL = true;
@@ -1097,8 +1104,16 @@
             if (candles[k].h > candles[pIdx].h) isSwingH = false;
             if (candles[k].l < candles[pIdx].l) isSwingL = false;
           }
-          if (isSwingH) { refHigh = candles[pIdx].h; refHighBar = pIdx; }
-          if (isSwingL) { refLow  = candles[pIdx].l; refLowBar  = pIdx; }
+          if (isSwingH) {
+            refHigh = candles[pIdx].h;
+            refHighBar = pIdx;
+            if (!bullTrend) bearTrend = true;
+          }
+          if (isSwingL) {
+            refLow = candles[pIdx].l;
+            refLowBar = pIdx;
+            if (!bearTrend) bullTrend = true;
+          }
         }
 
         // RULE 1: Strict Entry Window (09:30 AM to 12:00 PM only)
@@ -1114,7 +1129,10 @@
         const isStrongBull = cd.c > cd.o && bodyRatio >= 0.50;
         const isStrongBear = cd.c < cd.o && bodyRatio >= 0.50;
 
-        if (bias === 1 && isStrongBull && cd.c > refHigh && (showCHOCH || showBOS)) {
+        if (bias === 1 && refHigh !== null && isStrongBull && cd.c > refHigh) {
+          const isBos = bearTrend;
+          const sigName = isBos ? 'BOS' : 'ChoCH';
+          if ((isBos && !showBOS) || (!isBos && !showCHOCH)) continue;
           const entry = cd.c;
           const slBuffer = entry * 0.0005;
           const sl = Number((cd.l - slBuffer).toFixed(2));
@@ -1123,8 +1141,8 @@
           const tp2 = Number((entry + risk * 2.0).toFixed(2));
           setup = {
             side: 'BUY',
-            signal: i <= 7 ? 'ChoCH' : 'BOS',
-            signalColor: i <= 7 ? '#00BCD4' : '#00E676',
+            signal: sigName,
+            signalColor: isBos ? '#00E676' : '#00BCD4',
             fromBar: refHighBar,
             breakBar: i,
             breakLevel: refHigh,
@@ -1134,7 +1152,10 @@
             option: getItmOption(sym, entry, true),
             bias: 1
           };
-        } else if (bias === -1 && isStrongBear && cd.c < refLow && (showCHOCH || showBOS)) {
+        } else if (bias === -1 && refLow !== null && isStrongBear && cd.c < refLow) {
+          const isBos = bullTrend;
+          const sigName = isBos ? 'BOS' : 'ChoCH';
+          if ((isBos && !showBOS) || (!isBos && !showCHOCH)) continue;
           const entry = cd.c;
           const slBuffer = entry * 0.0005;
           const sl = Number((cd.h + slBuffer).toFixed(2));
@@ -1143,8 +1164,8 @@
           const tp2 = Number((entry - risk * 2.0).toFixed(2));
           setup = {
             side: 'SELL',
-            signal: i <= 7 ? 'ChoCH' : 'BOS',
-            signalColor: i <= 7 ? '#FF9800' : '#FF1744',
+            signal: sigName,
+            signalColor: isBos ? '#FF1744' : '#FF9800',
             fromBar: refLowBar,
             breakBar: i,
             breakLevel: refLow,
@@ -1245,7 +1266,7 @@
 
       let changed = false;
       top6.forEach(s => {
-        if (!s.setup) return;
+        if (!s.isRealChart || !s.setup) return; // ONLY log 100% REAL 5m candle setups, NEVER demo/fake candles
         const st = s.setup;
         if (st.entryTime < ENTRY_START_HHMM || st.entryTime > ENTRY_CUTOFF_HHMM) return;
 
